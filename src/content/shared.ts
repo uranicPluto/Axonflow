@@ -23,9 +23,9 @@ export const testimonials = [
 ];
 
 export const heroMetrics = [
-  { value: "2,400+", label: "Hours returned to client teams" },
-  { value: "12+", label: "Automation systems built and live" },
-  { value: "14 hrs/wk", label: "Average time saved per client business" },
+  { value: "40%", label: "Average reduction in operational overhead after automation" },
+  { value: "3x", label: "Faster lead and customer response with automated pipelines" },
+  { value: "4 wks", label: "From discovery call to first live automation in production" },
 ];
 
 export const integrationGroups = [

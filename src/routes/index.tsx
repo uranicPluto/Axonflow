@@ -74,11 +74,11 @@ function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               >
-                <Eyebrow>AI AUTOMATION &amp; BUSINESS GROWTH</Eyebrow>
+                <Eyebrow>WEB DEVELOPMENT &amp; AI AUTOMATION</Eyebrow>
                 <h1 className="mt-6 text-[2.6rem] leading-[1.04] font-medium text-balance-tight sm:text-[3.4rem] lg:text-[4rem]">
-                  Save Your Time, Money, &amp; Headspace{" "}
+                  Your business should not run on{" "}
                   <span className="relative inline-block">
-                    <span className="relative z-10">via AI Automation!</span>
+                    <span className="relative z-10">manual work.</span>
                     <motion.span
                       className="absolute inset-x-0 bottom-1.5 z-0 h-3 rounded-full bg-primary/20"
                       initial={{ scaleX: 0 }}
@@ -90,7 +90,7 @@ function Home() {
                   </span>
                 </h1>
                 <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
-                  We build websites and AI automation systems for restaurants, clinics, salons, coaching institutes, and real estate agents — so leads don't go cold, bookings run themselves, and your team focuses on growth.
+                  We build high-performance websites and AI automation systems for startups, SaaS companies, agencies, enterprises, and growing businesses across 14 industries — so your team gets hours back, operations run without intervention, and revenue compounds on its own.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <button
