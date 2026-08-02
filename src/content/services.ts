@@ -25,15 +25,15 @@ export type Service = {
 export const services: Service[] = [
   {
     slug: "ai-automation",
-    name: "AI Automation",
+    name: "AI & Business Process Automation",
     kicker: "Systems that run without being asked",
     headline: "Automate the work that never should have been a job.",
     summary:
-      "We find the repetitive, judgment-light work buried in your operations and rebuild it as instrumented automation with human checkpoints where they matter.",
+      "We identify the repetitive, rule-based work embedded in your operations — lead follow-up, data entry, report generation, customer onboarding, invoice processing — and rebuild it as automation with human checkpoints where judgment actually matters.",
     outcomes: [
-      { value: "1,900+", label: "hours returned per year, median engagement" },
-      { value: "6 wks", label: "from discovery to first production workflow" },
-      { value: "99.4%", label: "task success rate after tuning" },
+      { value: "500+", label: "hours returned per client" },
+      { value: "4 wks", label: "to first live workflow" },
+      { value: "Built on", label: "n8n · OpenAI API · Manychat" },
     ],
     capabilities: [
       {

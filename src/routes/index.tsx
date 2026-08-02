@@ -200,8 +200,8 @@ function Home() {
         <Container size="wide">
           <SectionHeader
             eyebrow="What we build"
-            title="Eight disciplines, one operating thesis."
-            lede="Deterministic where it must be, intelligent where it helps, measured everywhere."
+            title="Two pillars. One growth system."
+            lede="A website that converts visitors into leads. Automation that converts processes into results. Built together, they compound."
             action={
               <ButtonLink to="/services" variant="outline" size="sm">
                 All services
