@@ -24,6 +24,47 @@ export type Service = {
 
 export const services: Service[] = [
   {
+    slug: "web-development",
+    name: "Web Development",
+    kicker: "The frontend your automation sits behind",
+    headline: "High-performance websites built for speed, conversion, and seamless integration.",
+    summary:
+      "We design and engineer fast, responsive, and conversion-focused websites that showcase your business and integrate directly with your backend AI automation workflows.",
+    outcomes: [
+      { value: "100%", label: "custom design and responsive code" },
+      { value: "2–4 wks", label: "average design-to-launch timeline" },
+      { value: "0 ms", label: "friction lead capture and instant routing" },
+    ],
+    capabilities: [
+      {
+        title: "Conversion-first architecture",
+        body: "Clean layout, responsive design, fast page load speeds, and intuitive UX optimized for inbound lead capture.",
+      },
+      {
+        title: "Seamless backend integration",
+        body: "Built from day one to connect directly with your CRMs, booking tools, and automated workflow pipelines.",
+      },
+      {
+        title: "SEO & performance optimized",
+        body: "Structured metadata, accessibility compliance, and lightning-fast asset delivery built on modern web standards.",
+      },
+    ],
+    deliverables: [
+      "Custom responsive website design",
+      "Lead capture and CRM integration",
+      "SEO metadata and schema configuration",
+      "Production deployment and analytics setup",
+    ],
+    stack: ["React", "TypeScript", "Tailwind CSS", "Vite / Next.js", "Framer Motion"],
+    engagement: "Fixed fee starting from ₹12,000, 2–4 weeks delivery.",
+    faqs: [
+      {
+        q: "Do you integrate the website with automation tools?",
+        a: "Yes. Every website we build is designed to plug into backend workflows like n8n, CRMs, and email sequences.",
+      },
+    ],
+  },
+  {
     slug: "ai-automation",
     name: "AI & Business Process Automation",
     kicker: "Systems that run without being asked",
@@ -354,55 +395,6 @@ export const services: Service[] = [
       {
         q: "Do you write the copy?",
         a: "We build the system and the message-testing loop; your voice, tested against reply data.",
-      },
-    ],
-  },
-  {
-    slug: "web-development",
-    name: "Web Development",
-    kicker: "The frontend your automation sits behind",
-    headline: "High-performance websites built for speed, conversion, and seamless integration.",
-    summary:
-      "We design and engineer fast, responsive, and conversion-focused websites that showcase your business and integrate directly with your backend AI automation workflows.",
-    outcomes: [
-      { value: "3 wks", label: "to a costed, sequenced roadmap" },
-      { value: "12–20", label: "opportunities scored per assessment" },
-      { value: "1", label: "clear first project, de-risked" },
-    ],
-    capabilities: [
-      {
-        title: "Opportunity assessment",
-        body: "Every candidate workflow scored on value, feasibility, and risk — with numbers attached.",
-      },
-      {
-        title: "Build vs. buy analysis",
-        body: "Honest total-cost comparison, including the vendor lock-in nobody quotes.",
-      },
-      {
-        title: "Governance and risk",
-        body: "Data handling, model policy, review gates, and audit expectations documented.",
-      },
-      {
-        title: "Team capability plan",
-        body: "What to hire, what to train, and what to partner on for the next 12 months.",
-      },
-    ],
-    deliverables: [
-      "Scored opportunity portfolio",
-      "Costed 12-month roadmap",
-      "Governance and risk framework",
-      "Executive readout and board-ready narrative",
-    ],
-    stack: ["Workshops", "Data audit", "Cost modeling", "Architecture review"],
-    engagement: "Fixed fee, 3–5 weeks, roadmap credited against a build engagement.",
-    faqs: [
-      {
-        q: "Will you recommend yourselves for the build?",
-        a: "Only where we're the right team. Several roadmaps we've written were executed in-house by the client.",
-      },
-      {
-        q: "Who needs to be involved?",
-        a: "An executive sponsor, the operators who do the work, and someone who owns the data.",
       },
     ],
   },

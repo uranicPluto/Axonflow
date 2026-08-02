@@ -21,6 +21,11 @@ export type NavGroup = { label: string; to: string; children?: NavChild[] };
 
 export const serviceNav: NavChild[] = [
   {
+    label: "Web Development",
+    to: "/services/web-development",
+    blurb: "The frontend your automation sits behind.",
+  },
+  {
     label: "AI Automation",
     to: "/services/ai-automation",
     blurb: "Replace manual handoffs with systems that run themselves.",
@@ -54,11 +59,6 @@ export const serviceNav: NavChild[] = [
     label: "GTM Engineering",
     to: "/services/gtm-engineering",
     blurb: "Pipeline infrastructure: data, signals, sequencing, attribution.",
-  },
-  {
-    label: "Web Development",
-    to: "/services/web-development",
-    blurb: "The frontend your automation sits behind.",
   },
 ];
 
