@@ -40,10 +40,10 @@ export const Route = createFileRoute("/")({
 });
 
 const problems = [
-  { stat: "67%", text: "of business leads never get a follow-up within the hour" },
-  { stat: "3x", text: "higher conversion when you reply to a lead within 5 minutes" },
-  { stat: "14 hrs", text: "average time a small business owner wastes on manual admin per week" },
-  { stat: "₹2–5L", text: "revenue lost annually to missed leads and poor follow-up for a typical SME" },
+  { stat: "31%", text: "of a knowledge worker's week is spent on tasks a system could handle" },
+  { stat: "19%", text: "of process hours are duplicated work caused by disconnected tools" },
+  { stat: "6", text: "average number of software tools touched in a single customer request" },
+  { stat: "1", text: "person in most companies who genuinely understands the full end-to-end process" },
 ];
 
 function Home() {
@@ -154,15 +154,15 @@ function Home() {
         <Container size="wide">
           <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
             <Reveal>
-              <Eyebrow>The cost of the status quo</Eyebrow>
+              <Eyebrow>THE COST OF THE STATUS QUO</Eyebrow>
               <h2 className="mt-6 text-3xl leading-[1.06] font-medium sm:text-4xl md:text-[2.7rem]">
                 Thousands of hours a year, spent on work your systems should already be doing.
               </h2>
               <p className="mt-6 max-w-xl leading-relaxed text-muted-foreground">
-                It rarely looks like a crisis. It looks like a sales rep manually updating CRM fields, a marketing team exporting CSVs between tools, or an ops manager reconciling data no system talks to. Individually defensible. Together, it is the largest line item nobody has measured.
+                It rarely looks like a crisis. It looks like a sales rep manually updating CRM records, a clinic receptionist confirming appointments one by one, a logistics team copying data between spreadsheets, or a finance team reconciling GST entries at month-end. Individually manageable. Collectively, they are the largest invisible cost in your business — and the most automatable.
               </p>
-              <Link to="/blogs" className="group mt-8 inline-flex items-center gap-2 text-sm font-medium">
-                Discover how automation transforms your business
+              <Link to="/solutions" className="group mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+                Read how we solve this by industry
                 <ArrowRight />
               </Link>
             </Reveal>
