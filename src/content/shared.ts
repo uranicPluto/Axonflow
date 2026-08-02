@@ -87,22 +87,22 @@ export const comparisonPartner = {
 export const homeFaqs = [
   {
     q: "How quickly do you start?",
-    a: "Discovery typically begins within two weeks of a signed engagement. First production workflows land six to twelve weeks after that.",
+    a: "Discovery begins within one week of a signed engagement. First production workflows are live within 4–6 weeks after that.",
   },
   {
     q: "What does an engagement cost?",
-    a: "Diagnostics run $18k–$35k. Build engagements typically fall between $60k and $280k depending on scope, with fixed-price phases wherever the scope allows.",
+    a: "Website projects start from ₹12,000. Automation builds from ₹15,000 one-time with maintenance from ₹2,000/month. Bundles start from ₹22,000. We scope every project before quoting — no guesswork.",
   },
   {
     q: "Do you work with our engineers?",
-    a: "Preferably. Embedded delivery with your engineers pairing is how ownership transfers properly.",
+    a: "Yes. We build on your existing stack, document everything, and hand over systems your engineers can maintain. We are not a black box.",
   },
   {
     q: "What if the automation gets it wrong?",
     a: "Confidence thresholds route uncertain cases to humans, every run is logged and replayable, and regressions are caught by an evaluation suite in CI.",
   },
   {
-    q: "Where does our data go?",
-    a: "Into your cloud account, under your retention policy. Where models are involved, we redact and use enterprise endpoints with no training on your data.",
+    q: "Which industries do you work in?",
+    a: "We actively work in 14 industries: Technology and SaaS, Healthcare, Finance and Accounting, Banking, Logistics, Manufacturing, Retail and D2C, Marketing, Real Estate, Education and EdTech, HR and Recruitment, Media and Publishing, Hospitality, and Agency Operations.",
   },
 ];

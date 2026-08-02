@@ -102,8 +102,8 @@ export const team = [
 ];
 
 export const companyFacts = [
-  { value: "2019", label: "Founded" },
-  { value: "68", label: "Systems in production" },
-  { value: "412k", label: "Hours returned to clients" },
+  { value: "14", label: "Industries we actively work in" },
+  { value: "500+", label: "Hours returned to client teams per engagement" },
   { value: "94%", label: "Clients who extend scope" },
+  { value: "4 wks", label: "Median time to first live production workflow" },
 ];
