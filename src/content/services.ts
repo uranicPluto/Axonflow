@@ -6,7 +6,7 @@ export type ServiceSlug =
   | "saas-development"
   | "crm"
   | "gtm-engineering"
-  | "ai-consulting";
+  | "web-development";
 
 export type Service = {
   slug: ServiceSlug;
@@ -358,12 +358,12 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "ai-consulting",
-    name: "AI Consulting",
-    kicker: "Judgment before spend",
-    headline: "Know what to build, what to buy, and what to ignore.",
+    slug: "web-development",
+    name: "Web Development",
+    kicker: "The frontend your automation sits behind",
+    headline: "High-performance websites built for speed, conversion, and seamless integration.",
     summary:
-      "A short, opinionated engagement that produces a costed roadmap, a governance model, and the confidence to commit.",
+      "We design and engineer fast, responsive, and conversion-focused websites that showcase your business and integrate directly with your backend AI automation workflows.",
     outcomes: [
       { value: "3 wks", label: "to a costed, sequenced roadmap" },
       { value: "12–20", label: "opportunities scored per assessment" },

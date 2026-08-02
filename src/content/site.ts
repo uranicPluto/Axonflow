@@ -56,9 +56,9 @@ export const serviceNav: NavChild[] = [
     blurb: "Pipeline infrastructure: data, signals, sequencing, attribution.",
   },
   {
-    label: "AI Consulting",
-    to: "/services/ai-consulting",
-    blurb: "Strategy, roadmap, and governance before a line of code.",
+    label: "Web Development",
+    to: "/services/web-development",
+    blurb: "The frontend your automation sits behind.",
   },
 ];
 
