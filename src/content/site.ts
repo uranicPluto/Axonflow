@@ -8,7 +8,7 @@ export const brand = {
   phone: "+1 (415) 555-0142",
   addressLines: ["548 Market Street, Suite 21", "San Francisco, CA 94104"],
   founded: 2019,
-  url: "https://axonflow.com",
+  url: "https://axonflow-beta.vercel.app",
   social: {
     linkedin: "https://linkedin.com/company/axonflow",
     x: "https://x.com/axonflow",
