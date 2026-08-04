@@ -378,10 +378,10 @@ function Home() {
           <Reveal>
             <MetricStrip
               metrics={[
-                { value: "68", label: "Systems running in production" },
-                { value: "412k", label: "Hours returned to client teams" },
+                { value: "14", label: "Industries we actively work in" },
+                { value: "500+", label: "Hours saved per client engagement" },
                 { value: "94%", label: "Clients who extend scope" },
-                { value: "6 wks", label: "Median time to first production workflow" },
+                { value: "4 wks", label: "Average time to first live system" },
               ]}
             />
           </Reveal>

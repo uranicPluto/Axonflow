@@ -33,7 +33,7 @@ export const Route = createFileRoute("/case-studies/")({
 });
 
 const aggregate = [
-  { value: "412k", label: "Hours returned to client teams" },
+  { value: "500+", label: "Hours saved per client engagement" },
   { value: "$6.6M", label: "Combined annual value created" },
   { value: "4", label: "Industries, four different constraints" },
   { value: "16 wks", label: "Median time to first production system" },
