@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { CtaBand } from "@/components/site/CtaBand";
+import { ComparisonSection } from "@/components/site/ComparisonTable";
+import { RoiSection } from "@/components/site/RoiCalculator";
 import { Faq } from "@/components/site/Testimonials";
 import {
   ArrowRight,
@@ -13,6 +15,7 @@ import {
 } from "@/components/site/primitives";
 import { jsonLd, pageMeta } from "@/components/site/seo";
 import { services } from "@/content/services";
+import { comparisonHiring } from "@/content/shared";
 import { brand } from "@/content/site";
 
 export const Route = createFileRoute("/services/")({
@@ -78,41 +81,87 @@ function ServicesIndex() {
         </Container>
       </div>
 
+      {/* ---------------- SERVICES BENTO ---------------- */}
       <Section tone="surface" className="pt-0 sm:pt-0">
         <Container size="wide">
-          <div className="divide-y divide-hairline border-y border-hairline">
-            {services.map((service, i) => (
-              <Reveal key={service.slug} delay={i * 0.04}>
-                <Link
-                  to="/services/$slug"
-                  params={{ slug: service.slug }}
-                  className="group grid items-center gap-6 py-8 transition-colors duration-300 hover:bg-surface sm:py-10 md:grid-cols-[auto_1fr_auto_auto] md:gap-10"
-                >
-                  <span className="font-mono text-sm text-muted-foreground/70">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <h2 className="font-display text-2xl font-medium sm:text-[1.65rem]">{service.name}</h2>
-                    <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">{service.kicker}</p>
-                  </div>
-                  <div className="hidden gap-6 md:flex">
-                    {service.outcomes.slice(0, 1).map((o) => (
-                      <div key={o.label} className="text-right">
-                        <p className="font-display text-xl font-medium text-primary">
-                          <CountUp value={o.value} />
-                        </p>
-                        <p className="max-w-[9rem] text-xs leading-snug text-muted-foreground">{o.label}</p>
+          <div className="grid auto-rows-[minmax(0,1fr)] gap-4 md:grid-cols-6">
+            {services.map((service, i) => {
+              const span =
+                i === 0
+                  ? "md:col-span-4 md:row-span-2"
+                  : i === 1
+                    ? "md:col-span-2"
+                    : i === 2
+                      ? "md:col-span-2"
+                      : i === 3
+                        ? "md:col-span-3"
+                        : i === 4
+                          ? "md:col-span-3"
+                          : "md:col-span-2";
+              const large = i === 0;
+              return (
+                <Reveal key={service.slug} delay={i * 0.05} className={span}>
+                  <Link
+                    to="/services/$slug"
+                    params={{ slug: service.slug }}
+                    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-hairline bg-card p-6 transition-all duration-400 hover:-translate-y-1 hover:border-primary/25 hover:shadow-float sm:p-7"
+                  >
+                    <div
+                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                      style={{
+                        background:
+                          "radial-gradient(600px circle at 20% 0%, color-mix(in oklab, var(--color-primary) 7%, transparent), transparent 55%)",
+                      }}
+                      aria-hidden
+                    />
+                    <div className="relative">
+                      <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                        {String(i + 1).padStart(2, "0")}
+                      </p>
+                      <h3
+                        className={
+                          large
+                            ? "mt-5 font-display text-2xl font-medium sm:text-[2rem]"
+                            : "mt-5 font-display text-lg font-medium"
+                        }
+                      >
+                        {service.name}
+                      </h3>
+                      <p
+                        className={
+                          large
+                            ? "mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-muted-foreground"
+                            : "mt-3 text-[0.875rem] leading-relaxed text-muted-foreground"
+                        }
+                      >
+                        {large ? service.summary : service.kicker}
+                      </p>
+                    </div>
+
+                    {large ? (
+                      <div className="relative mt-8 grid gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:grid-cols-3">
+                        {service.outcomes.map((o) => (
+                          <div key={o.label} className="bg-surface p-4">
+                            <p className="font-display text-xl font-medium text-primary">{o.value}</p>
+                            <p className="mt-1.5 text-xs leading-snug text-muted-foreground">{o.label}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-hairline text-muted-foreground transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary group-hover:text-primary-foreground">
-                    <ArrowRight />
-                  </span>
-                </Link>
-              </Reveal>
-            ))}
+                    ) : null}
+
+                    <span className="relative mt-6 inline-flex items-center gap-2 text-[0.8125rem] font-medium text-primary">
+                      Explore
+                      <ArrowRight />
+                    </span>
+                  </Link>
+                </Reveal>
+              );
+            })}
           </div>
         </Container>
       </Section>
 
+      {/* ---------------- HOW WE ENGAGE ---------------- */}
       <Section>
         <Container size="wide">
           <SectionHeader
@@ -132,6 +181,35 @@ function ServicesIndex() {
         </Container>
       </Section>
 
+      {/* ---------------- ROI ---------------- */}
+      <Section tone="surface">
+        <Container size="wide">
+          <SectionHeader
+            eyebrow="Savings model"
+            title="Put your own numbers in."
+            lede="A rough model beats no model. Move the sliders to see the shape of the business case for one function in your company."
+          />
+          <div className="mt-14">
+            <RoiSection />
+          </div>
+        </Container>
+      </Section>
+
+      {/* ---------------- COMPARISON ---------------- */}
+      <Section>
+        <Container size="wide">
+          <SectionHeader
+            eyebrow="The honest comparison"
+            title="Headcount is not the only way to add capacity."
+            lede="We are not arguing against hiring. We are arguing against hiring to do work that a well-engineered system does better, cheaper, and with a complete audit trail."
+          />
+          <div className="mt-14">
+            <ComparisonSection data={comparisonHiring} />
+          </div>
+        </Container>
+      </Section>
+
+      {/* ---------------- FAQ ---------------- */}
       <Section tone="surface">
         <Container size="narrow">
           <SectionHeader eyebrow="Questions" title="Before you book a call." align="left" />

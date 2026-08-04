@@ -3,10 +3,8 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { useRef, useState } from "react";
 
 import { BookingModal } from "@/components/site/BookingModal";
-import { ComparisonSection } from "@/components/site/ComparisonTable";
 import { CtaBand } from "@/components/site/CtaBand";
-import { RoiSection } from "@/components/site/RoiCalculator";
-import { Faq, LogoTicker, Testimonials } from "@/components/site/Testimonials";
+import { Faq, LogoTicker } from "@/components/site/Testimonials";
 import { VideoPlaceholder } from "@/components/site/VideoPlaceholder";
 import { WorkflowGraph } from "@/components/site/WorkflowGraph";
 import {
@@ -15,15 +13,13 @@ import {
   Container,
   CountUp,
   Eyebrow,
-  MetricStrip,
   Reveal,
   Section,
   SectionHeader,
 } from "@/components/site/primitives";
 import { jsonLd, organizationSchema, pageMeta } from "@/components/site/seo";
 import { caseStudies } from "@/content/case-studies";
-import { services } from "@/content/services";
-import { comparisonHiring, heroMetrics, homeFaqs, testimonials } from "@/content/shared";
+import { heroMetrics, homeFaqs } from "@/content/shared";
 import { brand, trustedBy } from "@/content/site";
 
 export const Route = createFileRoute("/")({
@@ -67,7 +63,7 @@ function Home() {
           aria-hidden
         />
         <Container size="wide" className="relative">
-          <div className="grid items-center gap-14 pt-16 pb-10 sm:pt-24 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10 lg:pt-28">
+          <div className="grid items-center gap-14 pt-16 pb-16 sm:pt-24 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10 lg:pt-28">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 14 }}
@@ -142,12 +138,22 @@ function Home() {
               </motion.div>
             </motion.div>
           </div>
-
-          <div className="border-t border-hairline py-12">
-            <LogoTicker items={trustedBy} label="Industries we've transformed." />
-          </div>
         </Container>
       </div>
+
+      {/* ---------------- VIDEO SPACE ---------------- */}
+      <Section>
+        <Container size="wide">
+          <SectionHeader
+            eyebrow="SEE IT WORKING"
+            title="Watch a real business problem get solved in 90 seconds."
+            lede="We take a manual process that's eating your team's time, map it, automate it, and hand it over — so your team never touches that work again. Here's what that looks like."
+          />
+          <Reveal className="mt-14">
+            <VideoPlaceholder />
+          </Reveal>
+        </Container>
+      </Section>
 
       {/* ---------------- PROBLEM ---------------- */}
       <Section tone="surface">
@@ -181,109 +187,10 @@ function Home() {
         </Container>
       </Section>
 
-      {/* ---------------- VIDEO SPACE ---------------- */}
-      <Section>
+      {/* ---------------- INDUSTRIES TICKER ---------------- */}
+      <Section className="py-12 border-y border-hairline bg-card/20">
         <Container size="wide">
-          <SectionHeader
-            eyebrow="SEE IT WORKING"
-            title="Watch a real business problem get solved in 90 seconds."
-            lede="We take a manual process that's eating your team's time, map it, automate it, and hand it over — so your team never touches that work again. Here's what that looks like."
-          />
-          <Reveal className="mt-14">
-            <VideoPlaceholder />
-          </Reveal>
-        </Container>
-      </Section>
-
-      {/* ---------------- SERVICES BENTO ---------------- */}
-      <Section tone="surface">
-        <Container size="wide">
-          <SectionHeader
-            eyebrow="What we build"
-            title="Two pillars. One growth system."
-            lede="A website that converts visitors into leads. Automation that converts processes into results. Built together, they compound."
-            action={
-              <ButtonLink to="/services" variant="outline" size="sm">
-                All services
-                <ArrowRight />
-              </ButtonLink>
-            }
-          />
-
-          <div className="mt-14 grid auto-rows-[minmax(0,1fr)] gap-4 md:grid-cols-6">
-            {services.map((service, i) => {
-              const span =
-                i === 0
-                  ? "md:col-span-4 md:row-span-2"
-                  : i === 1
-                    ? "md:col-span-2"
-                    : i === 2
-                      ? "md:col-span-2"
-                      : i === 3
-                        ? "md:col-span-3"
-                        : i === 4
-                          ? "md:col-span-3"
-                          : "md:col-span-2";
-              const large = i === 0;
-              return (
-                <Reveal key={service.slug} delay={i * 0.05} className={span}>
-                  <Link
-                    to="/services/$slug"
-                    params={{ slug: service.slug }}
-                    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-hairline bg-card p-6 transition-all duration-400 hover:-translate-y-1 hover:border-primary/25 hover:shadow-float sm:p-7"
-                  >
-                    <div
-                      className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                      style={{
-                        background:
-                          "radial-gradient(600px circle at 20% 0%, color-mix(in oklab, var(--color-primary) 7%, transparent), transparent 55%)",
-                      }}
-                      aria-hidden
-                    />
-                    <div className="relative">
-                      <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
-                        {String(i + 1).padStart(2, "0")}
-                      </p>
-                      <h3
-                        className={
-                          large
-                            ? "mt-5 font-display text-2xl font-medium sm:text-[2rem]"
-                            : "mt-5 font-display text-lg font-medium"
-                        }
-                      >
-                        {service.name}
-                      </h3>
-                      <p
-                        className={
-                          large
-                            ? "mt-4 max-w-lg text-[0.9375rem] leading-relaxed text-muted-foreground"
-                            : "mt-3 text-[0.875rem] leading-relaxed text-muted-foreground"
-                        }
-                      >
-                        {large ? service.summary : service.kicker}
-                      </p>
-                    </div>
-
-                    {large ? (
-                      <div className="relative mt-8 grid gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:grid-cols-3">
-                        {service.outcomes.map((o) => (
-                          <div key={o.label} className="bg-surface p-4">
-                            <p className="font-display text-xl font-medium text-primary">{o.value}</p>
-                            <p className="mt-1.5 text-xs leading-snug text-muted-foreground">{o.label}</p>
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
-
-                    <span className="relative mt-6 inline-flex items-center gap-2 text-[0.8125rem] font-medium text-primary">
-                      Explore
-                      <ArrowRight />
-                    </span>
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </div>
+          <LogoTicker items={trustedBy} label="Industries we've transformed." />
         </Container>
       </Section>
 
@@ -302,7 +209,7 @@ function Home() {
             }
           />
 
-          <div className="mt-14 grid gap-4 lg:grid-cols-3">
+          <div className="mt-14 grid gap-4 lg:grid-cols-2">
             {featured.map((cs, i) => (
               <Reveal key={cs.slug} delay={i * 0.08}>
                 <Link
@@ -337,59 +244,11 @@ function Home() {
               </Reveal>
             ))}
           </div>
-
-          <div className="mt-4">
-            <Testimonials items={testimonials} />
-          </div>
-        </Container>
-      </Section>
-
-      {/* ---------------- ROI ---------------- */}
-      <Section tone="surface">
-        <Container size="wide">
-          <SectionHeader
-            eyebrow="Savings model"
-            title="Put your own numbers in."
-            lede="A rough model beats no model. Move the sliders to see the shape of the business case for one function in your company."
-          />
-          <div className="mt-14">
-            <RoiSection />
-          </div>
-        </Container>
-      </Section>
-
-      {/* ---------------- COMPARISON ---------------- */}
-      <Section>
-        <Container size="wide">
-          <SectionHeader
-            eyebrow="The honest comparison"
-            title="Headcount is not the only way to add capacity."
-            lede="We are not arguing against hiring. We are arguing against hiring to do work that a well-engineered system does better, cheaper, and with a complete audit trail."
-          />
-          <div className="mt-14">
-            <ComparisonSection data={comparisonHiring} />
-          </div>
-        </Container>
-      </Section>
-
-      {/* ---------------- METRIC STRIP ---------------- */}
-      <Section tone="surface">
-        <Container size="wide">
-          <Reveal>
-            <MetricStrip
-              metrics={[
-                { value: "14", label: "Industries we actively work in" },
-                { value: "500+", label: "Hours saved per client engagement" },
-                { value: "94%", label: "Clients who extend scope" },
-                { value: "4 wks", label: "Average time to first live system" },
-              ]}
-            />
-          </Reveal>
         </Container>
       </Section>
 
       {/* ---------------- THE TEAM ---------------- */}
-      <Section>
+      <Section tone="surface">
         <Container size="wide">
           <div className="grid gap-14 items-center lg:grid-cols-[1.25fr_0.75fr] lg:gap-20">
             <Reveal>
