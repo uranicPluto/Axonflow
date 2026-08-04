@@ -200,6 +200,12 @@
     background-color: var(--color-primary);
     color: var(--color-primary-foreground);
   }
+
+  @media (pointer: fine) {
+    body, a, button, [role="button"], input[type="submit"], input[type="button"] {
+      cursor: none !important;
+    }
+  }
 }
 
 /* ---- texture utilities ---- */
