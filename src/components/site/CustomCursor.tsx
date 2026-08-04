@@ -78,7 +78,7 @@ export function CustomCursor() {
   return (
     <div
       ref={cursorRef}
-      className="pointer-events-none fixed left-0 top-0 z-50 h-5 w-5 rounded-full bg-[#93a5ff] opacity-90 transition-opacity duration-300 md:block hidden"
+      className="pointer-events-none fixed left-0 top-0 z-[9999] h-5 w-5 rounded-full bg-[#93a5ff] opacity-90 transition-opacity duration-300 md:block hidden"
       style={{
         transform: "translate3d(-100px, -100px, 0)",
         willChange: "transform",
