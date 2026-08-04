@@ -58,7 +58,7 @@ export function RoiCalculator() {
     const weeklyHours = people * hours;
     const annualHours = weeklyHours * 46;
     const manualCost = annualHours * rate;
-    const automatedShare = 0.72;
+    const automatedShare = 0.60;
     const hoursSaved = annualHours * automatedShare;
     const savings = hoursSaved * rate;
     const buildCost = Math.round((14000 + people * 9000 + hours * 2600) / 1000) * 1000;
@@ -77,8 +77,8 @@ export function RoiCalculator() {
           <p className="eyebrow">Live model</p>
           <h3 className="mt-3 font-display text-xl font-medium">Your inputs</h3>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Adjust to match one function in your business. The model assumes 72% of in-scope work is automatable —
-            our median across engagements.
+            Adjust to match one function in your business. The model assumes 60% of in-scope work is automatable —
+            a conservative estimate across typical automation engagements.
           </p>
         </div>
         <div className="space-y-7">
