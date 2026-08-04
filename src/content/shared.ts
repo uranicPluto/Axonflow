@@ -7,11 +7,11 @@ export const testimonials = [
     initials: "MF",
   },
   {
-    text: "What separated Axonflow was the refusal to ship anything they couldn't measure. Every claim in the proposal had a number behind it by month three.",
-    name: "Priya Raman",
-    role: "VP Finance",
-    company: "Ledgerline",
-    initials: "PR",
+    text: "Reporting was the worst part of our team's week and the source of most client friction. Now it runs on autopilot, and our account managers focus entirely on strategy.",
+    name: "Alex Mercer",
+    role: "Founder",
+    company: "Vantage Media",
+    initials: "AM",
   },
   {
     text: "We were losing half our pipeline because we responded two days too late. Now, leads are booked on our calendar before the rep even opens their laptop.",
