@@ -248,34 +248,100 @@ function Home() {
       </Section>
 
       {/* ---------------- THE TEAM ---------------- */}
-      <Section tone="surface">
+      <Section tone="surface" className="relative overflow-hidden">
+        {/* Floating Coral Dot */}
+        <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden h-4.5 w-4.5 rounded-full bg-primary/45 md:block lg:left-14" />
+
         <Container size="wide">
-          <div className="grid gap-14 items-center lg:grid-cols-[1.25fr_0.75fr] lg:gap-20">
+          <div className="flex flex-col items-center text-center">
             <Reveal>
-              <Eyebrow>the team</Eyebrow>
-              <h2 className="mt-6 text-3xl leading-[1.06] font-medium sm:text-4xl md:text-[2.7rem]">
+              <p className="font-mono text-xs tracking-[0.2em] text-primary uppercase">
+                // the team
+              </p>
+              <h2
+                className="mt-4 text-4xl leading-[1.06] tracking-tight font-normal sm:text-5xl md:text-[3.8rem] text-foreground"
+                style={{ fontFamily: "'Instrument Serif', serif" }}
+              >
                 Small team. Serious output.
               </h2>
-              <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                We built {brand.name} because we kept seeing the same thing — great businesses held back by manual processes and disconnected tools. We're builders based in Pune. We fix that.
+              <p className="mt-6 max-w-2xl text-[0.95rem] leading-relaxed text-muted-foreground">
+                We built House Of Workflow because we kept seeing the same thing — great businesses held back by manual processes and disconnected tools. We're builders based in Pune. We fix that.
               </p>
             </Reveal>
-            <Reveal delay={0.1}>
-              <div className="group relative overflow-hidden rounded-3xl border border-hairline bg-card p-4 shadow-float transition-all duration-300 hover:border-primary/25 hover:shadow-glow">
-                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-hairline/60 bg-surface/90">
-                  <img
-                    src="/founder.png"
-                    alt="Jay Mahale"
-                    className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-60" />
+
+            <div className="mt-16 flex flex-wrap justify-center gap-16 md:gap-24">
+              <Reveal delay={0.1}>
+                <div className="flex flex-col items-center">
+                  <div className="relative h-32 w-32 overflow-hidden rounded-full border border-hairline bg-surface shadow-sm md:h-36 md:w-36">
+                    <img
+                      src="/vansh.png"
+                      alt="Vansh Sood"
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
+                  <h3 className="mt-6 flex items-center gap-1.5 font-display text-lg font-medium text-foreground">
+                    Vansh Sood
+                    <a
+                      href="https://linkedin.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground/60 transition-colors hover:text-[#0077b5]"
+                      aria-label="LinkedIn Profile"
+                    >
+                      <svg
+                        className="h-4 w-4 fill-current"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                      </svg>
+                    </a>
+                  </h3>
+                  <p className="mt-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
+                    Engineer
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    B.E. BITS Pilani
+                  </p>
                 </div>
-                <div className="mt-5 px-2">
-                  <h3 className="font-display text-xl font-medium text-foreground">Jay Mahale</h3>
-                  <p className="mt-1 text-sm font-medium text-primary">Founder &amp; Automation Engineer</p>
+              </Reveal>
+
+              <Reveal delay={0.15}>
+                <div className="flex flex-col items-center">
+                  <div className="relative h-32 w-32 overflow-hidden rounded-full border border-hairline bg-surface shadow-sm md:h-36 md:w-36">
+                    <img
+                      src="/russhil.png"
+                      alt="Russhil Chawla"
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
+                  <h3 className="mt-6 flex items-center gap-1.5 font-display text-lg font-medium text-foreground">
+                    Russhil Chawla
+                    <a
+                      href="https://linkedin.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground/60 transition-colors hover:text-[#0077b5]"
+                      aria-label="LinkedIn Profile"
+                    >
+                      <svg
+                        className="h-4 w-4 fill-current"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                      </svg>
+                    </a>
+                  </h3>
+                  <p className="mt-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
+                    Strategy &amp; Growth
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Final Year, IIM
+                  </p>
                 </div>
-              </div>
-            </Reveal>
+              </Reveal>
+            </div>
           </div>
         </Container>
       </Section>
