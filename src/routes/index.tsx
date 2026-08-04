@@ -388,6 +388,39 @@ function Home() {
         </Container>
       </Section>
 
+      {/* ---------------- THE TEAM ---------------- */}
+      <Section>
+        <Container size="wide">
+          <div className="grid gap-14 items-center lg:grid-cols-[1.25fr_0.75fr] lg:gap-20">
+            <Reveal>
+              <Eyebrow>the team</Eyebrow>
+              <h2 className="mt-6 text-3xl leading-[1.06] font-medium sm:text-4xl md:text-[2.7rem]">
+                Small team. Serious output.
+              </h2>
+              <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+                We built {brand.name} because we kept seeing the same thing — great businesses held back by manual processes and disconnected tools. We're builders based in Pune. We fix that.
+              </p>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="group relative overflow-hidden rounded-3xl border border-hairline bg-card p-4 shadow-float transition-all duration-300 hover:border-primary/25 hover:shadow-glow">
+                <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-hairline/60 bg-surface/90">
+                  <img
+                    src="/founder.png"
+                    alt="Jay Mahale"
+                    className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-60" />
+                </div>
+                <div className="mt-5 px-2">
+                  <h3 className="font-display text-xl font-medium text-foreground">Jay Mahale</h3>
+                  <p className="mt-1 text-sm font-medium text-primary">Founder &amp; Automation Engineer</p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </Container>
+      </Section>
+
       {/* ---------------- FAQ ---------------- */}
       <Section>
         <Container size="wide">
