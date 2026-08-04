@@ -202,8 +202,17 @@
   }
 
   @media (pointer: fine) {
-    body, a, button, [role="button"], input[type="submit"], input[type="button"] {
+    body, a, button, [role="button"] {
       cursor: none !important;
+    }
+
+    iframe, 
+    input, 
+    textarea, 
+    select,
+    [src*="cal.com"],
+    [src*="calendly.com"] {
+      cursor: auto !important;
     }
   }
 }

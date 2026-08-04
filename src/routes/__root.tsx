@@ -124,7 +124,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CustomCursor />
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
@@ -133,6 +132,7 @@ function RootComponent() {
         </main>
         <Footer />
       </div>
+      <CustomCursor />
     </QueryClientProvider>
   );
 }
