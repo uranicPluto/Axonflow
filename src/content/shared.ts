@@ -14,11 +14,11 @@ export const testimonials = [
     initials: "PR",
   },
   {
-    text: "The number that mattered was not the automation rate. It was that our coordinators stopped working evenings.",
-    name: "Dr. Naomi Okafor",
-    role: "Chief Medical Officer",
-    company: "Cadence Health",
-    initials: "NO",
+    text: "We were losing half our pipeline because we responded two days too late. Now, leads are booked on our calendar before the rep even opens their laptop.",
+    name: "Sarah Jenkins",
+    role: "VP of Sales",
+    company: "Clearbound",
+    initials: "SJ",
   },
 ];
 
