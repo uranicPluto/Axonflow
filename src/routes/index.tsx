@@ -269,7 +269,7 @@ function Home() {
               </p>
             </Reveal>
 
-            <div className="mt-16 flex flex-wrap justify-center gap-16 md:gap-24">
+            <div className="mt-16 flex flex-wrap justify-center">
               <Reveal delay={0.1}>
                 <div className="flex flex-col items-center">
                   <div className="relative h-32 w-32 overflow-hidden rounded-full border border-hairline bg-surface shadow-sm md:h-36 md:w-36">
@@ -298,82 +298,7 @@ function Home() {
                     </a>
                   </h3>
                   <p className="mt-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
-                    Founder &amp; Automation Engineer
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Pune
-                  </p>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.15}>
-                <div className="flex flex-col items-center">
-                  <div className="relative h-32 w-32 overflow-hidden rounded-full border border-hairline bg-surface shadow-sm md:h-36 md:w-36">
-                    <img
-                      src="/vansh.png"
-                      alt="Vansh Sood"
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
-                  <h3 className="mt-6 flex items-center gap-1.5 font-display text-lg font-medium text-foreground">
-                    Vansh Sood
-                    <a
-                      href="https://linkedin.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground/60 transition-colors hover:text-[#0077b5]"
-                      aria-label="LinkedIn Profile"
-                    >
-                      <svg
-                        className="h-4 w-4 fill-current"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                      </svg>
-                    </a>
-                  </h3>
-                  <p className="mt-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
-                    Engineer
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    B.E. BITS Pilani
-                  </p>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.2}>
-                <div className="flex flex-col items-center">
-                  <div className="relative h-32 w-32 overflow-hidden rounded-full border border-hairline bg-surface shadow-sm md:h-36 md:w-36">
-                    <img
-                      src="/russhil.png"
-                      alt="Russhil Chawla"
-                      className="h-full w-full object-cover object-center"
-                    />
-                  </div>
-                  <h3 className="mt-6 flex items-center gap-1.5 font-display text-lg font-medium text-foreground">
-                    Russhil Chawla
-                    <a
-                      href="https://linkedin.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground/60 transition-colors hover:text-[#0077b5]"
-                      aria-label="LinkedIn Profile"
-                    >
-                      <svg
-                        className="h-4 w-4 fill-current"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                      </svg>
-                    </a>
-                  </h3>
-                  <p className="mt-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
-                    Strategy &amp; Growth
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Final Year, IIM
+                    CEO AND Engineer
                   </p>
                 </div>
               </Reveal>
