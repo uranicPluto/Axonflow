@@ -291,9 +291,9 @@ function Home() {
       <Section>
         <Container size="wide">
           <SectionHeader
-            eyebrow="Portfolio proof"
-            title="Outcomes we can put a figure against."
-            lede="Every engagement starts with an instrumented baseline, which is why we can publish results this specific."
+            eyebrow="WHAT WE'VE BUILT"
+            title="Real problems solved. Real numbers."
+            lede="AI automation and web development projects for startups, agencies, and growing businesses. All live and in production."
             action={
               <ButtonLink to="/case-studies" variant="outline" size="sm">
                 View Portfolio
