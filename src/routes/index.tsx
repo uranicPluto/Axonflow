@@ -185,9 +185,9 @@ function Home() {
       <Section>
         <Container size="wide">
           <SectionHeader
-            eyebrow="Featured Demonstration"
-            title="See our automation systems in action."
-            lede="Watch how Axonflow transforms complex business workflows into seamless, automated intelligence."
+            eyebrow="SEE IT WORKING"
+            title="Watch a real business problem get solved in 90 seconds."
+            lede="We take a manual process that's eating your team's time, map it, automate it, and hand it over — so your team never touches that work again. Here's what that looks like."
           />
           <Reveal className="mt-14">
             <VideoPlaceholder />

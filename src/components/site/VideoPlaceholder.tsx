@@ -32,10 +32,10 @@ export function VideoPlaceholder() {
             Featured Video
           </span>
           <h3 className="mt-4 font-display text-xl font-medium sm:text-2xl text-foreground">
-            Watch Axonflow in Action
+            Watch [Your Agency Name] in action
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            [ Video Space — Video will be added here ]
+            [ Your walkthrough video goes here ]
           </p>
         </div>
       </div>
