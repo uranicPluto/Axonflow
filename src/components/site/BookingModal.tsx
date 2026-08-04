@@ -227,10 +227,10 @@ export function BookingModal({
                   <div className="border-b border-hairline pb-8 lg:border-b-0 lg:border-r lg:pr-10 lg:pb-0">
                     <div className="flex items-center gap-3.5">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-mono text-base font-semibold text-primary">
-                        AF
+                        {brand.name.split(" ").map((w) => w[0]).join("")}
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Axonflow Team</p>
+                        <p className="text-xs text-muted-foreground">{brand.name} Team</p>
                         <p className="text-base font-semibold text-foreground">Discovery Call</p>
                       </div>
                     </div>

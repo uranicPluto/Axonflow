@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "../components/site/Header";
 import { Footer } from "../components/site/Footer";
+import { brand } from "../content/site";
 
 function NotFoundComponent() {
   return (
@@ -79,11 +80,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "author", content: "Axonflow" },
-      { property: "og:site_name", content: "Axonflow" },
+      { name: "author", content: brand.name },
+      { property: "og:site_name", content: brand.name },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@axonflow" },
+      { name: "twitter:site", content: `@${brand.social.x.split("/").pop()}` },
       { name: "theme-color", content: "#FAF9F6" },
     ],
     links: [

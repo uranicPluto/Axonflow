@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Play } from "lucide-react";
+import { brand } from "@/content/site";
 
 export function VideoPlaceholder() {
   return (
@@ -32,7 +33,7 @@ export function VideoPlaceholder() {
             Featured Video
           </span>
           <h3 className="mt-4 font-display text-xl font-medium sm:text-2xl text-foreground">
-            Watch [Your Agency Name] in action
+            Watch {brand.name} in action
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             [ Your walkthrough video goes here ]

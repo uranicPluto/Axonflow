@@ -1,18 +1,18 @@
 export const brand = {
-  name: "Axonflow",
-  legalName: "Axonflow Labs, Inc.",
+  name: "House Of Workflow",
+  legalName: "House Of Workflow, Inc.",
   tagline: "Automation and growth engineering for companies that intend to win.",
   positioning:
     "We architect the AI systems that run your business — so revenue compounds while manual work disappears.",
-  email: "hello@axonflow.com",
+  email: "hello@houseofworkflow.com",
   phone: "+1 (415) 555-0142",
   addressLines: ["548 Market Street, Suite 21", "San Francisco, CA 94104"],
   founded: 2019,
   url: "https://axonflow-beta.vercel.app",
   social: {
-    linkedin: "https://linkedin.com/company/axonflow",
-    x: "https://x.com/axonflow",
-    github: "https://github.com/axonflow",
+    linkedin: "https://linkedin.com/company/houseofworkflow",
+    x: "https://x.com/houseofworkflow",
+    github: "https://github.com/houseofworkflow",
   },
 } as const;
 

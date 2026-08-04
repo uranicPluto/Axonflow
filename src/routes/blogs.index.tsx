@@ -19,19 +19,14 @@ export const Route = createFileRoute("/blogs/")({
   head: () => ({
     ...pageMeta({
       title: "Blogs & Field Notes — Process, Insights & Automation Strategy",
-      description:
-        "Field notes on automation ROI, process engineering, agent architectures, and delivery discipline from the Axonflow team.",
+      description: `Field notes on automation ROI, process engineering, agent architectures, and delivery discipline from the ${brand.name} team.`,
       path: "/blogs",
     }),
     ...jsonLd({
       "@context": "https://schema.org",
-      "@type": "ItemList",
-      itemListElement: insights.map((i, idx) => ({
-        "@type": "ListItem",
-        position: idx + 1,
-        name: i.title,
-        url: `${brand.url}/blogs/${i.slug}`,
-      })),
+      "@type": "Blog",
+      name: `${brand.name} Blogs`,
+      description: `Field notes on automation ROI, process engineering, agent architectures, and delivery discipline from the ${brand.name} team.`,
     }),
   }),
   component: BlogsIndex,
@@ -57,7 +52,7 @@ function BlogsIndex() {
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-70" aria-hidden />
         <Container size="wide" className="relative py-16 sm:py-24">
           <Reveal>
-            <Eyebrow>Axonflow Blogs &amp; Process</Eyebrow>
+            <Eyebrow>{brand.name} Blogs &amp; Process</Eyebrow>
             <h1 className="mt-6 max-w-3xl text-[2.4rem] leading-[1.02] font-medium text-balance-tight sm:text-5xl md:text-[3.4rem]">
               Insights, engineering notes &amp; how we work.
             </h1>

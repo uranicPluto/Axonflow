@@ -63,7 +63,7 @@ function CareersIndex() {
 
       <Section className="pt-0 sm:pt-0">
         <Container size="wide">
-          <SectionHeader eyebrow="Why work here" title="What is actually true about working at Axonflow." />
+          <SectionHeader eyebrow="Why work here" title={`What is actually true about working at ${brand.name}.`} />
           <div className="mt-12 grid gap-4 sm:grid-cols-2">
             {careerValues.map((v, i) => (
               <Reveal key={v.title} delay={i * 0.06} className="rounded-3xl border border-hairline bg-card p-7">
