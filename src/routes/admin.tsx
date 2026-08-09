@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { checkAdminAuthFn, cookieHelper, getAdminSessionCookieFn, getLeadsFn, getPostsFn } from "@/lib/db";
 import { Cpu, LayoutDashboard, Users, Activity, Sliders, LogOut, ChevronRight, Menu, X, Globe } from "lucide-react";
@@ -22,11 +22,11 @@ export const Route = createFileRoute("/admin")({
     const isLoginPath = location.pathname === "/admin/login";
 
     if (!isAuthenticated && !isLoginPath) {
-      throw useNavigate()({ to: "/admin/login" });
+      throw redirect({ to: "/admin/login" });
     }
 
     if (isAuthenticated && isLoginPath) {
-      throw useNavigate()({ to: "/admin/dashboard" });
+      throw redirect({ to: "/admin/dashboard" });
     }
   },
   component: AdminLayout,
