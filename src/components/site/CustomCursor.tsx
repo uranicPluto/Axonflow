@@ -28,6 +28,24 @@ export function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      if (!target) return;
+
+      const isInputOrIframe =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.tagName === "IFRAME" ||
+        target.closest("iframe") ||
+        target.closest("input") ||
+        target.closest("textarea") ||
+        target.closest("select");
+
+      if (isInputOrIframe) {
+        cursor.style.opacity = "0";
+      } else {
+        cursor.style.opacity = "0.9";
+      }
+
       if (
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
@@ -78,7 +96,7 @@ export function CustomCursor() {
   return (
     <div
       ref={cursorRef}
-      className="pointer-events-none fixed left-0 top-0 z-[9999] h-5 w-5 rounded-full bg-[#93a5ff] opacity-90 transition-opacity duration-300 md:block hidden"
+      className="pointer-events-none fixed left-0 top-0 z-[999999] h-5 w-5 rounded-full bg-[#93a5ff] opacity-90 transition-opacity duration-300 md:block hidden"
       style={{
         transform: "translate3d(-100px, -100px, 0)",
         willChange: "transform",

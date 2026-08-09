@@ -4,13 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { industryNav } from "@/content/site";
 import { ArrowRight } from "./primitives";
 
-export function IndustryModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+export function IndustryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -36,9 +30,7 @@ export function IndustryModal({
             <div className="flex items-start justify-between gap-4 border-b border-hairline pb-6">
               <div>
                 <p className="eyebrow">Solutions &amp; Industries</p>
-                <h3 className="mt-2 text-2xl font-medium sm:text-3xl">
-                  Industries We Automate
-                </h3>
+                <h3 className="mt-2 text-2xl font-medium sm:text-3xl">Industries We Automate</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Explore tailored automation workflows built for 14 core industry sectors.
                 </p>

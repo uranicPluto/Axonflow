@@ -11,43 +11,64 @@ import {
   SectionHeader,
 } from "@/components/site/primitives";
 import { jsonLd, pageMeta } from "@/components/site/seo";
-import { insights } from "@/content/insights";
 import { brand } from "@/content/site";
+import { getPostsFn } from "@/lib/db";
 
 export const Route = createFileRoute("/insights/")({
-  head: () => ({
-    ...pageMeta({
-      title: "Insights — Notes from the engagements",
-      description:
-        "Field notes on automation ROI, agent permissions, CRM adoption, and delivery discipline, written by the people who ship the systems.",
-      path: "/insights",
-    }),
-    ...jsonLd({
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      itemListElement: insights.map((i, idx) => ({
-        "@type": "ListItem",
-        position: idx + 1,
-        name: i.title,
-        url: `${brand.url}/insights/${i.slug}`,
-      })),
-    }),
-  }),
+  loader: async () => {
+    const rawPosts = await getPostsFn();
+    const published = rawPosts.filter((p) => p.status === "published");
+    const posts = published.map((p) => ({
+      ...p,
+      readTime: p.read_time,
+      ogImageUrl: p.og_image_url,
+    }));
+    return { posts };
+  },
+  head: ({ loaderData }) => {
+    const posts = loaderData?.posts || [];
+    return {
+      ...pageMeta({
+        title: "Insights — Notes from the engagements",
+        description:
+          "Field notes on automation ROI, agent permissions, CRM adoption, and delivery discipline, written by the people who ship the systems.",
+        path: "/insights",
+      }),
+      ...jsonLd({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        itemListElement: posts.map((i, idx) => ({
+          "@type": "ListItem",
+          position: idx + 1,
+          name: i.title,
+          url: `${brand.url}/insights/${i.slug}`,
+        })),
+      }),
+    };
+  },
   component: InsightsIndex,
 });
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function InsightsIndex() {
-  const categories = useMemo(() => ["All", ...Array.from(new Set(insights.map((i) => i.category)))], []);
+  const { posts } = Route.useLoaderData();
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(posts.map((i) => i.category)))],
+    [posts],
+  );
   const [active, setActive] = useState("All");
 
-  const [featured, ...rest] = insights;
-  const featuredInsight = featured!;
+  const [featured, ...rest] = posts;
+  const featuredInsight = featured;
   const filtered = active === "All" ? rest : rest.filter((i) => i.category === active);
-  const showFeatured = active === "All" || featuredInsight.category === active;
+  const showFeatured = posts.length > 0 && (active === "All" || (featuredInsight && featuredInsight.category === active));
 
   return (
     <>
@@ -60,8 +81,8 @@ function InsightsIndex() {
               Field notes from the engagements, not the marketing calendar.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Everything here was written by the person who did the work — measurement, agents, revenue systems,
-              and delivery discipline.
+              Everything here was written by the person who did the work — measurement, agents,
+              revenue systems, and delivery discipline.
             </p>
           </Reveal>
 
@@ -84,7 +105,7 @@ function InsightsIndex() {
         </Container>
       </div>
 
-      {showFeatured ? (
+      {showFeatured && featuredInsight ? (
         <Section className="pt-0 sm:pt-0">
           <Container size="wide">
             <Reveal>
@@ -145,8 +166,12 @@ function InsightsIndex() {
                       <span className="h-1 w-1 rounded-full bg-hairline" aria-hidden />
                       <span>{insight.readTime}</span>
                     </div>
-                    <h3 className="mt-4 font-display text-lg leading-snug font-medium">{insight.title}</h3>
-                    <p className="mt-3 text-[0.875rem] leading-relaxed text-muted-foreground">{insight.excerpt}</p>
+                    <h3 className="mt-4 font-display text-lg leading-snug font-medium">
+                      {insight.title}
+                    </h3>
+                    <p className="mt-3 text-[0.875rem] leading-relaxed text-muted-foreground">
+                      {insight.excerpt}
+                    </p>
                   </div>
                   <div className="mt-6 flex items-center justify-between border-t border-hairline pt-5 text-xs text-muted-foreground">
                     <span>{insight.author}</span>

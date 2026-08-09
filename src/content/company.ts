@@ -6,7 +6,11 @@ export const processStages = [
     promise: "We measure before we recommend.",
     detail:
       "We shadow the people doing the work, instrument the current process, and put a number on every handoff. You get a baseline you can hold us to.",
-    outputs: ["Process map with hour and cost baselines", "Opportunity portfolio, scored", "Data and access audit"],
+    outputs: [
+      "Process map with hour and cost baselines",
+      "Opportunity portfolio, scored",
+      "Data and access audit",
+    ],
   },
   {
     number: "02",
@@ -24,7 +28,11 @@ export const processStages = [
     promise: "The unglamorous layer, done properly.",
     detail:
       "Integrations, data contracts, observability, and the evaluation harness. Everything after this moves faster because of it.",
-    outputs: ["Integration layer with contract tests", "Observability and cost monitoring", "Evaluation harness"],
+    outputs: [
+      "Integration layer with contract tests",
+      "Observability and cost monitoring",
+      "Evaluation harness",
+    ],
   },
   {
     number: "04",
@@ -51,7 +59,11 @@ export const processStages = [
     promise: "You own it, or we run it. Your call.",
     detail:
       "Documentation, runbooks, and enablement so your team can extend the system. Optional operating retainer for tuning and on-call.",
-    outputs: ["Runbooks and documentation", "Team enablement sessions", "Optional operating retainer"],
+    outputs: [
+      "Runbooks and documentation",
+      "Team enablement sessions",
+      "Optional operating retainer",
+    ],
   },
 ];
 
@@ -103,7 +115,7 @@ export const team = [
 
 export const companyFacts = [
   { value: "14", label: "Industries we actively work in" },
-  { value: "500+", label: "Hours saved per client engagement" },
-  { value: "94%", label: "Clients who extend scope" },
+  { value: "500+ hrs", label: "Saved per client engagement" },
+  { value: "94%", label: "Clients who expand scope" },
   { value: "4 wks", label: "Average time to first live system" },
 ];

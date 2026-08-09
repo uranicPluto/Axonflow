@@ -41,10 +41,26 @@ export const Route = createFileRoute("/services/")({
 });
 
 const engagementSteps = [
-  { step: "01", title: "Baseline", body: "We instrument the current state before proposing anything, so ROI has a number to compare against." },
-  { step: "02", title: "Scope", body: "A fixed-scope plan with named deliverables, timelines, and the metric that proves it worked." },
-  { step: "03", title: "Build", body: "Embedded delivery, typically 2–12 weeks to a production system, not a prototype." },
-  { step: "04", title: "Operate", body: "Monitoring, evaluation, and an optional retainer once the system is live and earning trust." },
+  {
+    step: "01",
+    title: "Baseline",
+    body: "We instrument the current state before proposing anything, so ROI has a number to compare against.",
+  },
+  {
+    step: "02",
+    title: "Scope",
+    body: "A fixed-scope plan with named deliverables, timelines, and the metric that proves it worked.",
+  },
+  {
+    step: "03",
+    title: "Build",
+    body: "Embedded delivery, typically 2–12 weeks to a production system, not a prototype.",
+  },
+  {
+    step: "04",
+    title: "Operate",
+    body: "Monitoring, evaluation, and an optional retainer once the system is live and earning trust.",
+  },
 ];
 
 const faqs = [
@@ -71,11 +87,11 @@ function ServicesIndex() {
           <Reveal>
             <Eyebrow>Services</Eyebrow>
             <h1 className="mt-6 max-w-3xl text-[2.4rem] leading-[1.02] font-medium text-balance-tight sm:text-5xl md:text-[3.6rem]">
-              Eight disciplines. One operating thesis.
+              Eight ways we solve the same problem.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Deterministic where it must be, intelligent where it helps, measured everywhere. Every service below
-              ships as a production system with an owner, not a slide deck.
+              Every service below exists to eliminate manual work, improve conversion, or both. We
+              build systems that run — not slide decks that explain what we might build.
             </p>
           </Reveal>
         </Container>
@@ -142,8 +158,12 @@ function ServicesIndex() {
                       <div className="relative mt-8 grid gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:grid-cols-3">
                         {service.outcomes.map((o) => (
                           <div key={o.label} className="bg-surface p-4">
-                            <p className="font-display text-xl font-medium text-primary">{o.value}</p>
-                            <p className="mt-1.5 text-xs leading-snug text-muted-foreground">{o.label}</p>
+                            <p className="font-display text-xl font-medium text-primary">
+                              {o.value}
+                            </p>
+                            <p className="mt-1.5 text-xs leading-snug text-muted-foreground">
+                              {o.label}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -172,7 +192,9 @@ function ServicesIndex() {
           <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
             {engagementSteps.map((s, i) => (
               <Reveal key={s.step} delay={i * 0.07} className="bg-surface p-7">
-                <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">{s.step}</p>
+                <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">
+                  {s.step}
+                </p>
                 <h3 className="mt-4 font-display text-lg font-medium">{s.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
               </Reveal>

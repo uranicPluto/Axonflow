@@ -2,7 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ComparisonSection } from "@/components/site/ComparisonTable";
 import { CtaBand } from "@/components/site/CtaBand";
-import { Container, Eyebrow, MetricStrip, Reveal, Section, SectionHeader } from "@/components/site/primitives";
+import {
+  Container,
+  Eyebrow,
+  MetricStrip,
+  Reveal,
+  Section,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { jsonLd, organizationSchema, pageMeta } from "@/components/site/seo";
 import { companyFacts, principles, team } from "@/content/company";
 import { comparisonPartner } from "@/content/shared";
@@ -33,8 +40,8 @@ function About() {
               We were founded on the idea that automation should be measured, not marketed.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              {brand.positioning} That means baselines before recommendations, owned code instead of black boxes,
-              and a team that stays accountable to a number, not a demo.
+              {brand.positioning} That means baselines before recommendations, owned code instead of
+              black boxes, and a team that stays accountable to a number, not a demo.
             </p>
           </Reveal>
         </Container>
@@ -55,18 +62,22 @@ function About() {
                 Most automation fails quietly, then gets blamed on the technology.
               </h2>
             </Reveal>
-            <Reveal delay={0.08} className="flex flex-col justify-center gap-5 text-muted-foreground">
+            <Reveal
+              delay={0.08}
+              className="flex flex-col justify-center gap-5 text-muted-foreground"
+            >
               <p className="leading-relaxed">
-                It usually fails because nobody measured the process it replaced, nobody wrote down who owns which
-                decision, and nobody built the evaluation harness that would have caught the regression before a
-                customer did. We started {brand.name} in {brand.founded} to do the unglamorous parts properly — the
-                data contracts, the observability, the shadow-mode cutover — because that is what determines whether
-                a system survives contact with a real business.
+                It usually fails because nobody measured the process it replaced, nobody wrote down
+                who owns which decision, and nobody built the evaluation harness that would have
+                caught the regression before a customer did. We started {brand.name} in{" "}
+                {brand.founded} to do the unglamorous parts properly — the data contracts, the
+                observability, the shadow-mode cutover — because that is what determines whether a
+                system survives contact with a real business.
               </p>
               <p className="leading-relaxed">
-                We are engineers first. We write the architecture decision records, we own the repository we hand
-                you, and we would rather tell you a $200/month tool is the right answer than sell you a platform you
-                don't need.
+                We are engineers first. We write the architecture decision records, we own the
+                repository we hand you, and we would rather tell you a $200/month tool is the right
+                answer than sell you a platform you don't need.
               </p>
             </Reveal>
           </div>
@@ -81,7 +92,11 @@ function About() {
           />
           <div className="mt-14 grid gap-4 sm:grid-cols-2">
             {principles.map((p, i) => (
-              <Reveal key={p.title} delay={i * 0.07} className="rounded-3xl border border-hairline bg-surface p-7">
+              <Reveal
+                key={p.title}
+                delay={i * 0.07}
+                className="rounded-3xl border border-hairline bg-surface p-7"
+              >
                 <h3 className="font-display text-lg font-medium">{p.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
               </Reveal>

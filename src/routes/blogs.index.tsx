@@ -33,17 +33,25 @@ export const Route = createFileRoute("/blogs/")({
 });
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function BlogsIndex() {
   const [activeTab, setActiveTab] = useState<"all" | "articles" | "process">("all");
-  const categories = useMemo(() => ["All", ...Array.from(new Set(insights.map((i) => i.category)))], []);
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(insights.map((i) => i.category)))],
+    [],
+  );
   const [activeCategory, setActiveCategory] = useState("All");
 
   const [featured, ...rest] = insights;
   const featuredInsight = featured!;
-  const filteredInsights = activeCategory === "All" ? rest : rest.filter((i) => i.category === activeCategory);
+  const filteredInsights =
+    activeCategory === "All" ? rest : rest.filter((i) => i.category === activeCategory);
 
   return (
     <>
@@ -57,7 +65,8 @@ function BlogsIndex() {
               Insights, engineering notes &amp; how we work.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Written by the team building systems in production. Explore our article insights, field notes, and complete 6-stage engineering process.
+              Written by the team building systems in production. Explore our article insights,
+              field notes, and complete 6-stage engineering process.
             </p>
           </Reveal>
 
@@ -150,7 +159,7 @@ function BlogsIndex() {
           <Section tone="surface" className="pt-0 sm:pt-0">
             <Container size="wide">
               <SectionHeader eyebrow="Recent Blogs" title="Latest Articles & Insights" />
-              
+
               {/* Category Filter */}
               <div className="mt-6 flex flex-wrap gap-2">
                 {categories.map((c) => (
@@ -183,8 +192,12 @@ function BlogsIndex() {
                           <span className="h-1 w-1 rounded-full bg-hairline" aria-hidden />
                           <span>{insight.readTime}</span>
                         </div>
-                        <h3 className="mt-4 font-display text-lg leading-snug font-medium">{insight.title}</h3>
-                        <p className="mt-3 text-[0.875rem] leading-relaxed text-muted-foreground">{insight.excerpt}</p>
+                        <h3 className="mt-4 font-display text-lg leading-snug font-medium">
+                          {insight.title}
+                        </h3>
+                        <p className="mt-3 text-[0.875rem] leading-relaxed text-muted-foreground">
+                          {insight.excerpt}
+                        </p>
                       </div>
                       <div className="mt-6 flex items-center justify-between border-t border-hairline pt-5 text-xs text-muted-foreground">
                         <span>{insight.author}</span>
@@ -228,7 +241,9 @@ function BlogsIndex() {
                           <span className="font-mono text-[0.7rem] tracking-widest text-primary uppercase sm:hidden">
                             {stage.number}
                           </span>
-                          <h3 className="font-display text-xl font-medium sm:text-2xl">{stage.name}</h3>
+                          <h3 className="font-display text-xl font-medium sm:text-2xl">
+                            {stage.name}
+                          </h3>
                           <span className="rounded-full border border-hairline bg-secondary/50 px-3 py-1 font-mono text-[0.7rem] tracking-wide text-muted-foreground uppercase">
                             {stage.duration}
                           </span>
@@ -236,7 +251,9 @@ function BlogsIndex() {
                         <p className="mt-4 font-display text-lg leading-snug font-medium text-primary">
                           {stage.promise}
                         </p>
-                        <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">{stage.detail}</p>
+                        <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+                          {stage.detail}
+                        </p>
                       </div>
                     </div>
                   </Reveal>
@@ -248,7 +265,11 @@ function BlogsIndex() {
               <SectionHeader eyebrow="Operating principles" title="Our rules for shipping code" />
               <div className="mt-10 grid gap-4 sm:grid-cols-2">
                 {principles.map((p, i) => (
-                  <Reveal key={p.title} delay={i * 0.07} className="rounded-3xl border border-hairline bg-surface p-7">
+                  <Reveal
+                    key={p.title}
+                    delay={i * 0.07}
+                    className="rounded-3xl border border-hairline bg-surface p-7"
+                  >
                     <h3 className="font-display text-lg font-medium">{p.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
                   </Reveal>

@@ -57,7 +57,9 @@ function Column({
               </span>
               {row.label}
             </span>
-            <span className={`shrink-0 font-mono text-[0.65rem] whitespace-nowrap ${toneClass[row.tone]}`}>
+            <span
+              className={`shrink-0 font-mono text-[0.65rem] whitespace-nowrap ${toneClass[row.tone]}`}
+            >
               {row.meta}
             </span>
           </li>
@@ -162,7 +164,13 @@ export function BeforeAfterSlider() {
             className="absolute top-1/2 left-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-full border border-primary/40 bg-card shadow-float focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             <svg viewBox="0 0 20 12" className="h-3 w-5 text-primary" fill="none" aria-hidden>
-              <path d="M7 2L3 6l4 4M13 2l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M7 2L3 6l4 4M13 2l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>

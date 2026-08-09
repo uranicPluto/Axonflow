@@ -50,22 +50,31 @@ function Slider({
 }
 
 export function RoiCalculator() {
-  const [people, setPeople] = useState(6);
-  const [hours, setHours] = useState(11);
-  const [rate, setRate] = useState(58);
+  const [people, setPeople] = useState(3);
+  const [hours, setHours] = useState(15);
+  const [rate, setRate] = useState(25);
 
   const result = useMemo(() => {
     const weeklyHours = people * hours;
     const annualHours = weeklyHours * 46;
     const manualCost = annualHours * rate;
-    const automatedShare = 0.60;
+    const automatedShare = 0.6;
     const hoursSaved = annualHours * automatedShare;
     const savings = hoursSaved * rate;
-    const buildCost = Math.round((14000 + people * 9000 + hours * 2600) / 1000) * 1000;
-    const runCost = Math.round((buildCost * 0.18) / 1000) * 1000;
+    const buildCost = Math.round((4000 + people * 2000 + hours * 500) / 1000) * 1000;
+    const runCost = Math.round((buildCost * 0.15) / 500) * 500;
     const netYearOne = savings - buildCost - runCost;
     const paybackMonths = savings > 0 ? Math.max(1, (buildCost / (savings / 12)) * 1) : 0;
-    return { annualHours, manualCost, hoursSaved, savings, buildCost, runCost, netYearOne, paybackMonths };
+    return {
+      annualHours,
+      manualCost,
+      hoursSaved,
+      savings,
+      buildCost,
+      runCost,
+      netYearOne,
+      paybackMonths,
+    };
   }, [people, hours, rate]);
 
   const maxBar = Math.max(result.manualCost, result.buildCost + result.runCost, 1);
@@ -77,8 +86,8 @@ export function RoiCalculator() {
           <p className="eyebrow">Live model</p>
           <h3 className="mt-3 font-display text-xl font-medium">Your inputs</h3>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Adjust to match one function in your business. The model assumes 60% of in-scope work is automatable —
-            a conservative estimate across typical automation engagements.
+            Adjust to match one function in your business. The model assumes 60% of in-scope work is
+            automatable — a conservative estimate across typical automation engagements.
           </p>
         </div>
         <div className="space-y-7">
@@ -111,8 +120,8 @@ export function RoiCalculator() {
           />
         </div>
         <p className="border-t border-hairline pt-5 text-xs leading-relaxed text-muted-foreground">
-          Estimates only. Real engagements begin with an instrumented baseline — we measure your process before
-          quoting a number.
+          Estimates only. Real engagements begin with an instrumented baseline — we measure your
+          process before quoting a number.
         </p>
       </div>
 
@@ -123,13 +132,17 @@ export function RoiCalculator() {
             <p className="font-display text-4xl leading-none font-medium text-primary sm:text-[3rem]">
               {currency(result.netYearOne)}
             </p>
-            <p className="mt-2 text-sm text-muted-foreground">Net benefit after build and run cost</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Net benefit after build and run cost
+            </p>
           </div>
           <div>
             <p className="font-display text-4xl leading-none font-medium sm:text-[3rem]">
               {Math.round(result.hoursSaved).toLocaleString()}
             </p>
-            <p className="mt-2 text-sm text-muted-foreground">Hours returned to your team annually</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Hours returned to your team annually
+            </p>
           </div>
         </div>
 
@@ -163,9 +176,13 @@ export function RoiCalculator() {
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-hairline bg-surface px-5 py-4">
           <div>
-            <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Payback</p>
+            <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+              Payback
+            </p>
             <p className="font-display text-xl font-medium">
-              {result.paybackMonths < 1 ? "under a month" : `${result.paybackMonths.toFixed(1)} months`}
+              {result.paybackMonths < 1
+                ? "under a month"
+                : `${result.paybackMonths.toFixed(1)} months`}
             </p>
           </div>
           <ButtonLink to="/contact" size="sm">

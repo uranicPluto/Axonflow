@@ -1,0 +1,884 @@
+{
+  "settings": {
+    "email": "admin@houseofworkflow.com",
+    "password": "admin",
+    "notification_email": "admin@houseofworkflow.com",
+    "whatsapp_number": "+919876543210",
+    "integrations": {
+      "hubspot": true,
+      "slack": true,
+      "stripe": true,
+      "openai": true,
+      "make": true,
+      "zapier": false
+    }
+  },
+  "leads": [
+    {
+      "id": "lead-1",
+      "created_at": "2026-08-09T02:56:44.459Z",
+      "source": "experience_form",
+      "name": "Akshay Deshmukh",
+      "email": "akshay@techvibe.io",
+      "phone": "+91 98765 43210",
+      "service_interest": "ai_automation",
+      "problem_description": "We need an automated workflow that fetches our sales prospects from LinkedIn, enrichment, and syncs them to HubSpot.",
+      "status": "new",
+      "internal_notes": "Very interested in Clay integration.",
+      "lead_score": 9,
+      "lead_score_reason": "High urgency, budget alignment fits, clear automation pain points.",
+      "pain_points": "Manual prospecting on LinkedIn, manual HubSpot entry",
+      "budget_signal": "₹30,000–80,000",
+      "business_type": "B2B SaaS Agency",
+      "call_attempted_at": "2026-08-09T03:08:44.459Z",
+      "call_answered": true,
+      "call_transcript": "AI: Hi Akshay, this is Aria from House of Workflow. I saw you requested an automation flow. Akshay: Yes, we are drowning in manual LinkedIn copy-pasting. AI: Got it, we can fully automate that. Let's schedule a call.",
+      "call_attempts": 1,
+      "call_outcome": "booked",
+      "meeting_datetime": "2026-08-11T05:56:44.459Z",
+      "meeting_link": "meet.google.com/abc-defg-hij",
+      "meeting_confirmed": true,
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "lead-2",
+      "created_at": "2026-08-08T05:56:44.459Z",
+      "source": "book_a_call",
+      "name": "Sarah Jenkins",
+      "email": "s.jenkins@brightmedia.co",
+      "phone": "+1 415 555 0142",
+      "service_interest": "web_dev",
+      "problem_description": "Looking to build a custom SaaS client portal that handles client reporting and automated billing via Stripe.",
+      "status": "in_progress",
+      "internal_notes": "Scheduled diagnostic review.",
+      "lead_score": 7,
+      "lead_score_reason": "Standard SaaS portal layout request.",
+      "call_attempts": 0,
+      "meeting_confirmed": false,
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "lead-3",
+      "created_at": "2026-08-07T05:56:44.459Z",
+      "source": "experience_form",
+      "name": "Vikram Malhotra",
+      "email": "vikram@finscale.in",
+      "phone": "+91 91234 56789",
+      "service_interest": "both",
+      "problem_description": "Need a robust internal data pipeline to automate our monthly GST reconciliation. We pull raw invoices from three sources and want to compare data automatically.",
+      "status": "won",
+      "internal_notes": "Deal closed. Kickoff scheduled next Monday.",
+      "lead_score": 10,
+      "lead_score_reason": "High budget, ready to start immediately, highly technical and defined scope.",
+      "pain_points": "Manual GST reconciliation across 3 sources, invoice matching errors",
+      "budget_signal": "₹1,50,000+",
+      "business_type": "FinTech",
+      "call_attempts": 1,
+      "call_answered": true,
+      "call_transcript": "AI: Hi Vikram, Aria here. Reaching out about the GST reconciler. Vikram: We are ready to sign the SOW. AI: Excellent. I'll alert Jay.",
+      "call_outcome": "booked",
+      "meeting_confirmed": true,
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    }
+  ],
+  "call_logs": [],
+  "posts": [
+    {
+      "id": "post-1",
+      "slug": "automation-roi-is-a-measurement-problem",
+      "title": "Automation ROI is a measurement problem, not a technology problem",
+      "category": "Operations",
+      "date": "2026-07-14",
+      "read_time": "7 min",
+      "author": "Ilya Marchetti",
+      "excerpt": "Most automation projects fail their business case in the spreadsheet, not the codebase. If you cannot baseline the process, you cannot defend the investment.",
+      "body": "[{\"paragraphs\":[\"We have reviewed roughly ninety automation business cases in the last four years. The technology worked in most of them. The business case survived in fewer than half. The difference was almost never model quality — it was whether anyone had measured the process before changing it.\",\"A baseline is not a guess about how long something takes. It is an instrumented number, collected over enough cycles to include the bad weeks, attributed to named steps in a real workflow.\"]},{\"heading\":\"What a defensible baseline contains\",\"paragraphs\":[\"Volume per period, including seasonality. Time per unit, separated by happy path and exception. Fully loaded cost per hour for the people involved. Error rate and the cost of each error class. Rework volume, which is almost always underestimated.\",\"The last one matters most. Teams measure the time to do the work and forget the time spent doing it a second time. In our engagements, rework accounts for a median 19% of total process hours.\"]},{\"heading\":\"The exception tax\",\"paragraphs\":[\"The happy path is cheap to automate and cheap to measure. Exceptions consume the majority of human time and the majority of build effort. If your business case assumes the exception rate you see in the documentation rather than the one in the data, it will be wrong by a factor rather than a margin.\",\"Design for exceptions from the start: route them to people with full context, and count them as a first-class outcome rather than a failure.\"]},{\"heading\":\"Instrument the new system with the old metrics\",\"paragraphs\":[\"The most common reporting mistake is measuring the new system with new metrics. Automation rate and token cost are operational metrics, not business metrics. Keep reporting hours, cost per unit, cycle time, and error rate — the same four numbers you baselined — and the argument for the next project writes itself.\"]}]",
+      "status": "published",
+      "seo_title": "Automation ROI is a measurement problem, not a technology problem",
+      "seo_description": "Most automation projects fail their business case in the spreadsheet, not the codebase. If you cannot baseline the process, you cannot defend the investment.",
+      "og_image_url": "",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "post-2",
+      "slug": "agents-need-permissions-not-personalities",
+      "title": "Agents need permissions, not personalities",
+      "category": "AI Engineering",
+      "date": "2026-06-28",
+      "read_time": "9 min",
+      "author": "Sana Qureshi",
+      "excerpt": "The hard part of shipping agents to production is not reasoning quality. It is the permission model, the audit trail, and knowing when to stop.",
+      "body": "[{\"paragraphs\":[\"Every agent demo looks the same and works the same. Every agent in production differs on the same three axes: what it is allowed to touch, what evidence it leaves behind, and what it does when it is unsure.\"]},{\"heading\":\"Capabilities are an allowlist\",\"paragraphs\":[\"Give an agent a typed tool per capability, each with scoped credentials, rate limits, and an explicit reversibility classification. Reversible actions can run autonomously. Irreversible ones — refunds, deletions, external communication at scale — require approval until evaluation data earns them autonomy.\",\"This is not a limitation on capability. It is the mechanism by which capability expands safely.\"]},{\"heading\":\"Audit trails are the product\",\"paragraphs\":[\"When a stakeholder asks why the system did something in March, the answer must be retrievable in seconds. That means persisting the inputs, the retrieved context with source references, the tool calls with arguments and results, and the decision at every gate.\",\"Teams that treat this as observability overhead ship slower, because every incident becomes an investigation instead of a lookup.\"]},{\"heading\":\"Evaluation is a CI gate, not a launch checklist\",\"paragraphs\":[\"Build a golden set from real cases, including the ones that went badly. Run it on every prompt, model, or retrieval change, in CI, with a threshold that blocks merge. Sample production conversations weekly and promote the interesting failures into the set.\",\"Without this loop, a model upgrade is a coin flip. With it, it is a pull request.\"]},{\"heading\":\"Knowing when to stop\",\"paragraphs\":[\"Confidence-based escalation is the highest-leverage feature in an agent system. An agent that hands off cleanly with full context is more valuable than one that resolves five percent more cases and occasionally invents an answer. Users forgive handoffs. They do not forgive confident errors.\"]}]",
+      "status": "published",
+      "seo_title": "Agents need permissions, not personalities",
+      "seo_description": "The hard part of shipping agents to production is not reasoning quality. It is the permission model, the audit trail, and knowing when to stop.",
+      "og_image_url": "",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "post-3",
+      "slug": "the-crm-adoption-problem-is-a-typing-problem",
+      "title": "The CRM adoption problem is a typing problem",
+      "category": "Revenue",
+      "date": "2026-06-09",
+      "read_time": "6 min",
+      "author": "Marta Lindqvist",
+      "excerpt": "Reps are not lazy and they are not resisting change. They are declining to do forty minutes of data entry a day for someone else's dashboard.",
+      "body": "[{\"paragraphs\":[\"Every CRM rescue project we have run began with a leadership hypothesis about discipline and ended with a finding about friction. When we instrument the actual cost of logging a call properly, it is between four and nine minutes. Multiply by the daily call volume and the behavior stops being mysterious.\"]},{\"heading\":\"Stop asking for data you can capture\",\"paragraphs\":[\"Firmographics come from enrichment. Activity comes from calendar and email. Call content comes from transcription. Next steps can be drafted from the transcript and confirmed with one click. Almost every field a rep types today can be captured from a system that already has it.\",\"Reserve human input for genuine judgment: qualification, risk, and the political read on the account. Those are worth typing.\"]},{\"heading\":\"Design stages a manager can inspect\",\"paragraphs\":[\"Most pipelines encode a sales methodology nobody follows. Rebuild stages around observable buyer behavior with explicit exit criteria. If a stage cannot be verified from evidence in the record, it will be reported optimistically forever.\"]},{\"heading\":\"Forecast accuracy follows\",\"paragraphs\":[\"Across our CRM engagements, field completeness reached 94% without any change to rep incentives, and forecast accuracy improved by a median 23% within two quarters. Nothing changed about the people. The work changed.\"]}]",
+      "status": "published",
+      "seo_title": "The CRM adoption problem is a typing problem",
+      "seo_description": "Reps are not lazy and they are not resisting change. They are declining to do forty minutes of data entry a day for someone else's dashboard.",
+      "og_image_url": "",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "post-4",
+      "slug": "build-versus-buy-in-the-ai-era",
+      "title": "Build versus buy, honestly, in the AI era",
+      "category": "Strategy",
+      "date": "2026-05-21",
+      "read_time": "8 min",
+      "author": "Ilya Marchetti",
+      "excerpt": "A framework for deciding when to buy the tool, when to build the system, and when to do nothing at all — including the total costs vendors never quote.",
+      "body": "[{\"paragraphs\":[\"We are a build shop, so treat the following with appropriate suspicion. We also tell perhaps a quarter of the companies who approach us to buy something instead, because that is what makes the other three-quarters worth the money.\"]},{\"heading\":\"Buy when the workflow is common and non-differentiating\",\"paragraphs\":[\"Transcription, scheduling, e-signature, expense capture, standard support macros. These are solved, competitively priced, and improving faster than you would. Buying is correct and building is vanity.\"]},{\"heading\":\"Build when the workflow is how you compete\",\"paragraphs\":[\"If the process encodes something specific about how your business wins — pricing logic, underwriting judgment, clinical routing, supply allocation — a generic tool will force you toward the industry average. That is the actual cost of buying, and it never appears in the comparison.\"]},{\"heading\":\"The costs nobody quotes\",\"paragraphs\":[\"Per-seat pricing that grows with headcount. Integration work that is your problem regardless. The migration cost when the vendor changes direction. The workaround spreadsheet your team maintains because the tool does not quite fit — that spreadsheet is a real line item.\",\"Model those four and the comparison changes shape more often than people expect.\"]},{\"heading\":\"Do nothing when the process should be deleted\",\"paragraphs\":[\"The best outcome of a diagnostic is occasionally the discovery that a workflow exists to produce a report nobody reads. Automating it would have been a well-engineered waste. Ask what the output is for before asking how to speed it up.\"]}]",
+      "status": "published",
+      "seo_title": "Build versus buy, honestly, in the AI era",
+      "seo_description": "A framework for deciding when to buy the tool, when to build the system, and when to do nothing at all — including the total costs vendors never quote.",
+      "og_image_url": "",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "post-5",
+      "slug": "shadow-mode-is-the-only-safe-cutover",
+      "title": "Shadow mode is the only safe cutover",
+      "category": "Delivery",
+      "date": "2026-04-30",
+      "read_time": "5 min",
+      "author": "David Okonkwo",
+      "excerpt": "Running the new system in parallel costs a few weeks and eliminates the category of failure that kills automation programs.",
+      "body": "[{\"paragraphs\":[\"Automation programs rarely die from bad code. They die from one visible failure in the first month that costs leadership its confidence. Shadow mode is how you spend three weeks to prevent that.\"]},{\"heading\":\"What shadow mode means precisely\",\"paragraphs\":[\"The new system processes every real case and records what it would have done. Humans continue doing the work. Nightly, you compare outputs and classify every divergence: system correct, human correct, or ambiguous.\",\"The third bucket is the valuable one. Ambiguity almost always reveals an undocumented rule.\"]},{\"heading\":\"Set the threshold before you look at the data\",\"paragraphs\":[\"Agree the accuracy and cost thresholds for cutover in writing, in advance, with the business owner. Deciding afterwards turns an engineering judgment into a negotiation.\"]},{\"heading\":\"Cut over by segment\",\"paragraphs\":[\"Then move one segment, category, or region at a time, with a rollback procedure documented and tested. Every engagement we have run this way has held its rollout schedule. The ones that skipped it are the ones we cite in this article.\"]}]",
+      "status": "published",
+      "seo_title": "Shadow mode is the only safe cutover",
+      "seo_description": "Running the new system in parallel costs a few weeks and eliminates the category of failure that kills automation programs.",
+      "og_image_url": "",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1",
+      "slug": "saas-trial-qualification",
+      "title": "Lead qualification time cut from 72 hours to 4 hours",
+      "industry_tag": "SaaS Startup",
+      "service_tag": "AI Automation",
+      "context_body": "A B2B SaaS startup was manually qualifying every inbound trial signup. Sales reps spent 3 days chasing responses before a single demo could be booked. We built an automated qualification pipeline on n8n and OpenAI — leads scored, follow-ups sent within minutes, hot prospects routed directly to the sales calendar.",
+      "result_1_value": "4 hrs",
+      "result_1_label": "Qualification time",
+      "result_2_value": "3.2x",
+      "result_2_label": "More demos booked per week",
+      "image_url": "",
+      "image_alt": "Lead qualification time cut from 72 hours to 4 hours",
+      "sort_order": 1,
+      "published": true,
+      "seo_title": "Lead qualification time cut from 72 hours to 4 hours",
+      "seo_description": "A B2B SaaS startup was manually qualifying every inbound trial signup. Sales reps spent 3 days chasing responses before a single demo could be booked. We built an automated qualification pipeline on n8n and OpenAI — leads scored, follow-ups sent within minutes, hot prospects routed directly to the sales calendar.",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "project-2",
+      "slug": "agency-client-reporting",
+      "title": "Client reporting rebuilt from 12 hours to 20 minutes",
+      "industry_tag": "Digital Agency",
+      "service_tag": "Business Process Automation",
+      "context_body": "A performance marketing agency manually pulled data from Google Ads, Meta, and client CRMs every week to build reports. We automated the entire pipeline — data pulled, cleaned, formatted, and delivered to every client every Monday at 8am. No one touches it.",
+      "result_1_value": "20 mins",
+      "result_1_label": "Full weekly report",
+      "result_2_value": "8 clients",
+      "result_2_label": "Served automatically",
+      "image_url": "",
+      "image_alt": "Client reporting rebuilt from 12 hours to 20 minutes",
+      "sort_order": 2,
+      "published": true,
+      "seo_title": "Client reporting rebuilt from 12 hours to 20 minutes",
+      "seo_description": "A performance marketing agency manually pulled data from Google Ads, Meta, and client CRMs every week to build reports. We automated the entire pipeline — data pulled, cleaned, formatted, and delivered to every client every Monday at 8am. No one touches it.",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "project-3",
+      "slug": "northwind-gtm-engine",
+      "title": "Tripling qualified pipeline without adding reps",
+      "industry_tag": "SaaS",
+      "service_tag": "GTM Engineering",
+      "context_body": "A Series B infrastructure company had plateaued outbound. We rebuilt go-to-market as instrumented infrastructure and held headcount flat.",
+      "result_1_value": "3.1x",
+      "result_1_label": "Qualified meetings",
+      "result_2_value": "-48%",
+      "result_2_label": "Cost per opportunity",
+      "image_url": "",
+      "image_alt": "Tripling qualified pipeline without adding reps",
+      "sort_order": 3,
+      "published": true,
+      "seo_title": "Tripling qualified pipeline without adding reps",
+      "seo_description": "A Series B infrastructure company had plateaued outbound. We rebuilt go-to-market as instrumented infrastructure and held headcount flat.",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "project-4",
+      "slug": "volta-support-agents",
+      "title": "Resolving 78% of support tickets without a human",
+      "industry_tag": "Manufacturing",
+      "service_tag": "AI Agents",
+      "context_body": "A robotics manufacturer's support queue grew faster than its team. We deployed audited agents with strict escalation and product-grounded retrieval.",
+      "result_1_value": "78%",
+      "result_1_label": "Tickets auto-resolved",
+      "result_2_value": "4 min",
+      "result_2_label": "First response time",
+      "image_url": "",
+      "image_alt": "Resolving 78% of support tickets without a human",
+      "sort_order": 4,
+      "published": true,
+      "seo_title": "Resolving 78% of support tickets without a human",
+      "seo_description": "A robotics manufacturer's support queue grew faster than its team. We deployed audited agents with strict escalation and product-grounded retrieval.",
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    }
+  ],
+  "roles": [
+    {
+      "id": "role-1",
+      "slug": "senior-automation-engineer",
+      "title": "Senior Automation Engineer",
+      "team": "Delivery",
+      "location": "Remote (US / EU)",
+      "type": "Full-time",
+      "salary_range": "$165,000 – $210,000",
+      "summary": "Design and ship the production systems at the centre of client engagements — integrations, workflow orchestration, and the surfaces operators live in.",
+      "about": "You will lead the technical build on two to three concurrent engagements, working directly with client operators and engineers. This is a senior role with real architectural authority and direct client exposure.",
+      "responsibilities": [
+        "Own architecture and delivery for client automation systems end to end",
+        "Design integration layers with contract tests against third-party systems",
+        "Build operator-facing interfaces that people use all day without complaint",
+        "Instrument everything: cost, latency, accuracy, and business outcome",
+        "Pair with client engineers so ownership transfers cleanly at handover"
+      ],
+      "requirements": [
+        "6+ years building production TypeScript systems",
+        "Deep Postgres experience and comfort with data modeling under real constraints",
+        "Experience with workflow orchestration (Temporal, Step Functions, or equivalent)",
+        "Clear written communication — our deliverables include documents, not just code"
+      ],
+      "nice_to_have": [
+        "Worked in a consulting or agency delivery model before",
+        "Experience with LLM evaluation and retrieval systems",
+        "Background in operations before engineering"
+      ],
+      "open": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "role-2",
+      "slug": "applied-ai-engineer",
+      "title": "Applied AI Engineer",
+      "team": "Applied AI",
+      "location": "Remote (US / EU)",
+      "type": "Full-time",
+      "salary_range": "$175,000 – $225,000",
+      "summary": "Build agent systems that survive production: typed tools, permission models, retrieval quality, and evaluation harnesses that gate deploys.",
+      "about": "You will work on the hardest part of our engagements — making model-driven systems accountable. Expect to spend as much time on evaluation infrastructure as on prompts.",
+      "responsibilities": [
+        "Design and ship tool-using agents with explicit permission models",
+        "Build retrieval pipelines with provenance and version awareness",
+        "Own evaluation harnesses, golden sets, and CI quality gates",
+        "Drive cost and latency down without trading accuracy away",
+        "Publish what you learn — our insights are written by the people who build"
+      ],
+      "requirements": [
+        "4+ years software engineering, 2+ shipping LLM-backed systems to production",
+        "Strong opinions on evaluation, grounded in having been burned",
+        "Comfort with Python or TypeScript to a production standard",
+        "Ability to explain model behavior to a non-technical executive"
+      ],
+      "nice_to_have": [
+        "Published research or writing on retrieval or agent evaluation",
+        "Experience with regulated data environments"
+      ],
+      "open": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "role-3",
+      "slug": "gtm-engineer",
+      "title": "GTM Engineer",
+      "team": "GTM Engineering",
+      "location": "Remote (US)",
+      "type": "Full-time",
+      "salary_range": "$140,000 – $180,000",
+      "summary": "Build revenue infrastructure for clients: signal graphs, outbound systems, routing with SLAs, and attribution people actually trust.",
+      "about": "This role sits between engineering and revenue. You will build systems, not campaigns, and you will be measured on pipeline outcomes.",
+      "responsibilities": [
+        "Build ICP scoring and signal ingestion pipelines",
+        "Engineer outbound infrastructure including deliverability monitoring",
+        "Implement routing, SLA enforcement, and warehouse attribution models",
+        "Run test cycles on segmentation and messaging with real statistical discipline"
+      ],
+      "requirements": [
+        "3+ years in revenue operations or GTM engineering",
+        "SQL fluency and comfort building in dbt",
+        "Hands-on with HubSpot or Salesforce administration at depth",
+        "Scripting ability in Python or TypeScript"
+      ],
+      "nice_to_have": [
+        "Experience with Clay, Smartlead, or similar tooling at scale",
+        "Prior sales or SDR experience"
+      ],
+      "open": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "role-4",
+      "slug": "delivery-lead",
+      "title": "Delivery Lead",
+      "team": "Delivery",
+      "location": "Remote (US / EU)",
+      "type": "Full-time",
+      "salary_range": "$150,000 – $195,000",
+      "summary": "Own client outcomes across engagements: scope, sequencing, stakeholder confidence, and the discipline that keeps projects honest.",
+      "about": "You will run three to four engagements, protecting both the client's outcome and the team's ability to do good work. Technical literacy is required; writing code is not.",
+      "responsibilities": [
+        "Own scope, timeline, and commercial health across engagements",
+        "Run diagnostics: shadow operators, quantify baselines, build the business case",
+        "Manage executive stakeholders through shadow mode and cutover",
+        "Protect the team from scope drift without becoming a bottleneck"
+      ],
+      "requirements": [
+        "5+ years delivering technical projects in a client-facing role",
+        "Demonstrated ability to say no to an executive and keep the relationship",
+        "Comfort reading architecture diagrams and challenging estimates"
+      ],
+      "nice_to_have": [
+        "Operations background in a regulated industry",
+        "Experience with process mapping methodologies"
+      ],
+      "open": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    }
+  ],
+  "faq_items": [
+    {
+      "id": "faq-1",
+      "question": "How quickly do you start?",
+      "answer": "Discovery begins within one week of a signed engagement. First production workflows are live within 4–6 weeks after that.",
+      "sort_order": 1,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "faq-2",
+      "question": "What does an engagement cost?",
+      "answer": "Website projects start from ₹12,000. Automation builds from ₹15,000 one-time with maintenance from ₹2,000/month. Bundles start from ₹22,000. We scope every project before quoting — no guesswork.",
+      "sort_order": 2,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "faq-3",
+      "question": "Do you work with our engineers?",
+      "answer": "Yes. We build on your existing stack, document everything, and hand over systems your engineers can maintain. We are not a black box.",
+      "sort_order": 3,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "faq-4",
+      "question": "What if the automation gets it wrong?",
+      "answer": "Confidence thresholds route uncertain cases to humans, every run is logged and replayable, and regressions are caught by an evaluation suite in CI.",
+      "sort_order": 4,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.459Z",
+      "updated_at": "2026-08-09T05:56:44.459Z"
+    },
+    {
+      "id": "faq-5",
+      "question": "Which industries do you work in?",
+      "answer": "We actively work in 14 industries: Technology and SaaS, Healthcare, Finance and Accounting, Banking, Logistics, Manufacturing, Retail and D2C, Marketing, Real Estate, Education and EdTech, HR and Recruitment, Media and Publishing, Hospitality, and Agency Operations.",
+      "sort_order": 5,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "testimonial-1",
+      "quote": "They mapped our entire ops in week one and automated 70% within a month. The efficiency gains are incredible.",
+      "author_name": "Briana Patton",
+      "author_title": "Operations Manager",
+      "author_company": "B2B SaaS Company",
+      "published": true,
+      "sort_order": 1,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-2",
+      "quote": "Reporting went from 12 hours to 20 minutes. Every client gets it Monday before we log in.",
+      "author_name": "Bilal Ahmed",
+      "author_title": "IT Manager",
+      "author_company": "Marketing Agency",
+      "published": true,
+      "sort_order": 2,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-3",
+      "quote": "Lead response went from hours to under a minute. Site visits up 3x in 6 weeks. Exceptional support.",
+      "author_name": "Saman Malik",
+      "author_title": "Customer Support Lead",
+      "author_company": "Real Estate Agency",
+      "published": true,
+      "sort_order": 3,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-4",
+      "quote": "This automation pipeline revolutionized our operations, streamlining finance reconciliation and customer onboarding.",
+      "author_name": "Omar Raza",
+      "author_title": "CEO",
+      "author_company": "FinScale",
+      "published": true,
+      "sort_order": 4,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-5",
+      "quote": "The transition was extremely smooth and fast. Custom software integration made team onboarding simple.",
+      "author_name": "Zainab Hussain",
+      "author_title": "Project Manager",
+      "author_company": "Bright Media",
+      "published": true,
+      "sort_order": 5,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-6",
+      "quote": "The support team is exceptional, guiding us through setup and providing ongoing assistance when scaling pipelines.",
+      "author_name": "Aliza Khan",
+      "author_title": "Business Analyst",
+      "author_company": "Logistics Pro",
+      "published": true,
+      "sort_order": 6,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-7",
+      "quote": "Using custom AI agents, our customer booking conversions significantly improved, boosting business performance.",
+      "author_name": "Farhan Siddiqui",
+      "author_title": "Marketing Director",
+      "author_company": "Growth Labs",
+      "published": true,
+      "sort_order": 7,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-8",
+      "quote": "They delivered a custom sync workflow that exceeded expectations, understanding our needs and enhancing operations.",
+      "author_name": "Sana Sheikh",
+      "author_title": "Sales Manager",
+      "author_company": "Elite Properties",
+      "published": true,
+      "sort_order": 8,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "testimonial-9",
+      "quote": "HubSpot and Stripe syncing works flawlessly now. Not a single manual invoice error since launch.",
+      "author_name": "Hassan Ali",
+      "author_title": "E-commerce Manager",
+      "author_company": "Retail Brands",
+      "published": true,
+      "sort_order": 9,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "service-1",
+      "number": "01",
+      "name": "Web Development",
+      "tagline": "Built for conversion, not just appearance",
+      "description": "We build custom React and Next.js websites optimized for speed, search ranking, and capturing inbound pipeline. Built on pure design tokens, with zero code bloat.",
+      "featured": true,
+      "stat_1_val": "100%",
+      "stat_1_lbl": "custom design and responsive code",
+      "stat_2_val": "2–4 wks",
+      "stat_2_lbl": "average design-to-launch timeline",
+      "stat_3_val": "Instant",
+      "stat_3_lbl": "leads captured and routed the moment they land",
+      "sort_order": 1,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "service-2",
+      "number": "02",
+      "name": "AI Automation",
+      "tagline": "Your systems should run without manual handoffs",
+      "description": "We integrate your tech stack (HubSpot, Stripe, Slack, Clay, smart outreach) using custom serverless orchestrations and n8n workflows so manual admin work drops to zero.",
+      "featured": false,
+      "stat_1_val": "40%",
+      "stat_1_lbl": "average operational overhead reduction",
+      "stat_2_val": "3x",
+      "stat_2_lbl": "faster customer response time",
+      "stat_3_val": "24/7/365",
+      "stat_3_lbl": "autonomous pipeline routing",
+      "sort_order": 2,
+      "published": true,
+      "created_at": "2026-08-09T05:56:44.460Z",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    }
+  ],
+  "site_content": [
+    {
+      "id": "c-1",
+      "key": "hero_tag",
+      "value": "WEB DEVELOPMENT & AI AUTOMATION",
+      "type": "text",
+      "section": "hero",
+      "label": "Tag line",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-2",
+      "key": "hero_headline",
+      "value": "Your business should not run on manual work.",
+      "type": "html",
+      "section": "hero",
+      "label": "Headline",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-3",
+      "key": "hero_subheadline",
+      "value": "We build high-performance websites and AI automation systems for startups, SaaS companies, agencies, enterprises, and growing businesses across 14 industries — so your team gets hours back, operations run without intervention, and revenue compounds on its own.",
+      "type": "text",
+      "section": "hero",
+      "label": "Subheadline",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-4",
+      "key": "hero_cta1_text",
+      "value": "Book a discovery call",
+      "type": "text",
+      "section": "hero",
+      "label": "CTA Button 1 Text",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-5",
+      "key": "hero_cta1_url",
+      "value": "https://cal.com/houseofworkflow",
+      "type": "url",
+      "section": "hero",
+      "label": "CTA Button 1 URL",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-6",
+      "key": "hero_cta2_text",
+      "value": "View Portfolio",
+      "type": "text",
+      "section": "hero",
+      "label": "CTA Button 2 Text",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-7",
+      "key": "hero_cta2_url",
+      "value": "/portfolio",
+      "type": "url",
+      "section": "hero",
+      "label": "CTA Button 2 URL",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-8",
+      "key": "hero_stat1_num",
+      "value": "40%",
+      "type": "text",
+      "section": "hero",
+      "label": "Stat 1 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-9",
+      "key": "hero_stat1_label",
+      "value": "Average reduction in operational overhead after automation",
+      "type": "text",
+      "section": "hero",
+      "label": "Stat 1 - Label",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-10",
+      "key": "hero_stat2_num",
+      "value": "3x",
+      "type": "text",
+      "section": "hero",
+      "label": "Stat 2 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-11",
+      "key": "hero_stat2_label",
+      "value": "Faster lead and customer response with automated pipelines",
+      "type": "text",
+      "section": "hero",
+      "label": "Stat 2 - Label",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-12",
+      "key": "hero_stat3_num",
+      "value": "4 wks",
+      "type": "text",
+      "section": "hero",
+      "label": "Stat 3 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-13",
+      "key": "hero_stat3_label",
+      "value": "From discovery call to first live automation in production",
+      "type": "text",
+      "section": "hero",
+      "label": "Stat 3 - Label",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-14",
+      "key": "problem_tag",
+      "value": "THE COST OF THE STATUS QUO",
+      "type": "text",
+      "section": "problem",
+      "label": "Section tag",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-15",
+      "key": "problem_headline",
+      "value": "Thousands of hours a year, spent on work your systems should already be doing.",
+      "type": "html",
+      "section": "problem",
+      "label": "Headline",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-16",
+      "key": "problem_body",
+      "value": "It rarely looks like a crisis — it looks like a team spending hours every day copy-pasting data between Salesforce, HubSpot, and Google Sheets, manually scheduling client reporting metrics, or losing track of inbound signups because they didn't follow up in 5 minutes. That is a process tax you pay every week.",
+      "type": "text",
+      "section": "problem",
+      "label": "Body copy",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-17",
+      "key": "problem_link_text",
+      "value": "Read how we solve this by industry",
+      "type": "text",
+      "section": "problem",
+      "label": "Link text",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-18",
+      "key": "problem_link_url",
+      "value": "/services",
+      "type": "url",
+      "section": "problem",
+      "label": "Link URL",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-19",
+      "key": "problem_stat1_num",
+      "value": "31%",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 1 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-20",
+      "key": "problem_stat1_desc",
+      "value": "of a knowledge worker's week is spent on tasks a system could handle",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 1 - Description",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-21",
+      "key": "problem_stat2_num",
+      "value": "19%",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 2 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-22",
+      "key": "problem_stat2_desc",
+      "value": "of process hours are duplicated work caused by disconnected tools",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 2 - Description",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-23",
+      "key": "problem_stat3_num",
+      "value": "6",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 3 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-24",
+      "key": "problem_stat3_desc",
+      "value": "average number of software tools touched in a single customer request",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 3 - Description",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-25",
+      "key": "problem_stat4_num",
+      "value": "1",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 4 - Value",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-26",
+      "key": "problem_stat4_desc",
+      "value": "person in most companies who genuinely understands the full end-to-end process",
+      "type": "text",
+      "section": "problem",
+      "label": "Stat 4 - Description",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-27",
+      "key": "team_tag",
+      "value": "// THE TEAM",
+      "type": "text",
+      "section": "team",
+      "label": "Section tag",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-28",
+      "key": "team_headline",
+      "value": "Small team. Serious output.",
+      "type": "text",
+      "section": "team",
+      "label": "Headline",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-29",
+      "key": "team_body",
+      "value": "We built House Of Workflow because we kept seeing the same thing — great businesses held back by manual processes and disconnected tools. We're builders based in Pune. We fix that.",
+      "type": "text",
+      "section": "team",
+      "label": "Body copy",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-30",
+      "key": "footer_name",
+      "value": "House Of Workflow",
+      "type": "text",
+      "section": "footer",
+      "label": "Agency name",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-31",
+      "key": "footer_tagline",
+      "value": "Web development and AI automation for businesses that intend to scale.",
+      "type": "text",
+      "section": "footer",
+      "label": "Tagline",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-32",
+      "key": "footer_email",
+      "value": "hello@houseofworkflow.com",
+      "type": "text",
+      "section": "footer",
+      "label": "Support email",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-33",
+      "key": "footer_location",
+      "value": "Pune, Maharashtra, India",
+      "type": "text",
+      "section": "footer",
+      "label": "City / Location",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    },
+    {
+      "id": "c-34",
+      "key": "footer_copyright",
+      "value": "© 2026 House Of Workflow. All rights reserved.",
+      "type": "text",
+      "section": "footer",
+      "label": "Copyright text",
+      "updated_at": "2026-08-09T05:56:44.460Z"
+    }
+  ],
+  "activity_log": [
+    {
+      "id": "act-1",
+      "message": "Admin signed in",
+      "timestamp": "2026-08-09T05:55:44.460Z"
+    },
+    {
+      "id": "act-2",
+      "message": "Initial contents seeded successfully",
+      "timestamp": "2026-08-09T05:54:44.460Z"
+    }
+  ]
+}

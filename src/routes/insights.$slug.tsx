@@ -10,32 +10,62 @@ import {
   Section,
 } from "@/components/site/primitives";
 import { jsonLd, pageMeta } from "@/components/site/seo";
-import { getInsight, insights } from "@/content/insights";
 import { brand } from "@/content/site";
+import { getPostsFn } from "@/lib/db";
 
 export const Route = createFileRoute("/insights/$slug")({
-  loader: ({ params }) => {
-    const insight = getInsight(params.slug);
-    if (!insight) throw notFound();
-    return insight;
+  loader: async ({ params }) => {
+    const rawPosts = await getPostsFn();
+    const published = rawPosts.filter((p) => p.status === "published");
+    const matched = published.find((p) => p.slug === params.slug);
+    if (!matched) throw notFound();
+
+    let bodyParsed = [];
+    try {
+      bodyParsed = JSON.parse(matched.body);
+    } catch {
+      bodyParsed = [{ paragraphs: [matched.body] }];
+    }
+
+    const insight = {
+      ...matched,
+      body: bodyParsed as { heading?: string; paragraphs: string[] }[],
+      readTime: matched.read_time,
+      ogImageUrl: matched.og_image_url,
+    };
+
+    const related = published
+      .filter((i) => i.slug !== matched.slug && i.category === matched.category)
+      .slice(0, 3)
+      .map((p) => ({ ...p, readTime: p.read_time }));
+
+    const relatedFallback = related.length
+      ? related
+      : published
+          .filter((i) => i.slug !== matched.slug)
+          .slice(0, 3)
+          .map((p) => ({ ...p, readTime: p.read_time }));
+
+    return { insight, relatedFallback };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
+    const { insight } = loaderData;
     return {
       ...pageMeta({
-        title: loaderData.title,
-        description: loaderData.excerpt,
-        path: `/insights/${loaderData.slug}`,
+        title: insight.title,
+        description: insight.excerpt,
+        path: `/insights/${insight.slug}`,
       }),
       ...jsonLd({
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        headline: loaderData.title,
-        description: loaderData.excerpt,
-        author: { "@type": "Person", name: loaderData.author },
-        datePublished: loaderData.date,
+        headline: insight.title,
+        description: insight.excerpt,
+        author: { "@type": "Person", name: insight.author },
+        datePublished: insight.date,
         publisher: { "@type": "Organization", name: brand.name },
-        mainEntityOfPage: `${brand.url}/insights/${loaderData.slug}`,
+        mainEntityOfPage: `${brand.url}/insights/${insight.slug}`,
       }),
     };
   },
@@ -44,7 +74,11 @@ export const Route = createFileRoute("/insights/$slug")({
 });
 
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function slugify(text: string) {
@@ -56,13 +90,9 @@ function slugify(text: string) {
 
 function InsightArticle() {
   const { slug } = Route.useParams();
-  const insight = getInsight(slug);
+  const { insight, relatedFallback } = Route.useLoaderData();
   if (!insight) return <InsightNotFound />;
   const toc = insight.body.filter((s) => s.heading);
-  const related = insights.filter((i) => i.slug !== insight.slug && i.category === insight.category).slice(0, 3);
-  const relatedFallback = related.length
-    ? related
-    : insights.filter((i) => i.slug !== insight.slug).slice(0, 3);
 
   return (
     <>
@@ -149,8 +179,14 @@ function InsightArticle() {
                 </p>
                 <ul className="mt-4 space-y-3">
                   {toc.map((section) => (
-                    <li key={section.heading} className="flex gap-2.5 text-sm leading-snug text-foreground/85">
-                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                    <li
+                      key={section.heading}
+                      className="flex gap-2.5 text-sm leading-snug text-foreground/85"
+                    >
+                      <span
+                        className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary"
+                        aria-hidden
+                      />
                       {section.heading}
                     </li>
                   ))}
@@ -176,7 +212,9 @@ function InsightArticle() {
                     <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
                       {r.category}
                     </p>
-                    <h3 className="mt-3 font-display text-base leading-snug font-medium">{r.title}</h3>
+                    <h3 className="mt-3 font-display text-base leading-snug font-medium">
+                      {r.title}
+                    </h3>
                   </div>
                   <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
                     Read

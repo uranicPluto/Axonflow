@@ -24,7 +24,10 @@ export function ComparisonTable({ data, className }: { data: Comparison; classNa
         <table className="w-full min-w-[680px] border-collapse text-left">
           <thead>
             <tr className="border-b border-hairline bg-secondary/40">
-              <th scope="col" className="w-[30%] px-7 py-4 font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+              <th
+                scope="col"
+                className="w-[30%] px-7 py-4 font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase"
+              >
                 Dimension
               </th>
               <th scope="col" className="px-7 py-4 text-sm font-medium text-muted-foreground">
@@ -51,11 +54,15 @@ export function ComparisonTable({ data, className }: { data: Comparison; classNa
                 <th scope="row" className="px-7 py-5 text-sm font-medium align-top">
                   {row.label}
                 </th>
-                <td className="px-7 py-5 text-sm leading-relaxed text-muted-foreground align-top">{row.a}</td>
+                <td className="px-7 py-5 text-sm leading-relaxed text-muted-foreground align-top">
+                  {row.a}
+                </td>
                 <td
                   className={cn(
                     "px-7 py-5 text-sm leading-relaxed align-top",
-                    row.highlight ? "bg-accent/40 font-medium text-accent-foreground" : "text-foreground",
+                    row.highlight
+                      ? "bg-accent/40 font-medium text-accent-foreground"
+                      : "text-foreground",
                   )}
                 >
                   {row.b}

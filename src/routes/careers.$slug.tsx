@@ -33,7 +33,9 @@ export const Route = createFileRoute("/careers/$slug")({
         description: loaderData.about,
         employmentType: loaderData.type.toUpperCase().replace("-", "_"),
         hiringOrganization: { "@type": "Organization", name: brand.name, sameAs: brand.url },
-        jobLocationType: loaderData.location.toLowerCase().includes("remote") ? "TELECOMMUTE" : undefined,
+        jobLocationType: loaderData.location.toLowerCase().includes("remote")
+          ? "TELECOMMUTE"
+          : undefined,
         baseSalary: {
           "@type": "MonetaryAmount",
           currency: "USD",
@@ -77,19 +79,27 @@ function RoleDetail() {
             <h1 className="mt-5 max-w-3xl text-[2.1rem] leading-[1.05] font-medium text-balance-tight sm:text-4xl md:text-[2.9rem]">
               {role.title}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{role.summary}</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {role.summary}
+            </p>
 
             <dl className="mt-10 grid max-w-xl grid-cols-3 gap-6 border-t border-hairline pt-8">
               <div>
-                <dt className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Location</dt>
+                <dt className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                  Location
+                </dt>
                 <dd className="mt-2 text-sm font-medium">{role.location}</dd>
               </div>
               <div>
-                <dt className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Type</dt>
+                <dt className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                  Type
+                </dt>
                 <dd className="mt-2 text-sm font-medium">{role.type}</dd>
               </div>
               <div>
-                <dt className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Salary</dt>
+                <dt className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                  Salary
+                </dt>
                 <dd className="mt-2 text-sm font-medium">{role.range}</dd>
               </div>
             </dl>
@@ -110,15 +120,23 @@ function RoleDetail() {
             <article className="max-w-2xl space-y-10">
               <Reveal>
                 <h2 className="font-display text-xl font-medium sm:text-2xl">About the role</h2>
-                <p className="mt-4 text-[1.0625rem] leading-relaxed text-foreground/85">{role.about}</p>
+                <p className="mt-4 text-[1.0625rem] leading-relaxed text-foreground/85">
+                  {role.about}
+                </p>
               </Reveal>
 
               <Reveal delay={0.05}>
                 <h2 className="font-display text-xl font-medium sm:text-2xl">Responsibilities</h2>
                 <ul className="mt-4 space-y-3">
                   {role.responsibilities.map((r) => (
-                    <li key={r} className="flex gap-2.5 text-[1.0625rem] leading-relaxed text-foreground/85">
-                      <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                    <li
+                      key={r}
+                      className="flex gap-2.5 text-[1.0625rem] leading-relaxed text-foreground/85"
+                    >
+                      <span
+                        className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-primary"
+                        aria-hidden
+                      />
                       {r}
                     </li>
                   ))}
@@ -129,8 +147,14 @@ function RoleDetail() {
                 <h2 className="font-display text-xl font-medium sm:text-2xl">Requirements</h2>
                 <ul className="mt-4 space-y-3">
                   {role.requirements.map((r) => (
-                    <li key={r} className="flex gap-2.5 text-[1.0625rem] leading-relaxed text-foreground/85">
-                      <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                    <li
+                      key={r}
+                      className="flex gap-2.5 text-[1.0625rem] leading-relaxed text-foreground/85"
+                    >
+                      <span
+                        className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-primary"
+                        aria-hidden
+                      />
                       {r}
                     </li>
                   ))}
@@ -142,8 +166,14 @@ function RoleDetail() {
                   <h2 className="font-display text-xl font-medium sm:text-2xl">Nice to have</h2>
                   <ul className="mt-4 space-y-3">
                     {role.niceToHave.map((r) => (
-                      <li key={r} className="flex gap-2.5 text-[1.0625rem] leading-relaxed text-foreground/85">
-                        <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                      <li
+                        key={r}
+                        className="flex gap-2.5 text-[1.0625rem] leading-relaxed text-foreground/85"
+                      >
+                        <span
+                          className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-primary"
+                          aria-hidden
+                        />
                         {r}
                       </li>
                     ))}
@@ -160,7 +190,9 @@ function RoleDetail() {
                 <ol className="mt-4 space-y-4">
                   {process.map((p, i) => (
                     <li key={p} className="flex gap-3 text-sm leading-snug text-foreground/85">
-                      <span className="font-display font-medium text-primary">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="font-display font-medium text-primary">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
                       {p}
                     </li>
                   ))}
@@ -190,7 +222,9 @@ function RoleDetail() {
                     <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
                       {r.team}
                     </p>
-                    <h3 className="mt-3 font-display text-base leading-snug font-medium">{r.title}</h3>
+                    <h3 className="mt-3 font-display text-base leading-snug font-medium">
+                      {r.title}
+                    </h3>
                   </div>
                   <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
                     View role

@@ -27,7 +27,14 @@ export const Route = createFileRoute("/contact")({
 });
 
 const teamSizes = ["1–10", "11–50", "51–200", "201–1,000", "1,000+"];
-const budgetRanges = ["Under $25k", "$25k–$75k", "$75k–$150k", "$150k–$300k", "$300k+", "Not sure yet"];
+const budgetRanges = [
+  "Under $25k",
+  "$25k–$75k",
+  "$75k–$150k",
+  "$150k–$300k",
+  "$300k+",
+  "Not sure yet",
+];
 
 const faqs = [
   {
@@ -112,8 +119,8 @@ function Contact() {
               Tell us about the work your team shouldn't be doing.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              We read every submission ourselves. A founder or delivery lead replies within one business day —
-              usually with a discovery call time.
+              We read every submission ourselves. A founder or delivery lead replies within one
+              business day — usually with a discovery call time.
             </p>
           </Reveal>
         </Container>
@@ -131,13 +138,19 @@ function Contact() {
                 >
                   <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
                     <svg viewBox="0 0 16 16" className="h-5 w-5" fill="none">
-                      <path d="M3 8.5l3 3 7-7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      <path
+                        d="M3 8.5l3 3 7-7"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </span>
                   <h2 className="mt-6 font-display text-2xl font-medium">Message received.</h2>
                   <p className="mt-3 max-w-md leading-relaxed text-muted-foreground">
-                    Thanks, {form.name.split(" ")[0] || "there"}. Someone from Axonflow will reply at {form.email}{" "}
-                    within one business day with next steps.
+                    Thanks, {form.name.split(" ")[0] || "there"}. Someone from Axonflow will reply
+                    at {form.email} within one business day with next steps.
                   </p>
                   <button
                     type="button"
@@ -161,7 +174,9 @@ function Contact() {
                         onChange={(e) => update("name", e.target.value)}
                         placeholder="Jordan Reyes"
                       />
-                      {errorFor.name ? <p className="mt-1.5 text-xs text-ember">{errorFor.name}</p> : null}
+                      {errorFor.name ? (
+                        <p className="mt-1.5 text-xs text-ember">{errorFor.name}</p>
+                      ) : null}
                     </label>
                     <label className="block text-sm font-medium">
                       Work email
@@ -172,7 +187,9 @@ function Contact() {
                         onChange={(e) => update("email", e.target.value)}
                         placeholder="jordan@company.com"
                       />
-                      {errorFor.email ? <p className="mt-1.5 text-xs text-ember">{errorFor.email}</p> : null}
+                      {errorFor.email ? (
+                        <p className="mt-1.5 text-xs text-ember">{errorFor.email}</p>
+                      ) : null}
                     </label>
                   </div>
 
@@ -184,7 +201,9 @@ function Contact() {
                       onChange={(e) => update("company", e.target.value)}
                       placeholder="Company, Inc."
                     />
-                    {errorFor.company ? <p className="mt-1.5 text-xs text-ember">{errorFor.company}</p> : null}
+                    {errorFor.company ? (
+                      <p className="mt-1.5 text-xs text-ember">{errorFor.company}</p>
+                    ) : null}
                   </label>
 
                   <div className="grid gap-6 sm:grid-cols-2">
@@ -202,7 +221,9 @@ function Contact() {
                           </option>
                         ))}
                       </select>
-                      {errorFor.teamSize ? <p className="mt-1.5 text-xs text-ember">{errorFor.teamSize}</p> : null}
+                      {errorFor.teamSize ? (
+                        <p className="mt-1.5 text-xs text-ember">{errorFor.teamSize}</p>
+                      ) : null}
                     </label>
                     <label className="block text-sm font-medium">
                       Budget range
@@ -218,7 +239,9 @@ function Contact() {
                           </option>
                         ))}
                       </select>
-                      {errorFor.budget ? <p className="mt-1.5 text-xs text-ember">{errorFor.budget}</p> : null}
+                      {errorFor.budget ? (
+                        <p className="mt-1.5 text-xs text-ember">{errorFor.budget}</p>
+                      ) : null}
                     </label>
                   </div>
 
@@ -236,7 +259,9 @@ function Contact() {
                         </option>
                       ))}
                     </select>
-                    {errorFor.interest ? <p className="mt-1.5 text-xs text-ember">{errorFor.interest}</p> : null}
+                    {errorFor.interest ? (
+                      <p className="mt-1.5 text-xs text-ember">{errorFor.interest}</p>
+                    ) : null}
                   </label>
 
                   <label className="block text-sm font-medium">
@@ -247,7 +272,9 @@ function Contact() {
                       onChange={(e) => update("message", e.target.value)}
                       placeholder="Tell us who touches this process today, what's manual, and what you'd consider a win."
                     />
-                    {errorFor.message ? <p className="mt-1.5 text-xs text-ember">{errorFor.message}</p> : null}
+                    {errorFor.message ? (
+                      <p className="mt-1.5 text-xs text-ember">{errorFor.message}</p>
+                    ) : null}
                   </label>
 
                   <button
@@ -297,12 +324,13 @@ function Contact() {
                     Reply within one business day, from a founder or delivery lead.
                   </li>
                   <li className="flex gap-2">
-                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
-                    A 30-minute discovery call to scope the process and rough automation candidates.
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />A
+                    30-minute discovery call to scope the process and rough automation candidates.
                   </li>
                   <li className="flex gap-2">
-                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
-                    A written proposal with fixed-price phases where scope allows — no obligation to proceed.
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />A
+                    written proposal with fixed-price phases where scope allows — no obligation to
+                    proceed.
                   </li>
                 </ul>
               </div>

@@ -175,9 +175,18 @@ export function ArrowRight({ className }: { className?: string }) {
       viewBox="0 0 16 16"
       fill="none"
       aria-hidden
-      className={cn("h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1", className)}
+      className={cn(
+        "h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1",
+        className,
+      )}
     >
-      <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M2 8h11M9 4l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -257,7 +266,9 @@ export function MetricStrip({
       className={cn(
         "grid gap-px overflow-hidden rounded-2xl border sm:grid-cols-2",
         metrics.length % 3 === 0 ? "lg:grid-cols-3" : "lg:grid-cols-4",
-        tone === "light" ? "border-hairline bg-hairline" : "border-ink-foreground/15 bg-ink-foreground/15",
+        tone === "light"
+          ? "border-hairline bg-hairline"
+          : "border-ink-foreground/15 bg-ink-foreground/15",
         className,
       )}
     >
@@ -284,7 +295,12 @@ export function MetricStrip({
             {m.label}
           </dt>
           {m.note ? (
-            <p className={cn("mt-1 text-xs", tone === "light" ? "text-muted-foreground/70" : "text-ink-foreground/45")}>
+            <p
+              className={cn(
+                "mt-1 text-xs",
+                tone === "light" ? "text-muted-foreground/70" : "text-ink-foreground/45",
+              )}
+            >
               {m.note}
             </p>
           ) : null}

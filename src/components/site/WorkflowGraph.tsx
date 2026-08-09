@@ -66,11 +66,29 @@ function NodeCard({
         stroke={accent ? "var(--color-primary)" : "var(--color-hairline)"}
         strokeOpacity={accent ? 0.45 : 1}
       />
-      <circle cx={x + 15} cy={y + 26} r={3.5} fill={accent ? "var(--color-primary)" : "var(--color-muted-foreground)"} />
-      <text x={x + 28} y={y + 22} fontSize="11.5" fontWeight="500" fill="var(--color-foreground)" fontFamily="Geist, sans-serif">
+      <circle
+        cx={x + 15}
+        cy={y + 26}
+        r={3.5}
+        fill={accent ? "var(--color-primary)" : "var(--color-muted-foreground)"}
+      />
+      <text
+        x={x + 28}
+        y={y + 22}
+        fontSize="11.5"
+        fontWeight="500"
+        fill="var(--color-foreground)"
+        fontFamily="Geist, sans-serif"
+      >
         {label}
       </text>
-      <text x={x + 28} y={y + 37} fontSize="9.5" fill="var(--color-muted-foreground)" fontFamily="Geist Mono, monospace">
+      <text
+        x={x + 28}
+        y={y + 37}
+        fontSize="9.5"
+        fill="var(--color-muted-foreground)"
+        fontFamily="Geist Mono, monospace"
+      >
         {sub}
       </text>
     </motion.g>
@@ -82,7 +100,12 @@ export function WorkflowGraph({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <svg viewBox="0 0 784 500" className="h-auto w-full" role="img" aria-label="Diagram: source systems flowing into an Axonflow orchestration core, then out to approvals, actions, system write-backs and an audit ledger">
+      <svg
+        viewBox="0 0 784 500"
+        className="h-auto w-full"
+        role="img"
+        aria-label="Diagram: source systems flowing into an Axonflow orchestration core, then out to approvals, actions, system write-backs and an audit ledger"
+      >
         <defs>
           <linearGradient id="axon-core" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.12" />
@@ -93,7 +116,13 @@ export function WorkflowGraph({ className }: { className?: string }) {
         {/* edges */}
         {[...edgesIn, ...edgesOut].map((e, i) => (
           <g key={i}>
-            <path d={e.d} fill="none" stroke="var(--color-primary)" strokeOpacity="0.3" strokeWidth="2" />
+            <path
+              d={e.d}
+              fill="none"
+              stroke="var(--color-primary)"
+              strokeOpacity="0.3"
+              strokeWidth="2"
+            />
             {reduced ? null : (
               <motion.path
                 d={e.d}
@@ -107,8 +136,19 @@ export function WorkflowGraph({ className }: { className?: string }) {
             )}
             {reduced ? null : (
               <circle r="3.2" fill="var(--color-primary)">
-                <animateMotion dur={`${3.4 + (i % 4) * 0.6}s`} begin={`${1 + i * 0.28}s`} repeatCount="indefinite" path={e.d} />
-                <animate attributeName="opacity" values="0;1;1;0" dur={`${3.4 + (i % 4) * 0.6}s`} begin={`${1 + i * 0.28}s`} repeatCount="indefinite" />
+                <animateMotion
+                  dur={`${3.4 + (i % 4) * 0.6}s`}
+                  begin={`${1 + i * 0.28}s`}
+                  repeatCount="indefinite"
+                  path={e.d}
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;1;1;0"
+                  dur={`${3.4 + (i % 4) * 0.6}s`}
+                  begin={`${1 + i * 0.28}s`}
+                  repeatCount="indefinite"
+                />
               </circle>
             )}
           </g>
@@ -121,8 +161,24 @@ export function WorkflowGraph({ className }: { className?: string }) {
           transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           style={{ transformOrigin: "408px 250px" }}
         >
-          <rect x={coreX} y={116} width={coreW} height={268} rx={18} fill="url(#axon-core)" stroke="var(--color-primary)" strokeOpacity="0.35" />
-          <text x={coreX + 20} y={146} fontSize="9.5" letterSpacing="1.6" fill="var(--color-primary)" fontFamily="Geist Mono, monospace">
+          <rect
+            x={coreX}
+            y={116}
+            width={coreW}
+            height={268}
+            rx={18}
+            fill="url(#axon-core)"
+            stroke="var(--color-primary)"
+            strokeOpacity="0.35"
+          />
+          <text
+            x={coreX + 20}
+            y={146}
+            fontSize="9.5"
+            letterSpacing="1.6"
+            fill="var(--color-primary)"
+            fontFamily="Geist Mono, monospace"
+          >
             ORCHESTRATION CORE
           </text>
           {[
@@ -138,11 +194,32 @@ export function WorkflowGraph({ className }: { className?: string }) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.5 + i * 0.09 }}
             >
-              <rect x={coreX + 16} y={162 + i * 42} width={coreW - 32} height={34} rx={9} fill="var(--color-card)" stroke="var(--color-hairline)" />
-              <text x={coreX + 28} y={183 + i * 42} fontSize="11" fill="var(--color-foreground)" fontFamily="Geist, sans-serif">
+              <rect
+                x={coreX + 16}
+                y={162 + i * 42}
+                width={coreW - 32}
+                height={34}
+                rx={9}
+                fill="var(--color-card)"
+                stroke="var(--color-hairline)"
+              />
+              <text
+                x={coreX + 28}
+                y={183 + i * 42}
+                fontSize="11"
+                fill="var(--color-foreground)"
+                fontFamily="Geist, sans-serif"
+              >
                 {row.label}
               </text>
-              <text x={coreX + coreW - 28} y={183 + i * 42} textAnchor="end" fontSize="9.5" fill="var(--color-primary)" fontFamily="Geist Mono, monospace">
+              <text
+                x={coreX + coreW - 28}
+                y={183 + i * 42}
+                textAnchor="end"
+                fontSize="9.5"
+                fill="var(--color-primary)"
+                fontFamily="Geist Mono, monospace"
+              >
                 {row.value}
               </text>
             </motion.g>
@@ -150,10 +227,24 @@ export function WorkflowGraph({ className }: { className?: string }) {
         </motion.g>
 
         {/* labels */}
-        <text x={40} y={34} fontSize="9.5" letterSpacing="1.6" fill="var(--color-muted-foreground)" fontFamily="Geist Mono, monospace">
+        <text
+          x={40}
+          y={34}
+          fontSize="9.5"
+          letterSpacing="1.6"
+          fill="var(--color-muted-foreground)"
+          fontFamily="Geist Mono, monospace"
+        >
           YOUR SYSTEMS
         </text>
-        <text x={596} y={58} fontSize="9.5" letterSpacing="1.6" fill="var(--color-muted-foreground)" fontFamily="Geist Mono, monospace">
+        <text
+          x={596}
+          y={58}
+          fontSize="9.5"
+          letterSpacing="1.6"
+          fill="var(--color-muted-foreground)"
+          fontFamily="Geist Mono, monospace"
+        >
           OUTCOMES
         </text>
 

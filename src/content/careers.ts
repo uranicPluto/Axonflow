@@ -67,7 +67,10 @@ export const roles: Role[] = [
       "Comfort with Python or TypeScript to a production standard",
       "Ability to explain model behavior to a non-technical executive",
     ],
-    niceToHave: ["Published research or writing on retrieval or agent evaluation", "Experience with regulated data environments"],
+    niceToHave: [
+      "Published research or writing on retrieval or agent evaluation",
+      "Experience with regulated data environments",
+    ],
   },
   {
     slug: "gtm-engineer",
@@ -92,7 +95,10 @@ export const roles: Role[] = [
       "Hands-on with HubSpot or Salesforce administration at depth",
       "Scripting ability in Python or TypeScript",
     ],
-    niceToHave: ["Experience with Clay, Smartlead, or similar tooling at scale", "Prior sales or SDR experience"],
+    niceToHave: [
+      "Experience with Clay, Smartlead, or similar tooling at scale",
+      "Prior sales or SDR experience",
+    ],
   },
   {
     slug: "delivery-lead",
@@ -116,7 +122,10 @@ export const roles: Role[] = [
       "Demonstrated ability to say no to an executive and keep the relationship",
       "Comfort reading architecture diagrams and challenging estimates",
     ],
-    niceToHave: ["Operations background in a regulated industry", "Experience with process mapping methodologies"],
+    niceToHave: [
+      "Operations background in a regulated industry",
+      "Experience with process mapping methodologies",
+    ],
   },
 ];
 

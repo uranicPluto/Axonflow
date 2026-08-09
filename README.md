@@ -2,9 +2,9 @@
 
 ROLE & OBJECTIVE
 
-Act as a world-class principal UI/UX designer and frontend engineer. Your objective is to design and architect a premium, enterprise-grade website for an AI automation & growth engineering company. 
+Act as a world-class principal UI/UX designer and frontend engineer. Your objective is to design and architect a premium, enterprise-grade website for an AI automation & growth engineering company.
 
-The company helps startups, SaaS businesses, agencies, and enterprises build intelligent software, automate operations, and increase revenue using AI. 
+The company helps startups, SaaS businesses, agencies, and enterprises build intelligent software, automate operations, and increase revenue using AI.
 
 DESIGN SYSTEM & VIBE
 
@@ -24,7 +24,7 @@ TECH STACK & ANIMATIONS
 
 • Styling: Tailwind CSS for clean, utility-first styling.
 
-• Animation (Crucial): Implement smooth, cinematic animations using libraries like Framer Motion or GSAP. Include subtle scroll reveals, parallax effects, and micro-interactions on hover. 
+• Animation (Crucial): Implement smooth, cinematic animations using libraries like Framer Motion or GSAP. Include subtle scroll reveals, parallax effects, and micro-interactions on hover.
 
 • Advanced Visuals: Consider lightweight Three.js or WebGL elements for hero background effects if it enhances the high-tech AI feel without compromising performance.
 
@@ -86,23 +86,13 @@ EXECUTION DIRECTIVE
 
 Every single component, heading, and layout choice must answer this underlying user question: "Why should a business trust this company to architect and automate their future?" Output the design code, component structure, and layout logic, starting with the Home Page.
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/acd9a1df-fc55-4799-ae72-d4386e936e4b).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+You need Node.js and npm to run this project locally.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
 ```
+

@@ -49,7 +49,9 @@ function ServiceNotFound() {
     <Section>
       <Container size="narrow" className="text-center">
         <Eyebrow>Not found</Eyebrow>
-        <h1 className="mt-6 font-display text-3xl font-medium">We don't have a service by that name.</h1>
+        <h1 className="mt-6 font-display text-3xl font-medium">
+          We don't have a service by that name.
+        </h1>
         <p className="mt-4 text-muted-foreground">Browse the full list instead.</p>
         <ButtonLink to="/services" className="mt-8" variant="outline">
           All services
@@ -85,7 +87,9 @@ function ServiceDetail() {
             <h1 className="mt-6 max-w-3xl text-[2.4rem] leading-[1.02] font-medium text-balance-tight sm:text-5xl md:text-[3.4rem]">
               {service.headline}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{service.summary}</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {service.summary}
+            </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <ButtonLink to="/contact" size="lg">
                 Book a discovery call
@@ -112,7 +116,11 @@ function ServiceDetail() {
           />
           <div className="mt-14 grid gap-5 sm:grid-cols-2">
             {service.capabilities.map((c, i) => (
-              <Reveal key={c.title} delay={i * 0.06} className="rounded-3xl border border-hairline bg-surface p-7">
+              <Reveal
+                key={c.title}
+                delay={i * 0.06}
+                className="rounded-3xl border border-hairline bg-surface p-7"
+              >
                 <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
                   {String(i + 1).padStart(2, "0")}
                 </p>
@@ -135,7 +143,13 @@ function ServiceDetail() {
                   <li key={d} className="flex items-start gap-3 text-[0.9375rem] leading-relaxed">
                     <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
                       <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none" aria-hidden>
-                        <path d="M2 6l3 3 5-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                        <path
+                          d="M2 6l3 3 5-6"
+                          stroke="currentColor"
+                          strokeWidth="1.6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </span>
                     {d}
@@ -154,8 +168,12 @@ function ServiceDetail() {
               </div>
 
               <div className="mt-10 rounded-3xl border border-hairline bg-surface p-7">
-                <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">Engagement</p>
-                <p className="mt-3 text-[0.9375rem] leading-relaxed text-foreground">{service.engagement}</p>
+                <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">
+                  Engagement
+                </p>
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-foreground">
+                  {service.engagement}
+                </p>
               </div>
             </Reveal>
           </div>
@@ -164,7 +182,11 @@ function ServiceDetail() {
 
       <Section tone="surface">
         <Container size="narrow">
-          <SectionHeader eyebrow="Questions" title={`${service.name}, answered directly.`} align="left" />
+          <SectionHeader
+            eyebrow="Questions"
+            title={`${service.name}, answered directly.`}
+            align="left"
+          />
           <div className="mt-12">
             <Faq items={service.faqs} />
           </div>

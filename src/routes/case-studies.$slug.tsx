@@ -84,7 +84,9 @@ function CaseStudyDetail() {
             <h1 className="mt-7 text-4xl leading-[1.02] font-medium text-balance-tight sm:text-5xl md:text-[3.6rem]">
               {cs.title}
             </h1>
-            <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground">{cs.summary}</p>
+            <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {cs.summary}
+            </p>
           </Reveal>
         </Container>
       </div>
@@ -127,22 +129,30 @@ function CaseStudyDetail() {
             lede="Every step below was measured before a single line of the new system was written."
           />
           <div className="mt-14 divide-y divide-hairline overflow-hidden rounded-3xl border border-hairline bg-surface">
-            {cs.legacyWorkflow.map((step: { step: string; detail: string; cost: string }, i: number) => (
-              <Reveal
-                key={step.step}
-                delay={i * 0.05}
-                className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="font-mono text-xs text-primary">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <p className="font-display text-lg font-medium">{step.step}</p>
-                    <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
+            {cs.legacyWorkflow.map(
+              (step: { step: string; detail: string; cost: string }, i: number) => (
+                <Reveal
+                  key={step.step}
+                  delay={i * 0.05}
+                  className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7"
+                >
+                  <div className="flex items-start gap-4">
+                    <span className="font-mono text-xs text-primary">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <p className="font-display text-lg font-medium">{step.step}</p>
+                      <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                        {step.detail}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <p className="font-mono text-sm font-medium text-ember shrink-0 sm:pl-6">{step.cost}</p>
-              </Reveal>
-            ))}
+                  <p className="font-mono text-sm font-medium text-ember shrink-0 sm:pl-6">
+                    {step.cost}
+                  </p>
+                </Reveal>
+              ),
+            )}
           </div>
         </Container>
       </Section>
@@ -150,12 +160,22 @@ function CaseStudyDetail() {
       {/* WHAT WE BUILT */}
       <Section>
         <Container size="wide">
-          <SectionHeader eyebrow="What we built" title="The system, in plain terms." lede={cs.solution} />
+          <SectionHeader
+            eyebrow="What we built"
+            title="The system, in plain terms."
+            lede={cs.solution}
+          />
           <div className="mt-14 grid gap-4 md:grid-cols-2">
             {cs.solutionPillars.map((p: { title: string; body: string }, i: number) => (
-              <Reveal key={p.title} delay={i * 0.07} className="rounded-3xl border border-hairline bg-card p-7">
+              <Reveal
+                key={p.title}
+                delay={i * 0.07}
+                className="rounded-3xl border border-hairline bg-card p-7"
+              >
                 <h3 className="font-display text-lg font-medium">{p.title}</h3>
-                <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground">{p.body}</p>
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground">
+                  {p.body}
+                </p>
               </Reveal>
             ))}
           </div>
@@ -168,11 +188,20 @@ function CaseStudyDetail() {
           <SectionHeader eyebrow="Architecture" title="How the pieces fit together." />
           <div className="mt-14 grid gap-4 lg:grid-cols-4">
             {cs.architecture.layers.map((layer: { name: string; nodes: string[] }, i: number) => (
-              <Reveal key={layer.name} delay={i * 0.08} className="rounded-3xl border border-hairline bg-surface p-6">
-                <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">{layer.name}</p>
+              <Reveal
+                key={layer.name}
+                delay={i * 0.08}
+                className="rounded-3xl border border-hairline bg-surface p-6"
+              >
+                <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                  {layer.name}
+                </p>
                 <ul className="mt-4 space-y-2.5">
                   {layer.nodes.map((n: string) => (
-                    <li key={n} className="rounded-lg border border-hairline bg-card px-3 py-2 text-sm">
+                    <li
+                      key={n}
+                      className="rounded-lg border border-hairline bg-card px-3 py-2 text-sm"
+                    >
                       {n}
                     </li>
                   ))}
@@ -191,21 +220,23 @@ function CaseStudyDetail() {
         <Container size="wide">
           <SectionHeader eyebrow="Timeline" title="From discovery to rollout." />
           <div className="mt-14 space-y-px overflow-hidden rounded-3xl border border-hairline bg-hairline">
-            {cs.timeline.map((t: { phase: string; duration: string; detail: string }, i: number) => (
-              <Reveal
-                key={t.phase}
-                delay={i * 0.06}
-                className="flex flex-col gap-2 bg-surface p-6 sm:flex-row sm:items-baseline sm:gap-8 sm:p-7"
-              >
-                <p className="font-mono text-xs tracking-widest text-primary uppercase sm:w-32 sm:shrink-0">
-                  {t.duration}
-                </p>
-                <div>
-                  <p className="font-display text-lg font-medium">{t.phase}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t.detail}</p>
-                </div>
-              </Reveal>
-            ))}
+            {cs.timeline.map(
+              (t: { phase: string; duration: string; detail: string }, i: number) => (
+                <Reveal
+                  key={t.phase}
+                  delay={i * 0.06}
+                  className="flex flex-col gap-2 bg-surface p-6 sm:flex-row sm:items-baseline sm:gap-8 sm:p-7"
+                >
+                  <p className="font-mono text-xs tracking-widest text-primary uppercase sm:w-32 sm:shrink-0">
+                    {t.duration}
+                  </p>
+                  <div>
+                    <p className="font-display text-lg font-medium">{t.phase}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t.detail}</p>
+                  </div>
+                </Reveal>
+              ),
+            )}
           </div>
         </Container>
       </Section>
@@ -214,14 +245,20 @@ function CaseStudyDetail() {
       <Section tone="ink">
         <Container size="narrow">
           <Reveal className="text-center">
-            <svg viewBox="0 0 32 24" className="mx-auto h-8 w-8 text-primary" fill="currentColor" aria-hidden>
+            <svg
+              viewBox="0 0 32 24"
+              className="mx-auto h-8 w-8 text-primary"
+              fill="currentColor"
+              aria-hidden
+            >
               <path d="M0 24V14.4C0 6.4 4.8 1.2 14.4 0l1.6 3.2C9.6 4.8 6.4 8 6.4 12.8h6.4V24H0zm17.6 0V14.4c0-8 4.8-13.2 14.4-14.4l1.6 3.2c-6.4 1.6-9.6 4.8-9.6 9.6h6.4V24H17.6z" />
             </svg>
             <blockquote className="mt-8 font-display text-2xl leading-[1.35] font-medium text-balance-tight text-ink-foreground sm:text-[2rem]">
               "{cs.quote.text}"
             </blockquote>
             <p className="mt-8 text-sm text-ink-foreground/60">
-              <span className="font-medium text-ink-foreground">{cs.quote.name}</span> — {cs.quote.role}
+              <span className="font-medium text-ink-foreground">{cs.quote.name}</span> —{" "}
+              {cs.quote.role}
             </p>
           </Reveal>
         </Container>
@@ -253,7 +290,9 @@ function CaseStudyDetail() {
               params={{ slug: prev.slug }}
               className="group rounded-3xl border border-hairline bg-surface p-7 transition-all duration-400 hover:-translate-y-1 hover:border-primary/25 hover:shadow-float"
             >
-              <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Previous</p>
+              <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                Previous
+              </p>
               <p className="mt-3 font-display text-lg font-medium">{prev.title}</p>
             </Link>
             <Link
@@ -261,7 +300,9 @@ function CaseStudyDetail() {
               params={{ slug: next.slug }}
               className="group rounded-3xl border border-hairline bg-surface p-7 text-right transition-all duration-400 hover:-translate-y-1 hover:border-primary/25 hover:shadow-float"
             >
-              <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Next</p>
+              <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+                Next
+              </p>
               <p className="mt-3 font-display text-lg font-medium">{next.title}</p>
             </Link>
           </div>

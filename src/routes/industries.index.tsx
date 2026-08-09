@@ -23,7 +23,14 @@ export const Route = createFileRoute("/industries/")({
     ...jsonLd({
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
-      itemListElement: [{ "@type": "ListItem", position: 1, name: "Industries", item: "https://axonflow.com/industries" }],
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Industries",
+          item: "https://axonflow.com/industries",
+        },
+      ],
     }),
   }),
   component: IndustriesIndex,
@@ -41,9 +48,9 @@ function IndustriesIndex() {
               Automation built for the rules your industry actually operates under.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Every sector has a different definition of acceptable risk, evidence, and speed. We start there —
-              not with a generic workflow — and build systems that hold up to the regulator, the auditor, or the
-              board, whichever is watching.
+              Every sector has a different definition of acceptable risk, evidence, and speed. We
+              start there — not with a generic workflow — and build systems that hold up to the
+              regulator, the auditor, or the board, whichever is watching.
             </p>
           </Reveal>
         </Container>
@@ -63,15 +70,21 @@ function IndustriesIndex() {
                     <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
                       {ind.name}
                     </p>
-                    <h2 className="mt-4 font-display text-2xl leading-snug font-medium">{ind.headline}</h2>
-                    <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted-foreground">{ind.summary}</p>
+                    <h2 className="mt-4 font-display text-2xl leading-snug font-medium">
+                      {ind.headline}
+                    </h2>
+                    <p className="mt-4 text-[0.9375rem] leading-relaxed text-muted-foreground">
+                      {ind.summary}
+                    </p>
                   </div>
                   <div className="mt-8">
                     <div className="grid grid-cols-3 gap-4 border-t border-hairline pt-6">
                       {ind.proof.map((p) => (
                         <div key={p.label}>
                           <p className="font-display text-xl font-medium text-primary">{p.value}</p>
-                          <p className="mt-1 text-xs leading-snug text-muted-foreground">{p.label}</p>
+                          <p className="mt-1 text-xs leading-snug text-muted-foreground">
+                            {p.label}
+                          </p>
                         </div>
                       ))}
                     </div>

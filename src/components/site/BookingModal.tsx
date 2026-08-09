@@ -3,13 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { brand } from "@/content/site";
 
-export function BookingModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+export function BookingModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const today = new Date();
 
   // Real working calendar state (Default: Current date / August 2026)
@@ -54,8 +48,18 @@ export function BookingModal({
 
   // Dynamic Month details
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const daysInMonth = useMemo(() => {
@@ -182,7 +186,8 @@ export function BookingModal({
             <div className="flex items-center justify-between border-b border-hairline px-8 py-5">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-base font-bold tracking-tight">
-                  [ <span className="font-display">{brand.name.toUpperCase()}</span> <span className="text-primary">.</span> ]
+                  [ <span className="font-display">{brand.name.toUpperCase()}</span>{" "}
+                  <span className="text-primary">.</span> ]
                 </span>
                 <span className="hidden font-mono text-xs text-muted-foreground sm:inline">
                   // book a call — explore how we can help your business
@@ -204,14 +209,24 @@ export function BookingModal({
                 /* Success State */
                 <div className="my-12 flex flex-col items-center justify-center text-center">
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <svg viewBox="0 0 24 24" fill="none" className="h-10 w-10" stroke="currentColor" strokeWidth="2.5">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="h-10 w-10"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
                       <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
                   <h3 className="mt-6 text-3xl font-medium">Booking Confirmed!</h3>
                   <p className="mt-3 max-w-md text-base leading-relaxed text-muted-foreground">
                     We've scheduled your alignment call for{" "}
-                    <strong className="text-foreground">{formattedSelectedDate}, {currentYear} at {selectedTime}</strong>. A calendar invite has been sent to <span className="text-foreground">{email}</span>.
+                    <strong className="text-foreground">
+                      {formattedSelectedDate}, {currentYear} at {selectedTime}
+                    </strong>
+                    . A calendar invite has been sent to{" "}
+                    <span className="text-foreground">{email}</span>.
                   </p>
                   <button
                     type="button"
@@ -227,7 +242,10 @@ export function BookingModal({
                   <div className="border-b border-hairline pb-8 lg:border-b-0 lg:border-r lg:pr-10 lg:pb-0">
                     <div className="flex items-center gap-3.5">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-mono text-base font-semibold text-primary">
-                        {brand.name.split(" ").map((w) => w[0]).join("")}
+                        {brand.name
+                          .split(" ")
+                          .map((w) => w[0])
+                          .join("")}
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">{brand.name} Team</p>
@@ -242,8 +260,12 @@ export function BookingModal({
                         <div className="flex items-start gap-3 border-b border-hairline/60 pb-4 text-foreground">
                           <span className="mt-0.5 text-base">📅</span>
                           <div>
-                            <p className="font-semibold text-foreground">{formattedSelectedDate}, {currentYear}</p>
-                            <p className="text-xs text-muted-foreground">{selectedTime} – 30 mins</p>
+                            <p className="font-semibold text-foreground">
+                              {formattedSelectedDate}, {currentYear}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {selectedTime} – 30 mins
+                            </p>
                           </div>
                         </div>
                       )}
@@ -294,7 +316,10 @@ export function BookingModal({
                         {/* Calendar Day Grid */}
                         <div className="grid grid-cols-7 gap-2.5 text-center text-xs">
                           {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((d) => (
-                            <span key={d} className="py-1.5 font-mono text-[0.7rem] font-bold tracking-wider text-muted-foreground uppercase">
+                            <span
+                              key={d}
+                              className="py-1.5 font-mono text-[0.7rem] font-bold tracking-wider text-muted-foreground uppercase"
+                            >
                               {d}
                             </span>
                           ))}
@@ -341,7 +366,10 @@ export function BookingModal({
                       <div className="border-t border-hairline pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-8">
                         <div className="mb-4 flex items-center justify-between">
                           <span className="text-xs font-semibold text-foreground">
-                            {new Date(currentYear, currentMonth, selectedDay).toLocaleDateString("en-US", { weekday: "short", day: "numeric" })}
+                            {new Date(currentYear, currentMonth, selectedDay).toLocaleDateString(
+                              "en-US",
+                              { weekday: "short", day: "numeric" },
+                            )}
                           </span>
 
                           {/* 12h / 24h Format Converter Toggle */}
@@ -390,7 +418,9 @@ export function BookingModal({
                     /* Step 2: Booking Form (Matching Cal.com Reference Images 1 & 2) */
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div>
-                        <label className="block text-sm font-semibold text-foreground/90">Your name *</label>
+                        <label className="block text-sm font-semibold text-foreground/90">
+                          Your name *
+                        </label>
                         <input
                           type="text"
                           required
@@ -402,7 +432,9 @@ export function BookingModal({
                       </div>
 
                       <div>
-                        <label className="block text-sm font-semibold text-foreground/90">Email address *</label>
+                        <label className="block text-sm font-semibold text-foreground/90">
+                          Email address *
+                        </label>
                         <input
                           type="email"
                           required
@@ -438,7 +470,13 @@ export function BookingModal({
                             }}
                             className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
                           >
-                            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <svg
+                              className="h-4 w-4"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
                               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                               <circle cx="8.5" cy="7" r="4" />
                               <line x1="20" y1="8" x2="20" y2="14" />
@@ -448,7 +486,9 @@ export function BookingModal({
                           </button>
                         ) : (
                           <div className="space-y-2.5">
-                            <label className="block text-sm font-semibold text-foreground/90">Add guests</label>
+                            <label className="block text-sm font-semibold text-foreground/90">
+                              Add guests
+                            </label>
 
                             {guestEmails.map((emailVal, idx) => (
                               <div key={idx} className="relative flex items-center">
@@ -486,7 +526,13 @@ export function BookingModal({
                               onClick={() => setGuestEmails((prev) => [...prev, ""])}
                               className="inline-flex items-center gap-1.5 pt-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                             >
-                              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <svg
+                                className="h-3.5 w-3.5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                                 <circle cx="8.5" cy="7" r="4" />
                                 <line x1="20" y1="8" x2="20" y2="14" />
@@ -527,7 +573,8 @@ export function BookingModal({
 
               {/* Bottom Company Brand Footer */}
               <div className="mt-8 flex items-center justify-center border-t border-hairline/60 pt-5 font-mono text-sm font-bold tracking-tight text-foreground/75">
-                [ <span className="font-display tracking-normal">{brand.name.toUpperCase()}</span> <span className="text-primary">.</span> ]
+                [ <span className="font-display tracking-normal">{brand.name.toUpperCase()}</span>{" "}
+                <span className="text-primary">.</span> ]
               </div>
             </div>
           </motion.div>

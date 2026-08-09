@@ -66,7 +66,6 @@ export function WorkflowDemo() {
   const [active, setActive] = useState<string>("sales");
   const dept = departments.find((d) => d.id === active) ?? departments[0]!;
 
-
   return (
     <div className="overflow-hidden rounded-3xl border border-hairline bg-surface">
       <div className="flex flex-wrap gap-1.5 border-b border-hairline p-4 sm:px-7">
@@ -77,7 +76,9 @@ export function WorkflowDemo() {
             onClick={() => setActive(d.id)}
             className={cn(
               "relative rounded-full px-4 py-2 text-sm transition-colors",
-              active === d.id ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+              active === d.id
+                ? "text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             {active === d.id ? (
@@ -96,7 +97,9 @@ export function WorkflowDemo() {
         <div className="relative bg-card p-7 sm:p-9">
           <div className="line-grid pointer-events-none absolute inset-0 opacity-40" aria-hidden />
           <div className="relative">
-            <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">Trigger</p>
+            <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+              Trigger
+            </p>
             <p className="mt-2 font-display text-lg font-medium">{dept.trigger}</p>
 
             <AnimatePresence mode="wait">
@@ -132,7 +135,9 @@ export function WorkflowDemo() {
                     </div>
                     <div className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-xl border border-hairline bg-surface px-4 py-3">
                       <span className="text-sm font-medium">{step.node}</span>
-                      <span className="font-mono text-[0.7rem] text-muted-foreground">{step.detail}</span>
+                      <span className="font-mono text-[0.7rem] text-muted-foreground">
+                        {step.detail}
+                      </span>
                     </div>
                   </motion.li>
                 ))}
@@ -158,8 +163,12 @@ export function WorkflowDemo() {
             </ul>
           </div>
           <div className="rounded-2xl border border-primary/25 bg-accent/40 p-5">
-            <p className="font-mono text-[0.7rem] tracking-widest text-accent-foreground/70 uppercase">Measured outcome</p>
-            <p className="mt-2 font-display text-lg leading-snug font-medium text-accent-foreground">{dept.outcome}</p>
+            <p className="font-mono text-[0.7rem] tracking-widest text-accent-foreground/70 uppercase">
+              Measured outcome
+            </p>
+            <p className="mt-2 font-display text-lg leading-snug font-medium text-accent-foreground">
+              {dept.outcome}
+            </p>
           </div>
         </div>
       </div>

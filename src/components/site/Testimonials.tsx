@@ -19,7 +19,9 @@ export function Testimonials({
           as="article"
           className="flex flex-col justify-between rounded-3xl border border-hairline bg-surface p-7 transition-shadow duration-300 hover:shadow-lift"
         >
-          <blockquote className="text-[1.0625rem] leading-relaxed text-foreground">"{t.text}"</blockquote>
+          <blockquote className="text-[1.0625rem] leading-relaxed text-foreground">
+            "{t.text}"
+          </blockquote>
           <footer className="mt-8 flex items-center gap-3 border-t border-hairline pt-6">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent font-mono text-[0.7rem] text-accent-foreground">
               {t.initials}
@@ -27,7 +29,7 @@ export function Testimonials({
             <span className="text-sm">
               <span className="block font-medium">{t.name}</span>
               <span className="block text-muted-foreground">
-                {t.role}, {t.company}
+                {[t.role, t.company].filter(Boolean).join(", ")}
               </span>
             </span>
           </footer>
@@ -37,7 +39,13 @@ export function Testimonials({
   );
 }
 
-export function Faq({ items, className }: { items: { q: string; a: string }[]; className?: string }) {
+export function Faq({
+  items,
+  className,
+}: {
+  items: { q: string; a: string }[];
+  className?: string;
+}) {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
@@ -59,7 +67,12 @@ export function Faq({ items, className }: { items: { q: string; a: string }[]; c
               aria-hidden
             >
               <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none">
-                <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                <path
+                  d="M6 1v10M1 6h10"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                />
               </svg>
             </span>
           </button>
@@ -88,7 +101,9 @@ export function LogoTicker({ items, label }: { items: readonly string[]; label: 
   const doubled = [...items, ...items];
   return (
     <div className="relative">
-      <p className="text-center font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">{label}</p>
+      <p className="text-center font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+        {label}
+      </p>
       <div className="relative mt-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <div className="marquee-track flex w-max items-center gap-12 sm:gap-16">
           {doubled.map((item, i) => (

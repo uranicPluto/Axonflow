@@ -51,7 +51,10 @@ export function SolutionsAndIndustriesIndex() {
   return (
     <>
       <div className="relative overflow-hidden">
-        <div className="line-grid pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden />
+        <div
+          className="line-grid pointer-events-none absolute inset-0 opacity-[0.35]"
+          aria-hidden
+        />
         <Container size="wide" className="relative pt-16 pb-16 sm:pt-24 sm:pb-20">
           <Reveal>
             <Eyebrow>Solutions &amp; Industries</Eyebrow>
@@ -59,7 +62,9 @@ export function SolutionsAndIndustriesIndex() {
               Tailored solutions by department and industry.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              Whether you need departmental automation (Sales, Finance, HR) or sector-specific compliance and workflows (Healthcare, Financial Services, Manufacturing), we build systems engineered for your domain.
+              Whether you need departmental automation (Sales, Finance, HR) or sector-specific
+              compliance and workflows (Healthcare, Financial Services, Manufacturing), we build
+              systems engineered for your domain.
             </p>
           </Reveal>
 
@@ -120,16 +125,26 @@ export function SolutionsAndIndustriesIndex() {
                     className="group flex h-full flex-col justify-between rounded-3xl border border-hairline bg-surface p-7 transition-all duration-400 hover:-translate-y-1 hover:border-primary/25 hover:shadow-float"
                   >
                     <div>
-                      <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">{s.department}</p>
-                      <h2 className="mt-4 font-display text-xl leading-snug font-medium">{s.headline}</h2>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.summary}</p>
+                      <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">
+                        {s.department}
+                      </p>
+                      <h2 className="mt-4 font-display text-xl leading-snug font-medium">
+                        {s.headline}
+                      </h2>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        {s.summary}
+                      </p>
                     </div>
                     <div className="mt-8">
                       <div className="grid grid-cols-3 gap-4 border-t border-hairline pt-6">
                         {s.metrics.map((m) => (
                           <div key={m.label}>
-                            <p className="font-display text-lg font-medium text-primary">{m.value}</p>
-                            <p className="mt-1 text-[0.7rem] leading-snug text-muted-foreground">{m.label}</p>
+                            <p className="font-display text-lg font-medium text-primary">
+                              {m.value}
+                            </p>
+                            <p className="mt-1 text-[0.7rem] leading-snug text-muted-foreground">
+                              {m.label}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -164,16 +179,26 @@ export function SolutionsAndIndustriesIndex() {
                     className="group flex h-full flex-col justify-between rounded-3xl border border-hairline bg-card p-7 transition-all duration-400 hover:-translate-y-1 hover:border-primary/25 hover:shadow-float"
                   >
                     <div>
-                      <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">{ind.name}</p>
-                      <h2 className="mt-4 font-display text-xl leading-snug font-medium">{ind.headline}</h2>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{ind.summary}</p>
+                      <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">
+                        {ind.name}
+                      </p>
+                      <h2 className="mt-4 font-display text-xl leading-snug font-medium">
+                        {ind.headline}
+                      </h2>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        {ind.summary}
+                      </p>
                     </div>
                     <div className="mt-8">
                       <div className="grid grid-cols-3 gap-4 border-t border-hairline pt-6">
                         {ind.proof.map((p) => (
                           <div key={p.label}>
-                            <p className="font-display text-lg font-medium text-primary">{p.value}</p>
-                            <p className="mt-1 text-[0.7rem] leading-snug text-muted-foreground">{p.label}</p>
+                            <p className="font-display text-lg font-medium text-primary">
+                              {p.value}
+                            </p>
+                            <p className="mt-1 text-[0.7rem] leading-snug text-muted-foreground">
+                              {p.label}
+                            </p>
                           </div>
                         ))}
                       </div>

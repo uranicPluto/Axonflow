@@ -6,6 +6,7 @@ import { BookingModal } from "@/components/site/BookingModal";
 import { CtaBand } from "@/components/site/CtaBand";
 import { Faq, LogoTicker } from "@/components/site/Testimonials";
 import { VideoPlaceholder } from "@/components/site/VideoPlaceholder";
+import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { WorkflowGraph } from "@/components/site/WorkflowGraph";
 import {
   ArrowRight,
@@ -39,7 +40,10 @@ const problems = [
   { stat: "31%", text: "of a knowledge worker's week is spent on tasks a system could handle" },
   { stat: "19%", text: "of process hours are duplicated work caused by disconnected tools" },
   { stat: "6", text: "average number of software tools touched in a single customer request" },
-  { stat: "1", text: "person in most companies who genuinely understands the full end-to-end process" },
+  {
+    stat: "1",
+    text: "person in most companies who genuinely understands the full end-to-end process",
+  },
 ];
 
 function Home() {
@@ -63,7 +67,7 @@ function Home() {
           aria-hidden
         />
         <Container size="wide" className="relative">
-          <div className="grid items-center gap-14 pt-16 pb-16 sm:pt-24 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10 lg:pt-28">
+          <div className="grid items-center gap-14 pt-16 pb-6 sm:pt-24 sm:pb-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10 lg:pt-28">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 14 }}
@@ -72,9 +76,9 @@ function Home() {
               >
                 <Eyebrow>WEB DEVELOPMENT &amp; AI AUTOMATION</Eyebrow>
                 <h1 className="mt-6 text-[2.6rem] leading-[1.04] font-medium text-balance-tight sm:text-[3.4rem] lg:text-[4rem]">
-                  Your business should not run on{" "}
+                  Your business should not run{" "}
                   <span className="relative inline-block">
-                    <span className="relative z-10">manual work.</span>
+                    <span className="relative z-10">on manual work.</span>
                     <motion.span
                       className="absolute inset-x-0 bottom-1.5 z-0 h-3 rounded-full bg-primary/20"
                       initial={{ scaleX: 0 }}
@@ -86,7 +90,10 @@ function Home() {
                   </span>
                 </h1>
                 <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
-                  We build high-performance websites and AI automation systems for startups, SaaS companies, agencies, enterprises, and growing businesses across 14 industries — so your team gets hours back, operations run without intervention, and revenue compounds on its own.
+                  We build high-performance websites and AI automation systems for startups, SaaS
+                  companies, agencies, enterprises, and growing businesses across 14 industries — so
+                  your team gets hours back, operations run without intervention, and revenue
+                  compounds on its own.
                 </p>
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <button
@@ -108,7 +115,9 @@ function Home() {
                       <dd className="font-display text-2xl leading-none font-medium sm:text-[1.75rem]">
                         <CountUp value={m.value} />
                       </dd>
-                      <dt className="mt-2 text-[0.8125rem] leading-snug text-muted-foreground">{m.label}</dt>
+                      <dt className="mt-2 text-[0.8125rem] leading-snug text-muted-foreground">
+                        {m.label}
+                      </dt>
                     </div>
                   ))}
                 </dl>
@@ -142,16 +151,26 @@ function Home() {
       </div>
 
       {/* ---------------- VIDEO SPACE ---------------- */}
-      <Section>
-        <Container size="wide">
-          <SectionHeader
-            eyebrow="SEE IT WORKING"
-            title="Watch a real business problem get solved in 90 seconds."
-            lede="We take a manual process that's eating your team's time, map it, automate it, and hand it over — so your team never touches that work again. Here's what that looks like."
-          />
-          <Reveal className="mt-14">
-            <VideoPlaceholder />
-          </Reveal>
+      <Section className="overflow-hidden py-0">
+        <Container size="wide" className="px-0 md:px-6">
+          <ContainerScroll
+            titleComponent={
+              <div className="text-center max-w-4xl mx-auto px-4 mb-2 md:mb-6">
+                <span className="inline-block rounded-full border border-hairline bg-secondary/80 px-3.5 py-1 font-mono text-[0.7rem] tracking-widest text-primary uppercase">
+                  SEE IT WORKING
+                </span>
+                <h2 className="mt-6 text-3xl font-display leading-[1.1] font-medium sm:text-5xl md:text-[3.5rem] text-foreground">
+                  Watch a real business problem <br />
+                  get solved in 90 seconds.
+                </h2>
+                <p className="mt-6 text-sm sm:text-base leading-relaxed text-muted-foreground max-w-2xl mx-auto">
+                  We take a manual process that's eating your team's time, map it, automate it, and hand it over — so your team never touches that work again. Here's what that looks like.
+                </p>
+              </div>
+            }
+          >
+            <VideoPlaceholder className="w-full h-full p-0 border-0 bg-transparent shadow-none" />
+          </ContainerScroll>
         </Container>
       </Section>
 
@@ -165,9 +184,16 @@ function Home() {
                 Thousands of hours a year, spent on work your systems should already be doing.
               </h2>
               <p className="mt-6 max-w-xl leading-relaxed text-muted-foreground">
-                It rarely looks like a crisis. It looks like a sales rep manually updating CRM records, a clinic receptionist confirming appointments one by one, a logistics team copying data between spreadsheets, or a finance team reconciling GST entries at month-end. Individually manageable. Collectively, they are the largest invisible cost in your business — and the most automatable.
+                It rarely looks like a crisis. It looks like a sales rep manually updating CRM
+                records, a clinic receptionist confirming appointments one by one, a logistics team
+                copying data between spreadsheets, or a finance team reconciling GST entries at
+                month-end. Individually manageable. Collectively, they are the largest invisible
+                cost in your business — and the most automatable.
               </p>
-              <Link to="/solutions" className="group mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+              <Link
+                to="/solutions"
+                className="group mt-8 inline-flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+              >
                 Read how we solve this by industry
                 <ArrowRight />
               </Link>
@@ -223,15 +249,23 @@ function Home() {
                       <span className="h-1 w-1 rounded-full bg-hairline" aria-hidden />
                       <span>{cs.service}</span>
                     </div>
-                    <h3 className="mt-5 font-display text-xl leading-snug font-medium">{cs.title}</h3>
-                    <p className="mt-3 text-[0.875rem] leading-relaxed text-muted-foreground">{cs.summary}</p>
+                    <h3 className="mt-5 font-display text-xl leading-snug font-medium">
+                      {cs.title}
+                    </h3>
+                    <p className="mt-3 text-[0.875rem] leading-relaxed text-muted-foreground">
+                      {cs.summary}
+                    </p>
                   </div>
                   <div className="mt-8">
                     <div className="grid grid-cols-2 gap-4 border-t border-hairline pt-6">
                       {cs.roi.slice(0, 2).map((r) => (
                         <div key={r.label}>
-                          <p className="font-display text-2xl font-medium text-primary">{r.value}</p>
-                          <p className="mt-1 text-xs leading-snug text-muted-foreground">{r.label}</p>
+                          <p className="font-display text-2xl font-medium text-primary">
+                            {r.value}
+                          </p>
+                          <p className="mt-1 text-xs leading-snug text-muted-foreground">
+                            {r.label}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -265,7 +299,9 @@ function Home() {
                 Small team. Serious output.
               </h2>
               <p className="mt-6 max-w-2xl text-[0.95rem] leading-relaxed text-muted-foreground">
-                We built House Of Workflow because we kept seeing the same thing — great businesses held back by manual processes and disconnected tools. We're builders based in Pune. We fix that.
+                We built House Of Workflow because we kept seeing the same thing — great businesses
+                held back by manual processes and disconnected tools. We're builders based in Pune.
+                We fix that.
               </p>
             </Reveal>
 
@@ -318,7 +354,10 @@ function Home() {
               </h2>
               <p className="mt-5 leading-relaxed text-muted-foreground">
                 If yours is not here,{" "}
-                <Link to="/contact" className="text-foreground underline decoration-primary/40 underline-offset-4">
+                <Link
+                  to="/contact"
+                  className="text-foreground underline decoration-primary/40 underline-offset-4"
+                >
                   ask it directly
                 </Link>
                 .
@@ -335,4 +374,3 @@ function Home() {
     </>
   );
 }
-

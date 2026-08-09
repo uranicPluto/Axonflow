@@ -20,7 +20,9 @@ export function EcosystemGraph() {
       <div className="grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-5">
         {integrationGroups.map((group, gi) => (
           <div key={group.group} className="bg-surface p-6">
-            <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">{group.group}</p>
+            <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
+              {group.group}
+            </p>
             <ul className="mt-5 space-y-2.5">
               {group.items.map((item, i) => (
                 <motion.li
@@ -31,7 +33,10 @@ export function EcosystemGraph() {
                   transition={{ duration: 0.4, delay: gi * 0.05 + i * 0.03 }}
                   className="group flex items-center gap-2.5 text-[0.875rem]"
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary/40 transition-colors group-hover:bg-primary" aria-hidden />
+                  <span
+                    className="h-1.5 w-1.5 rounded-full bg-primary/40 transition-colors group-hover:bg-primary"
+                    aria-hidden
+                  />
                   {item}
                 </motion.li>
               ))}
@@ -44,7 +49,9 @@ export function EcosystemGraph() {
         <p className="text-sm text-muted-foreground">
           Plus 200+ platforms via typed adapters, webhooks, and contract-tested integrations.
         </p>
-        <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">No connector? We build it.</p>
+        <p className="font-mono text-[0.7rem] tracking-widest text-primary uppercase">
+          No connector? We build it.
+        </p>
       </div>
     </div>
   );

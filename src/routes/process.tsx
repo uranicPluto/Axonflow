@@ -1,7 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { CtaBand } from "@/components/site/CtaBand";
-import { ArrowRight, Container, Eyebrow, Reveal, Section, SectionHeader } from "@/components/site/primitives";
+import {
+  ArrowRight,
+  Container,
+  Eyebrow,
+  Reveal,
+  Section,
+  SectionHeader,
+} from "@/components/site/primitives";
 import { jsonLd, organizationSchema, pageMeta } from "@/components/site/seo";
 import { principles, processStages } from "@/content/company";
 import { brand } from "@/content/site";
@@ -22,19 +29,23 @@ export const Route = createFileRoute("/process")({
 const risks = [
   {
     risk: "Scope creep once the team sees what's possible",
-    mitigation: "Costed delivery plan is fixed at the Architecture stage; new ideas go into a scored backlog, not the current sprint.",
+    mitigation:
+      "Costed delivery plan is fixed at the Architecture stage; new ideas go into a scored backlog, not the current sprint.",
   },
   {
     risk: "The model gets something wrong in production",
-    mitigation: "Confidence thresholds route uncertain cases to a human, every run is logged and replayable, and a regression suite runs in CI.",
+    mitigation:
+      "Confidence thresholds route uncertain cases to a human, every run is logged and replayable, and a regression suite runs in CI.",
   },
   {
     risk: "Cutover breaks something the old system quietly handled",
-    mitigation: "Shadow mode runs the new system in parallel until accuracy and cost clear agreed thresholds, then we cut over by segment, never all at once.",
+    mitigation:
+      "Shadow mode runs the new system in parallel until accuracy and cost clear agreed thresholds, then we cut over by segment, never all at once.",
   },
   {
     risk: "Your team can't extend the system after we leave",
-    mitigation: "Documentation, runbooks, and enablement sessions are a deliverable, not an afterthought — with an optional operating retainer if you'd rather we keep tuning it.",
+    mitigation:
+      "Documentation, runbooks, and enablement sessions are a deliverable, not an afterthought — with an optional operating retainer if you'd rather we keep tuning it.",
   },
 ];
 
@@ -50,8 +61,8 @@ function Process() {
               Six stages. One accountable plan. No surprises at cutover.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              {brand.positioning} Every engagement follows the same sequence — measured, architected, built, and
-              proven in parallel before it ever touches production for real.
+              {brand.positioning} Every engagement follows the same sequence — measured,
+              architected, built, and proven in parallel before it ever touches production for real.
             </p>
           </Reveal>
         </Container>
@@ -84,7 +95,9 @@ function Process() {
                         <span className="font-mono text-[0.7rem] tracking-widest text-primary uppercase sm:hidden">
                           {stage.number}
                         </span>
-                        <h3 className="font-display text-xl font-medium sm:text-2xl">{stage.name}</h3>
+                        <h3 className="font-display text-xl font-medium sm:text-2xl">
+                          {stage.name}
+                        </h3>
                         <span className="rounded-full border border-hairline bg-secondary/50 px-3 py-1 font-mono text-[0.7rem] tracking-wide text-muted-foreground uppercase">
                           {stage.duration}
                         </span>
@@ -92,7 +105,9 @@ function Process() {
                       <p className="mt-4 font-display text-lg leading-snug font-medium text-primary">
                         {stage.promise}
                       </p>
-                      <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">{stage.detail}</p>
+                      <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+                        {stage.detail}
+                      </p>
                       <div className="mt-6 grid gap-4 border-t border-hairline pt-6 sm:grid-cols-2">
                         <div>
                           <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
@@ -101,7 +116,10 @@ function Process() {
                           <ul className="mt-3 space-y-2">
                             {stage.outputs.map((o) => (
                               <li key={o} className="flex gap-2 text-sm leading-relaxed">
-                                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                                <span
+                                  className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary"
+                                  aria-hidden
+                                />
                                 {o}
                               </li>
                             ))}
@@ -133,7 +151,11 @@ function Process() {
           />
           <div className="mt-14 grid gap-4 sm:grid-cols-2">
             {principles.map((p, i) => (
-              <Reveal key={p.title} delay={i * 0.07} className="rounded-3xl border border-hairline bg-surface p-7">
+              <Reveal
+                key={p.title}
+                delay={i * 0.07}
+                className="rounded-3xl border border-hairline bg-surface p-7"
+              >
                 <h3 className="font-display text-lg font-medium">{p.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.body}</p>
               </Reveal>

@@ -17,9 +17,14 @@ export function Footer() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             {/* Left: Brand & Status Indicator */}
             <div className="flex items-center gap-4">
-              <Link to="/" className="group flex items-center gap-2.5" aria-label={`${brand.name} home`}>
-                <span className="font-mono text-xl font-bold tracking-tight">
-                  [ <span className="font-display tracking-normal">{brand.name.toUpperCase()}</span> <span className="text-primary">.</span> ]
+              <Link
+                to="/"
+                className="group flex items-center gap-2.5"
+                aria-label={`${brand.name} home`}
+              >
+                <span className="font-display text-xl font-bold tracking-tight">
+                  {brand.name}
+                  <span className="text-primary">.</span>
                 </span>
               </Link>
               <span className="relative flex h-3.5 w-3.5 items-center justify-center">
@@ -32,12 +37,24 @@ export function Footer() {
             <div className="flex flex-col items-start gap-2.5 lg:items-center">
               {/* Top Primary Row */}
               <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.9375rem] font-medium text-foreground/80 sm:gap-x-8">
-                <Link to="/" className="transition-colors hover:text-foreground">Home</Link>
-                <Link to="/services" className="transition-colors hover:text-foreground">Services</Link>
-                <Link to="/solutions" className="transition-colors hover:text-foreground">Solutions</Link>
-                <Link to="/case-studies" className="transition-colors hover:text-foreground">Portfolio</Link>
-                <Link to="/blogs" className="transition-colors hover:text-foreground">Blogs</Link>
-                <Link to="/careers" className="transition-colors hover:text-foreground">Careers</Link>
+                <Link to="/" className="transition-colors hover:text-foreground">
+                  Home
+                </Link>
+                <Link to="/services" className="transition-colors hover:text-foreground">
+                  Services
+                </Link>
+                <Link to="/solutions" className="transition-colors hover:text-foreground">
+                  Solutions
+                </Link>
+                <Link to="/case-studies" className="transition-colors hover:text-foreground">
+                  Portfolio
+                </Link>
+                <Link to="/blogs" className="transition-colors hover:text-foreground">
+                  Blogs
+                </Link>
+                <Link to="/careers" className="transition-colors hover:text-foreground">
+                  Careers
+                </Link>
                 <button
                   type="button"
                   onClick={() => setBookingOpen(true)}
@@ -49,18 +66,27 @@ export function Footer() {
 
               {/* Sub Secondary Row */}
               <div className="flex flex-wrap items-center gap-x-5 text-xs text-muted-foreground/75">
-                <Link to="/about" className="transition-colors hover:text-foreground">What We Do</Link>
-                <Link to="/solutions" className="transition-colors hover:text-foreground">Industries</Link>
-                <Link to="/contact" className="transition-colors hover:text-foreground">FAQ</Link>
+                <Link to="/about" className="transition-colors hover:text-foreground">
+                  What We Do
+                </Link>
+                <Link to="/solutions" className="transition-colors hover:text-foreground">
+                  Industries
+                </Link>
+                <Link to="/contact" className="transition-colors hover:text-foreground">
+                  FAQ
+                </Link>
               </div>
             </div>
 
             {/* Right: Agency Details */}
             <div className="text-left text-xs leading-relaxed text-muted-foreground lg:text-right">
-              <p className="font-medium text-foreground/90">AI &amp; Automation Agency</p>
+              <p className="font-medium text-foreground/90">Web Development &amp; AI Automation</p>
               <p>{brand.addressLines[0]}</p>
               <p>
-                <a href={`mailto:${brand.email}`} className="transition-colors hover:text-foreground">
+                <a
+                  href={`mailto:${brand.email}`}
+                  className="transition-colors hover:text-foreground"
+                >
                   {brand.email}
                 </a>
               </p>
@@ -69,11 +95,34 @@ export function Footer() {
 
           {/* Bottom copyright & Socials */}
           <div className="mt-12 flex flex-col gap-4 border-t border-hairline pt-7 text-xs text-muted-foreground/70 sm:flex-row sm:items-center sm:justify-between">
-            <p>© {year} {brand.legalName}. All rights reserved.</p>
+            <p>
+              © {year} {brand.legalName}. All rights reserved.
+            </p>
             <div className="flex gap-6">
-              <a href={brand.social.linkedin} target="_blank" rel="noreferrer" className="transition-colors hover:text-foreground">LinkedIn</a>
-              <a href={brand.social.x} target="_blank" rel="noreferrer" className="transition-colors hover:text-foreground">X</a>
-              <a href={brand.social.github} target="_blank" rel="noreferrer" className="transition-colors hover:text-foreground">GitHub</a>
+              <a
+                href={brand.social.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-foreground"
+              >
+                LinkedIn
+              </a>
+              <a
+                href={brand.social.x}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-foreground"
+              >
+                X
+              </a>
+              <a
+                href={brand.social.github}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-foreground"
+              >
+                GitHub
+              </a>
             </div>
           </div>
         </Container>

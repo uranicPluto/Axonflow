@@ -254,7 +254,10 @@ export const services: Service[] = [
         q: "Do we own the code?",
         a: "Entirely, from the first commit, in your repository and your cloud account.",
       },
-      { q: "Can you take over an existing codebase?", a: "Yes — we start with an audit and a stabilization plan." },
+      {
+        q: "Can you take over an existing codebase?",
+        a: "Yes — we start with an audit and a stabilization plan.",
+      },
     ],
   },
   {
@@ -296,7 +299,10 @@ export const services: Service[] = [
     stack: ["TypeScript", "React", "Postgres", "Stripe", "Clerk / Auth", "PostHog", "AWS"],
     engagement: "MVP in 10–14 weeks, then continuous delivery.",
     faqs: [
-      { q: "Do you take equity?", a: "We work on cash terms; for select partners we blend a reduced rate with equity." },
+      {
+        q: "Do you take equity?",
+        a: "We work on cash terms; for select partners we blend a reduced rate with equity.",
+      },
       {
         q: "Will it scale past the MVP?",
         a: "The boring parts — tenancy, migrations, observability — are built properly precisely so you can grow into it.",
@@ -391,7 +397,10 @@ export const services: Service[] = [
     stack: ["Clay", "Apollo", "Smartlead", "HubSpot", "dbt", "BigQuery", "Metabase"],
     engagement: "Build in 6–8 weeks, then monthly optimization.",
     faqs: [
-      { q: "Is this an agency retainer?", a: "No. We build the infrastructure and hand you the controls." },
+      {
+        q: "Is this an agency retainer?",
+        a: "No. We build the infrastructure and hand you the controls.",
+      },
       {
         q: "Do you write the copy?",
         a: "We build the system and the message-testing loop; your voice, tested against reply data.",

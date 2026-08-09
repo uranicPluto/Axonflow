@@ -33,8 +33,18 @@ export const Route = createFileRoute("/industries/$slug")({
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Industries", item: "https://axonflow.com/industries" },
-          { "@type": "ListItem", position: 2, name: loaderData.name, item: `https://axonflow.com/industries/${loaderData.slug}` },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Industries",
+            item: "https://axonflow.com/industries",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: loaderData.name,
+            item: `https://axonflow.com/industries/${loaderData.slug}`,
+          },
         ],
       }),
     };
@@ -48,7 +58,9 @@ function IndustryNotFound() {
     <Section>
       <Container className="text-center">
         <Eyebrow className="justify-center">Not found</Eyebrow>
-        <h1 className="mt-6 font-display text-3xl font-medium">We don't have that industry page.</h1>
+        <h1 className="mt-6 font-display text-3xl font-medium">
+          We don't have that industry page.
+        </h1>
         <p className="mt-4 text-muted-foreground">Have a look at the industries we do cover.</p>
         <div className="mt-8 flex justify-center">
           <ButtonLink to="/industries">Browse industries</ButtonLink>
@@ -73,7 +85,9 @@ function IndustryDetail() {
             <h1 className="mt-6 max-w-3xl text-4xl leading-[1.02] font-medium sm:text-5xl md:text-[3.4rem]">
               {industry.headline}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{industry.summary}</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              {industry.summary}
+            </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <ButtonLink to="/contact" size="lg">
                 Book a discovery call
@@ -101,8 +115,14 @@ function IndustryDetail() {
           />
           <div className="mt-14 grid gap-4 sm:grid-cols-2">
             {industry.pressures.map((p: string, i: number) => (
-              <Reveal key={p} delay={i * 0.06} className="flex items-start gap-4 rounded-2xl border border-hairline bg-surface p-6">
-                <span className="mt-1 font-mono text-xs text-primary">{String(i + 1).padStart(2, "0")}</span>
+              <Reveal
+                key={p}
+                delay={i * 0.06}
+                className="flex items-start gap-4 rounded-2xl border border-hairline bg-surface p-6"
+              >
+                <span className="mt-1 font-mono text-xs text-primary">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <p className="text-[0.9375rem] leading-relaxed text-foreground">{p}</p>
               </Reveal>
             ))}
@@ -120,9 +140,15 @@ function IndustryDetail() {
           />
           <div className="mt-14 grid gap-4 md:grid-cols-2">
             {industry.workloads.map((w: { title: string; body: string }, i: number) => (
-              <Reveal key={w.title} delay={i * 0.07} className="rounded-3xl border border-hairline bg-card p-7">
+              <Reveal
+                key={w.title}
+                delay={i * 0.07}
+                className="rounded-3xl border border-hairline bg-card p-7"
+              >
                 <h3 className="font-display text-lg font-medium">{w.title}</h3>
-                <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground">{w.body}</p>
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted-foreground">
+                  {w.body}
+                </p>
               </Reveal>
             ))}
           </div>
@@ -169,7 +195,9 @@ function IndustryDetail() {
                       <p className="font-mono text-[0.7rem] tracking-widest text-muted-foreground uppercase">
                         {cs.client}
                       </p>
-                      <h3 className="mt-4 font-display text-xl leading-snug font-medium">{cs.title}</h3>
+                      <h3 className="mt-4 font-display text-xl leading-snug font-medium">
+                        {cs.title}
+                      </h3>
                     </div>
                     <span className="mt-8 inline-flex items-center gap-2 text-[0.8125rem] font-medium">
                       Read the engagement

@@ -11,8 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ProcessRouteImport } from './routes/process'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as BlogsIndexRouteImport } from './routes/blogs.index'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
@@ -26,6 +31,25 @@ import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as SolutionsIndexRouteImport } from './routes/solutions.index'
 import { Route as SolutionsSlugRouteImport } from './routes/solutions.$slug'
+import { Route as AdminBlogIndexRouteImport } from './routes/admin.blog.index'
+import { Route as AdminBlogIdRouteImport } from './routes/admin.blog.$id'
+import { Route as AdminBlogNewRouteImport } from './routes/admin.blog.new'
+import { Route as AdminCareersIndexRouteImport } from './routes/admin.careers.index'
+import { Route as AdminCareersIdRouteImport } from './routes/admin.careers.$id'
+import { Route as AdminCareersNewRouteImport } from './routes/admin.careers.new'
+import { Route as AdminContentIndexRouteImport } from './routes/admin.content.index'
+import { Route as AdminContentFaqRouteImport } from './routes/admin.content.faq'
+import { Route as AdminContentFooterRouteImport } from './routes/admin.content.footer'
+import { Route as AdminContentHeroRouteImport } from './routes/admin.content.hero'
+import { Route as AdminContentProblemRouteImport } from './routes/admin.content.problem'
+import { Route as AdminContentServicesRouteImport } from './routes/admin.content.services'
+import { Route as AdminContentTeamRouteImport } from './routes/admin.content.team'
+import { Route as AdminContentTestimonialsRouteImport } from './routes/admin.content.testimonials'
+import { Route as AdminLeadsIndexRouteImport } from './routes/admin.leads.index'
+import { Route as AdminLeadsIdRouteImport } from './routes/admin.leads.$id'
+import { Route as AdminPortfolioIndexRouteImport } from './routes/admin.portfolio.index'
+import { Route as AdminPortfolioIdRouteImport } from './routes/admin.portfolio.$id'
+import { Route as AdminPortfolioNewRouteImport } from './routes/admin.portfolio.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,6 +61,11 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -46,6 +75,26 @@ const ProcessRoute = ProcessRouteImport.update({
   id: '/process',
   path: '/process',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
 } as any)
 const BlogsIndexRoute = BlogsIndexRouteImport.update({
   id: '/blogs/',
@@ -112,18 +161,119 @@ const SolutionsSlugRoute = SolutionsSlugRouteImport.update({
   path: '/solutions/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminBlogIndexRoute = AdminBlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogIdRoute = AdminBlogIdRouteImport.update({
+  id: '/blog/$id',
+  path: '/blog/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogNewRoute = AdminBlogNewRouteImport.update({
+  id: '/blog/new',
+  path: '/blog/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCareersIndexRoute = AdminCareersIndexRouteImport.update({
+  id: '/careers/',
+  path: '/careers/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCareersIdRoute = AdminCareersIdRouteImport.update({
+  id: '/careers/$id',
+  path: '/careers/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCareersNewRoute = AdminCareersNewRouteImport.update({
+  id: '/careers/new',
+  path: '/careers/new',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentIndexRoute = AdminContentIndexRouteImport.update({
+  id: '/content/',
+  path: '/content/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentFaqRoute = AdminContentFaqRouteImport.update({
+  id: '/content/faq',
+  path: '/content/faq',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentFooterRoute = AdminContentFooterRouteImport.update({
+  id: '/content/footer',
+  path: '/content/footer',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentHeroRoute = AdminContentHeroRouteImport.update({
+  id: '/content/hero',
+  path: '/content/hero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentProblemRoute = AdminContentProblemRouteImport.update({
+  id: '/content/problem',
+  path: '/content/problem',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentServicesRoute = AdminContentServicesRouteImport.update({
+  id: '/content/services',
+  path: '/content/services',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentTeamRoute = AdminContentTeamRouteImport.update({
+  id: '/content/team',
+  path: '/content/team',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContentTestimonialsRoute =
+  AdminContentTestimonialsRouteImport.update({
+    id: '/content/testimonials',
+    path: '/content/testimonials',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminLeadsIndexRoute = AdminLeadsIndexRouteImport.update({
+  id: '/leads/',
+  path: '/leads/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLeadsIdRoute = AdminLeadsIdRouteImport.update({
+  id: '/leads/$id',
+  path: '/leads/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPortfolioIndexRoute = AdminPortfolioIndexRouteImport.update({
+  id: '/portfolio/',
+  path: '/portfolio/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPortfolioIdRoute = AdminPortfolioIdRouteImport.update({
+  id: '/portfolio/$id',
+  path: '/portfolio/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPortfolioNewRoute = AdminPortfolioNewRouteImport.update({
+  id: '/portfolio/new',
+  path: '/portfolio/new',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/process': typeof ProcessRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/insights/$slug': typeof InsightsSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/solutions/$slug': typeof SolutionsSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/blogs/': typeof BlogsIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
@@ -131,18 +281,41 @@ export interface FileRoutesByFullPath {
   '/insights/': typeof InsightsIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/solutions/': typeof SolutionsIndexRoute
+  '/admin/blog/$id': typeof AdminBlogIdRoute
+  '/admin/blog/new': typeof AdminBlogNewRoute
+  '/admin/careers/$id': typeof AdminCareersIdRoute
+  '/admin/careers/new': typeof AdminCareersNewRoute
+  '/admin/content/faq': typeof AdminContentFaqRoute
+  '/admin/content/footer': typeof AdminContentFooterRoute
+  '/admin/content/hero': typeof AdminContentHeroRoute
+  '/admin/content/problem': typeof AdminContentProblemRoute
+  '/admin/content/services': typeof AdminContentServicesRoute
+  '/admin/content/team': typeof AdminContentTeamRoute
+  '/admin/content/testimonials': typeof AdminContentTestimonialsRoute
+  '/admin/leads/$id': typeof AdminLeadsIdRoute
+  '/admin/portfolio/$id': typeof AdminPortfolioIdRoute
+  '/admin/portfolio/new': typeof AdminPortfolioNewRoute
+  '/admin/blog/': typeof AdminBlogIndexRoute
+  '/admin/careers/': typeof AdminCareersIndexRoute
+  '/admin/content/': typeof AdminContentIndexRoute
+  '/admin/leads/': typeof AdminLeadsIndexRoute
+  '/admin/portfolio/': typeof AdminPortfolioIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/process': typeof ProcessRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/insights/$slug': typeof InsightsSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/solutions/$slug': typeof SolutionsSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/blogs': typeof BlogsIndexRoute
   '/careers': typeof CareersIndexRoute
   '/case-studies': typeof CaseStudiesIndexRoute
@@ -150,19 +323,43 @@ export interface FileRoutesByTo {
   '/insights': typeof InsightsIndexRoute
   '/services': typeof ServicesIndexRoute
   '/solutions': typeof SolutionsIndexRoute
+  '/admin/blog/$id': typeof AdminBlogIdRoute
+  '/admin/blog/new': typeof AdminBlogNewRoute
+  '/admin/careers/$id': typeof AdminCareersIdRoute
+  '/admin/careers/new': typeof AdminCareersNewRoute
+  '/admin/content/faq': typeof AdminContentFaqRoute
+  '/admin/content/footer': typeof AdminContentFooterRoute
+  '/admin/content/hero': typeof AdminContentHeroRoute
+  '/admin/content/problem': typeof AdminContentProblemRoute
+  '/admin/content/services': typeof AdminContentServicesRoute
+  '/admin/content/team': typeof AdminContentTeamRoute
+  '/admin/content/testimonials': typeof AdminContentTestimonialsRoute
+  '/admin/leads/$id': typeof AdminLeadsIdRoute
+  '/admin/portfolio/$id': typeof AdminPortfolioIdRoute
+  '/admin/portfolio/new': typeof AdminPortfolioNewRoute
+  '/admin/blog': typeof AdminBlogIndexRoute
+  '/admin/careers': typeof AdminCareersIndexRoute
+  '/admin/content': typeof AdminContentIndexRoute
+  '/admin/leads': typeof AdminLeadsIndexRoute
+  '/admin/portfolio': typeof AdminPortfolioIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/process': typeof ProcessRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
   '/industries/$slug': typeof IndustriesSlugRoute
   '/insights/$slug': typeof InsightsSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/solutions/$slug': typeof SolutionsSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/blogs/': typeof BlogsIndexRoute
   '/careers/': typeof CareersIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
@@ -170,20 +367,44 @@ export interface FileRoutesById {
   '/insights/': typeof InsightsIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/solutions/': typeof SolutionsIndexRoute
+  '/admin/blog/$id': typeof AdminBlogIdRoute
+  '/admin/blog/new': typeof AdminBlogNewRoute
+  '/admin/careers/$id': typeof AdminCareersIdRoute
+  '/admin/careers/new': typeof AdminCareersNewRoute
+  '/admin/content/faq': typeof AdminContentFaqRoute
+  '/admin/content/footer': typeof AdminContentFooterRoute
+  '/admin/content/hero': typeof AdminContentHeroRoute
+  '/admin/content/problem': typeof AdminContentProblemRoute
+  '/admin/content/services': typeof AdminContentServicesRoute
+  '/admin/content/team': typeof AdminContentTeamRoute
+  '/admin/content/testimonials': typeof AdminContentTestimonialsRoute
+  '/admin/leads/$id': typeof AdminLeadsIdRoute
+  '/admin/portfolio/$id': typeof AdminPortfolioIdRoute
+  '/admin/portfolio/new': typeof AdminPortfolioNewRoute
+  '/admin/blog/': typeof AdminBlogIndexRoute
+  '/admin/careers/': typeof AdminCareersIndexRoute
+  '/admin/content/': typeof AdminContentIndexRoute
+  '/admin/leads/': typeof AdminLeadsIndexRoute
+  '/admin/portfolio/': typeof AdminPortfolioIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/process'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/admin/settings'
     | '/careers/$slug'
     | '/case-studies/$slug'
     | '/industries/$slug'
     | '/insights/$slug'
     | '/services/$slug'
     | '/solutions/$slug'
+    | '/admin/'
     | '/blogs/'
     | '/careers/'
     | '/case-studies/'
@@ -191,18 +412,41 @@ export interface FileRouteTypes {
     | '/insights/'
     | '/services/'
     | '/solutions/'
+    | '/admin/blog/$id'
+    | '/admin/blog/new'
+    | '/admin/careers/$id'
+    | '/admin/careers/new'
+    | '/admin/content/faq'
+    | '/admin/content/footer'
+    | '/admin/content/hero'
+    | '/admin/content/problem'
+    | '/admin/content/services'
+    | '/admin/content/team'
+    | '/admin/content/testimonials'
+    | '/admin/leads/$id'
+    | '/admin/portfolio/$id'
+    | '/admin/portfolio/new'
+    | '/admin/blog/'
+    | '/admin/careers/'
+    | '/admin/content/'
+    | '/admin/leads/'
+    | '/admin/portfolio/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
     | '/process'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/admin/settings'
     | '/careers/$slug'
     | '/case-studies/$slug'
     | '/industries/$slug'
     | '/insights/$slug'
     | '/services/$slug'
     | '/solutions/$slug'
+    | '/admin'
     | '/blogs'
     | '/careers'
     | '/case-studies'
@@ -210,18 +454,42 @@ export interface FileRouteTypes {
     | '/insights'
     | '/services'
     | '/solutions'
+    | '/admin/blog/$id'
+    | '/admin/blog/new'
+    | '/admin/careers/$id'
+    | '/admin/careers/new'
+    | '/admin/content/faq'
+    | '/admin/content/footer'
+    | '/admin/content/hero'
+    | '/admin/content/problem'
+    | '/admin/content/services'
+    | '/admin/content/team'
+    | '/admin/content/testimonials'
+    | '/admin/leads/$id'
+    | '/admin/portfolio/$id'
+    | '/admin/portfolio/new'
+    | '/admin/blog'
+    | '/admin/careers'
+    | '/admin/content'
+    | '/admin/leads'
+    | '/admin/portfolio'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/process'
+    | '/admin/dashboard'
+    | '/admin/login'
+    | '/admin/settings'
     | '/careers/$slug'
     | '/case-studies/$slug'
     | '/industries/$slug'
     | '/insights/$slug'
     | '/services/$slug'
     | '/solutions/$slug'
+    | '/admin/'
     | '/blogs/'
     | '/careers/'
     | '/case-studies/'
@@ -229,11 +497,31 @@ export interface FileRouteTypes {
     | '/insights/'
     | '/services/'
     | '/solutions/'
+    | '/admin/blog/$id'
+    | '/admin/blog/new'
+    | '/admin/careers/$id'
+    | '/admin/careers/new'
+    | '/admin/content/faq'
+    | '/admin/content/footer'
+    | '/admin/content/hero'
+    | '/admin/content/problem'
+    | '/admin/content/services'
+    | '/admin/content/team'
+    | '/admin/content/testimonials'
+    | '/admin/leads/$id'
+    | '/admin/portfolio/$id'
+    | '/admin/portfolio/new'
+    | '/admin/blog/'
+    | '/admin/careers/'
+    | '/admin/content/'
+    | '/admin/leads/'
+    | '/admin/portfolio/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   ProcessRoute: typeof ProcessRoute
   CareersSlugRoute: typeof CareersSlugRoute
@@ -267,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -280,6 +575,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/process'
       preLoaderRoute: typeof ProcessRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/blogs/': {
       id: '/blogs/'
@@ -372,12 +695,200 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SolutionsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/blog/': {
+      id: '/admin/blog/'
+      path: '/blog'
+      fullPath: '/admin/blog/'
+      preLoaderRoute: typeof AdminBlogIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blog/$id': {
+      id: '/admin/blog/$id'
+      path: '/blog/$id'
+      fullPath: '/admin/blog/$id'
+      preLoaderRoute: typeof AdminBlogIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blog/new': {
+      id: '/admin/blog/new'
+      path: '/blog/new'
+      fullPath: '/admin/blog/new'
+      preLoaderRoute: typeof AdminBlogNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/careers/': {
+      id: '/admin/careers/'
+      path: '/careers'
+      fullPath: '/admin/careers/'
+      preLoaderRoute: typeof AdminCareersIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/careers/$id': {
+      id: '/admin/careers/$id'
+      path: '/careers/$id'
+      fullPath: '/admin/careers/$id'
+      preLoaderRoute: typeof AdminCareersIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/careers/new': {
+      id: '/admin/careers/new'
+      path: '/careers/new'
+      fullPath: '/admin/careers/new'
+      preLoaderRoute: typeof AdminCareersNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/': {
+      id: '/admin/content/'
+      path: '/content'
+      fullPath: '/admin/content/'
+      preLoaderRoute: typeof AdminContentIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/faq': {
+      id: '/admin/content/faq'
+      path: '/content/faq'
+      fullPath: '/admin/content/faq'
+      preLoaderRoute: typeof AdminContentFaqRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/footer': {
+      id: '/admin/content/footer'
+      path: '/content/footer'
+      fullPath: '/admin/content/footer'
+      preLoaderRoute: typeof AdminContentFooterRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/hero': {
+      id: '/admin/content/hero'
+      path: '/content/hero'
+      fullPath: '/admin/content/hero'
+      preLoaderRoute: typeof AdminContentHeroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/problem': {
+      id: '/admin/content/problem'
+      path: '/content/problem'
+      fullPath: '/admin/content/problem'
+      preLoaderRoute: typeof AdminContentProblemRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/services': {
+      id: '/admin/content/services'
+      path: '/content/services'
+      fullPath: '/admin/content/services'
+      preLoaderRoute: typeof AdminContentServicesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/team': {
+      id: '/admin/content/team'
+      path: '/content/team'
+      fullPath: '/admin/content/team'
+      preLoaderRoute: typeof AdminContentTeamRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/content/testimonials': {
+      id: '/admin/content/testimonials'
+      path: '/content/testimonials'
+      fullPath: '/admin/content/testimonials'
+      preLoaderRoute: typeof AdminContentTestimonialsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/leads/': {
+      id: '/admin/leads/'
+      path: '/leads'
+      fullPath: '/admin/leads/'
+      preLoaderRoute: typeof AdminLeadsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/leads/$id': {
+      id: '/admin/leads/$id'
+      path: '/leads/$id'
+      fullPath: '/admin/leads/$id'
+      preLoaderRoute: typeof AdminLeadsIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/portfolio/': {
+      id: '/admin/portfolio/'
+      path: '/portfolio'
+      fullPath: '/admin/portfolio/'
+      preLoaderRoute: typeof AdminPortfolioIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/portfolio/$id': {
+      id: '/admin/portfolio/$id'
+      path: '/portfolio/$id'
+      fullPath: '/admin/portfolio/$id'
+      preLoaderRoute: typeof AdminPortfolioIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/portfolio/new': {
+      id: '/admin/portfolio/new'
+      path: '/portfolio/new'
+      fullPath: '/admin/portfolio/new'
+      preLoaderRoute: typeof AdminPortfolioNewRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminBlogIdRoute: typeof AdminBlogIdRoute
+  AdminBlogNewRoute: typeof AdminBlogNewRoute
+  AdminCareersIdRoute: typeof AdminCareersIdRoute
+  AdminCareersNewRoute: typeof AdminCareersNewRoute
+  AdminContentFaqRoute: typeof AdminContentFaqRoute
+  AdminContentFooterRoute: typeof AdminContentFooterRoute
+  AdminContentHeroRoute: typeof AdminContentHeroRoute
+  AdminContentProblemRoute: typeof AdminContentProblemRoute
+  AdminContentServicesRoute: typeof AdminContentServicesRoute
+  AdminContentTeamRoute: typeof AdminContentTeamRoute
+  AdminContentTestimonialsRoute: typeof AdminContentTestimonialsRoute
+  AdminLeadsIdRoute: typeof AdminLeadsIdRoute
+  AdminPortfolioIdRoute: typeof AdminPortfolioIdRoute
+  AdminPortfolioNewRoute: typeof AdminPortfolioNewRoute
+  AdminBlogIndexRoute: typeof AdminBlogIndexRoute
+  AdminCareersIndexRoute: typeof AdminCareersIndexRoute
+  AdminContentIndexRoute: typeof AdminContentIndexRoute
+  AdminLeadsIndexRoute: typeof AdminLeadsIndexRoute
+  AdminPortfolioIndexRoute: typeof AdminPortfolioIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminBlogIdRoute: AdminBlogIdRoute,
+  AdminBlogNewRoute: AdminBlogNewRoute,
+  AdminCareersIdRoute: AdminCareersIdRoute,
+  AdminCareersNewRoute: AdminCareersNewRoute,
+  AdminContentFaqRoute: AdminContentFaqRoute,
+  AdminContentFooterRoute: AdminContentFooterRoute,
+  AdminContentHeroRoute: AdminContentHeroRoute,
+  AdminContentProblemRoute: AdminContentProblemRoute,
+  AdminContentServicesRoute: AdminContentServicesRoute,
+  AdminContentTeamRoute: AdminContentTeamRoute,
+  AdminContentTestimonialsRoute: AdminContentTestimonialsRoute,
+  AdminLeadsIdRoute: AdminLeadsIdRoute,
+  AdminPortfolioIdRoute: AdminPortfolioIdRoute,
+  AdminPortfolioNewRoute: AdminPortfolioNewRoute,
+  AdminBlogIndexRoute: AdminBlogIndexRoute,
+  AdminCareersIndexRoute: AdminCareersIndexRoute,
+  AdminContentIndexRoute: AdminContentIndexRoute,
+  AdminLeadsIndexRoute: AdminLeadsIndexRoute,
+  AdminPortfolioIndexRoute: AdminPortfolioIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   ProcessRoute: ProcessRoute,
   CareersSlugRoute: CareersSlugRoute,

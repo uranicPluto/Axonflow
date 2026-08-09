@@ -1,12 +1,12 @@
 export const brand = {
   name: "House Of Workflow",
-  legalName: "House Of Workflow, Inc.",
-  tagline: "Automation and growth engineering for companies that intend to win.",
+  legalName: "House Of Workflow",
+  tagline: "Web Development & AI Automation",
   positioning:
     "We architect the AI systems that run your business — so revenue compounds while manual work disappears.",
-  email: "hello@houseofworkflow.com",
+  email: "your@email.com",
   phone: "+1 (415) 555-0142",
-  addressLines: ["548 Market Street, Suite 21", "San Francisco, CA 94104"],
+  addressLines: ["Pune, Maharashtra, India"],
   founded: 2019,
   url: "https://axonflow-beta.vercel.app",
   social: {
@@ -63,13 +63,21 @@ export const serviceNav: NavChild[] = [
 ];
 
 export const solutionNav: NavChild[] = [
-  { label: "Sales", to: "/solutions/sales", blurb: "Shorter cycles, cleaner data, faster follow-up." },
+  {
+    label: "Sales",
+    to: "/solutions/sales",
+    blurb: "Shorter cycles, cleaner data, faster follow-up.",
+  },
   {
     label: "Marketing",
     to: "/solutions/marketing",
     blurb: "Compounding content and campaign operations.",
   },
-  { label: "HR & People", to: "/solutions/hr", blurb: "Hiring and onboarding without the busywork." },
+  {
+    label: "HR & People",
+    to: "/solutions/hr",
+    blurb: "Hiring and onboarding without the busywork.",
+  },
   {
     label: "Finance",
     to: "/solutions/finance",
@@ -89,25 +97,74 @@ export const solutionNav: NavChild[] = [
 
 export const industryNav: NavChild[] = [
   { label: "Technology & SaaS", to: "/industries/saas", blurb: "Business Operations Automation" },
-  { label: "Healthcare", to: "/industries/healthcare", blurb: "Patient Engagement & Appointment Automation" },
-  { label: "Finance & Accounting", to: "/industries/finance", blurb: "GST & Financial Reconciliation Automation" },
-  { label: "Banking & Financial Services", to: "/industries/banking", blurb: "KYC & Customer Onboarding Automation" },
-  { label: "Logistics & Supply Chain", to: "/industries/logistics", blurb: "Inventory & Procurement Automation" },
-  { label: "Manufacturing & Industrial", to: "/industries/manufacturing", blurb: "Production & Shift Reporting Automation" },
-  { label: "Retail & D2C", to: "/industries/retail", blurb: "Product Catalog & eCommerce Automation" },
-  { label: "Marketing & Advertising", to: "/industries/marketing", blurb: "AI Content & Campaign Automation" },
-  { label: "Real Estate", to: "/industries/real-estate", blurb: "Lead Management & CRM Automation" },
-  { label: "Education & EdTech", to: "/industries/education", blurb: "AI Lesson Planning & Content Automation" },
-  { label: "HR & Recruitment", to: "/industries/hr", blurb: "Resume Screening & Hiring Automation" },
-  { label: "Media & Publishing", to: "/industries/media", blurb: "AI Content Creation & Publishing Automation" },
-  { label: "Hospitality & Tourism", to: "/industries/hospitality", blurb: "Revenue Management & Booking Automation" },
-  { label: "Government & Public Sector", to: "/industries/government", blurb: "RTI & Citizen Service Automation" },
+  {
+    label: "Healthcare",
+    to: "/industries/healthcare",
+    blurb: "Patient Engagement & Appointment Automation",
+  },
+  {
+    label: "Finance & Accounting",
+    to: "/industries/finance",
+    blurb: "GST & Financial Reconciliation Automation",
+  },
+  {
+    label: "Banking & Financial Services",
+    to: "/industries/banking",
+    blurb: "KYC & Customer Onboarding Automation",
+  },
+  {
+    label: "Logistics & Supply Chain",
+    to: "/industries/logistics",
+    blurb: "Inventory & Procurement Automation",
+  },
+  {
+    label: "Manufacturing & Industrial",
+    to: "/industries/manufacturing",
+    blurb: "Production & Shift Reporting Automation",
+  },
+  {
+    label: "Retail & D2C",
+    to: "/industries/retail",
+    blurb: "Product Catalog & eCommerce Automation",
+  },
+  {
+    label: "Marketing & Advertising",
+    to: "/industries/marketing",
+    blurb: "AI Content & Campaign Automation",
+  },
+  {
+    label: "Real Estate",
+    to: "/industries/real-estate",
+    blurb: "Lead Management & CRM Automation",
+  },
+  {
+    label: "Education & EdTech",
+    to: "/industries/education",
+    blurb: "AI Lesson Planning & Content Automation",
+  },
+  {
+    label: "HR & Recruitment",
+    to: "/industries/hr",
+    blurb: "Resume Screening & Hiring Automation",
+  },
+  {
+    label: "Media & Publishing",
+    to: "/industries/media",
+    blurb: "AI Content Creation & Publishing Automation",
+  },
+  {
+    label: "Hospitality & Tourism",
+    to: "/industries/hospitality",
+    blurb: "Revenue Management & Booking Automation",
+  },
+  {
+    label: "Government & Public Sector",
+    to: "/industries/government",
+    blurb: "RTI & Citizen Service Automation",
+  },
 ];
 
-export const solutionsAndIndustriesNav: NavChild[] = [
-  ...solutionNav,
-  ...industryNav,
-];
+export const solutionsAndIndustriesNav: NavChild[] = [...solutionNav, ...industryNav];
 
 export const mainNav: NavGroup[] = [
   { label: "Services", to: "/services", children: serviceNav },
@@ -153,4 +210,3 @@ export const trustedBy = [
   "Hospitality & Tourism",
   "Government & Public Sector",
 ];
-

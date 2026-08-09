@@ -48,7 +48,9 @@ function SolutionNotFound() {
     <Section>
       <Container size="narrow" className="text-center">
         <Eyebrow>Not found</Eyebrow>
-        <h1 className="mt-6 font-display text-3xl font-medium">We don't have a solution page for that.</h1>
+        <h1 className="mt-6 font-display text-3xl font-medium">
+          We don't have a solution page for that.
+        </h1>
         <p className="mt-4 text-muted-foreground">Browse all departments instead.</p>
         <ButtonLink to="/solutions" className="mt-8" variant="outline">
           All solutions
@@ -67,7 +69,10 @@ function SolutionDetail() {
   return (
     <>
       <div className="relative overflow-hidden bg-ink text-ink-foreground">
-        <div className="line-grid pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden />
+        <div
+          className="line-grid pointer-events-none absolute inset-0 opacity-[0.08]"
+          aria-hidden
+        />
         <div
           className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full opacity-30 blur-[110px]"
           style={{ background: "radial-gradient(circle, var(--color-primary), transparent 70%)" }}
@@ -82,11 +87,15 @@ function SolutionDetail() {
               <span aria-hidden>/</span>
               <span className="text-ink-foreground/80">{solution.department}</span>
             </nav>
-            <Eyebrow className="mt-6 text-ink-foreground/50 [&>span]:bg-primary">{solution.department}</Eyebrow>
+            <Eyebrow className="mt-6 text-ink-foreground/50 [&>span]:bg-primary">
+              {solution.department}
+            </Eyebrow>
             <h1 className="mt-6 max-w-3xl text-[2.4rem] leading-[1.02] font-medium text-balance-tight sm:text-5xl md:text-[3.4rem]">
               {solution.headline}
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-foreground/65">{solution.summary}</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-foreground/65">
+              {solution.summary}
+            </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <ButtonLink to="/contact" size="lg">
                 Book a discovery call
@@ -122,7 +131,10 @@ function SolutionDetail() {
               </p>
               <ul className="mt-8 flex flex-col gap-4">
                 {solution.problems.map((p) => (
-                  <li key={p} className="flex items-start gap-3 border-l-2 border-hairline pl-4 text-[0.9375rem] leading-relaxed text-foreground">
+                  <li
+                    key={p}
+                    className="flex items-start gap-3 border-l-2 border-hairline pl-4 text-[0.9375rem] leading-relaxed text-foreground"
+                  >
                     {p}
                   </li>
                 ))}
@@ -143,7 +155,9 @@ function SolutionDetail() {
                   >
                     <div>
                       <h3 className="font-display text-lg font-medium">{play.title}</h3>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{play.body}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                        {play.body}
+                      </p>
                     </div>
                     <p className="mt-6 inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 font-mono text-[0.7rem] text-accent-foreground uppercase tracking-wide">
                       {play.impact}

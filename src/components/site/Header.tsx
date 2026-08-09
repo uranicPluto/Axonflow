@@ -13,16 +13,35 @@ function Wordmark({ tone = "light" }: { tone?: "light" | "dark" }) {
     <Link to="/" className="group flex items-center gap-2.5" aria-label={`${brand.name} home`}>
       <span className="relative flex h-7 w-7 items-center justify-center">
         <svg viewBox="0 0 28 28" className="h-7 w-7" aria-hidden>
-          <rect x="0.75" y="0.75" width="26.5" height="26.5" rx="7.5" fill="none" stroke="currentColor" strokeOpacity="0.16" />
+          <rect
+            x="0.75"
+            y="0.75"
+            width="26.5"
+            height="26.5"
+            rx="7.5"
+            fill="none"
+            stroke="currentColor"
+            strokeOpacity="0.16"
+          />
           <circle cx="8" cy="8" r="2" fill="currentColor" className="text-primary" />
           <circle cx="20" cy="8" r="1.5" fill="currentColor" opacity="0.35" />
           <circle cx="8" cy="20" r="1.5" fill="currentColor" opacity="0.35" />
           <circle cx="20" cy="20" r="2.6" fill="currentColor" className="text-primary" />
-          <path d="M8 8h12M8 8v12M8 20h12M20 8v12" stroke="currentColor" strokeOpacity="0.22" strokeWidth="1" />
+          <path
+            d="M8 8h12M8 8v12M8 20h12M20 8v12"
+            stroke="currentColor"
+            strokeOpacity="0.22"
+            strokeWidth="1"
+          />
           <path d="M8 8L20 20" stroke="currentColor" strokeWidth="1.4" className="text-primary" />
         </svg>
       </span>
-      <span className={cn("font-display text-[1.0625rem] font-semibold tracking-tight", tone === "dark" && "text-ink-foreground")}>
+      <span
+        className={cn(
+          "font-display text-[1.0625rem] font-semibold tracking-tight",
+          tone === "dark" && "text-ink-foreground",
+        )}
+      >
         {brand.name}
       </span>
     </Link>
@@ -53,7 +72,9 @@ export function Header() {
       <header
         className={cn(
           "sticky top-0 z-50 transition-all duration-300",
-          scrolled ? "border-b border-hairline bg-background/85 backdrop-blur-xl" : "border-b border-transparent",
+          scrolled
+            ? "border-b border-hairline bg-background/85 backdrop-blur-xl"
+            : "border-b border-transparent",
         )}
         onMouseLeave={() => setOpen(null)}
       >
@@ -67,7 +88,10 @@ export function Header() {
               {mainNav.map((group) => {
                 const active = pathname === group.to || pathname.startsWith(`${group.to}/`);
                 return (
-                  <div key={group.label} onMouseEnter={() => setOpen(group.children ? group.label : null)}>
+                  <div
+                    key={group.label}
+                    onMouseEnter={() => setOpen(group.children ? group.label : null)}
+                  >
                     <Link
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       to={group.to as any}
@@ -78,7 +102,10 @@ export function Header() {
                     >
                       {group.label}
                       {active ? (
-                        <span className="absolute inset-x-3.5 -bottom-px h-px bg-primary" aria-hidden />
+                        <span
+                          className="absolute inset-x-3.5 -bottom-px h-px bg-primary"
+                          aria-hidden
+                        />
                       ) : null}
                     </Link>
                   </div>
