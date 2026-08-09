@@ -166,11 +166,17 @@ export const checkAdminAuthFn = createServerFn({ method: "GET" })
 
 export const getAdminSessionCookieFn = createServerFn({ method: "GET" })
   .handler(async () => {
-    const { getWebRequest } = await import("@tanstack/react-start/server");
-    const request = getWebRequest();
-    const cookieHeader = request?.headers.get("Cookie") || "";
-    const match = cookieHeader.match(/how_admin_session=([^;]+)/);
-    return match ? match[1] : null;
+    try {
+      const { getWebRequest } = await import("@tanstack/react-start/server");
+      const request = getWebRequest();
+      if (!request) return null;
+      const cookieHeader = request.headers.get("Cookie") || "";
+      const match = cookieHeader.match(/how_admin_session=([^;]+)/);
+      return match ? match[1] : null;
+    } catch (err) {
+      console.warn("Failed to get request headers or cookies inside server function (this is expected during SSR):", err);
+      return null;
+    }
   });
 
 // Leads

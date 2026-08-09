@@ -9,14 +9,18 @@ export const Route = createFileRoute("/admin")({
     let isAuthenticated = false;
     let token: string | null = null;
 
-    if (typeof document !== "undefined") {
-      token = cookieHelper.get("how_admin_session");
-    } else {
-      token = await getAdminSessionCookieFn();
-    }
+    try {
+      if (typeof document !== "undefined") {
+        token = cookieHelper.get("how_admin_session");
+      } else {
+        token = await getAdminSessionCookieFn();
+      }
 
-    if (token) {
-      isAuthenticated = await checkAdminAuthFn({ data: token });
+      if (token) {
+        isAuthenticated = await checkAdminAuthFn({ data: token });
+      }
+    } catch (err) {
+      console.warn("Failed to check admin authentication on server:", err);
     }
 
     const isLoginPath = location.pathname === "/admin/login";
