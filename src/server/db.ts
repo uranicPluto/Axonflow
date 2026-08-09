@@ -428,23 +428,27 @@ function generateDefaultDb() {
 
 // Sync read/write functions for local JSON DB
 export function readLocalDb() {
-  if (!fs.existsSync(LOCAL_DB_PATH)) {
+  try {
+    if (fs.existsSync(LOCAL_DB_PATH)) {
+      const raw = fs.readFileSync(LOCAL_DB_PATH, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.error("Failed to read local DB:", err);
+  }
+
+  const defaults = generateDefaultDb();
+
+  try {
     if (!fs.existsSync(LOCAL_DB_DIR)) {
       fs.mkdirSync(LOCAL_DB_DIR, { recursive: true });
     }
-    const defaults = generateDefaultDb();
     fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(defaults, null, 2), "utf-8");
-    return defaults;
-  }
-  try {
-    const raw = fs.readFileSync(LOCAL_DB_PATH, "utf-8");
-    return JSON.parse(raw);
   } catch (err) {
-    console.error("Failed to read local DB, resetting to default", err);
-    const defaults = generateDefaultDb();
-    fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(defaults, null, 2), "utf-8");
-    return defaults;
+    console.warn("Failed to write local DB seed (expected on serverless read-only platforms):", err);
   }
+
+  return defaults;
 }
 
 export function writeLocalDb(data: any) {
