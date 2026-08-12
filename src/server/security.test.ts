@@ -3156,8 +3156,38 @@ async function runSecurityTests() {
     results.push({ id: "DL", name: "E2E Route Handler: /api/health returns controlled health JSON without unhandled throws", expected: "controlled status (healthy/degraded/unhealthy)", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DM: Full Production Server Entry Fetch Execution (server.ts) ──
+  try {
+    const serverModule = await import("../server");
+    const serverEntry = serverModule.default;
+
+    const healthReq = new Request("https://houseofworkflow.com/api/health", { method: "GET" });
+    const healthRes = await serverEntry.fetch(healthReq, {}, {});
+
+    const calcomReq = new Request("https://houseofworkflow.com/api/webhook/calcom", { method: "GET" });
+    const calcomRes = await serverEntry.fetch(calcomReq, {}, {});
+
+    const healthBody = await healthRes.text();
+    const calcomBody = await calcomRes.text();
+
+    const isHealthOk = (healthRes.status === 200 || healthRes.status === 503) &&
+                       healthRes.headers.get("content-type")?.includes("application/json") &&
+                       healthRes.headers.get("cache-control")?.includes("no-store") &&
+                       !healthBody.includes('"unhandled":true');
+
+    const isCalcomOk = calcomRes.status === 200 && calcomBody.includes("Cal.com Webhook Receiver Active");
+
+    if (isHealthOk && isCalcomOk) {
+      results.push({ id: "DM", name: "Full Server Entry: server.ts fetch handler dispatches /api/health and /api/webhook/calcom correctly", expected: "health 200/503 JSON with cache headers, calcom 200 text", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DM", name: "Full Server Entry: server.ts fetch handler dispatches /api/health and /api/webhook/calcom correctly", expected: "health 200/503 JSON with cache headers, calcom 200 text", actual: `FAIL: healthStatus=${healthRes.status}, calcomStatus=${calcomRes.status}, body=${healthBody}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DM", name: "Full Server Entry: server.ts fetch handler dispatches /api/health and /api/webhook/calcom correctly", expected: "health 200/503 JSON with cache headers, calcom 200 text", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DL):");
+  console.log("TEST RESULTS SUMMARY (A-DM):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3167,7 +3197,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DL) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DM) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);
