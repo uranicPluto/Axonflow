@@ -1,0 +1,309 @@
+{
+  "name": "Cal.com Webhook Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cal-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-trigger",
+      "name": "Cal.com Webhook Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\n\nconst signature = $request.headers['x-cal-signature-256'];\nconst secret = process.env.CAL_WEBHOOK_SECRET;\n\nif (secret) {\n  const hmac = crypto.createHmac('sha256', secret);\n  const digest = hmac.update(JSON.stringify($json.body)).digest('hex');\n  \n  try {\n    const signatureBuffer = Buffer.from(signature, 'hex');\n    const digestBuffer = Buffer.from(digest, 'hex');\n    \n    if (signatureBuffer.length !== digestBuffer.length || !crypto.timingSafeEqual(signatureBuffer, digestBuffer)) {\n      throw new Error('Invalid signature');\n    }\n  } catch (e) {\n    return { json: { verified: false, error: 'Signature mismatch' } };\n  }\n}\n\nreturn { json: { verified: true, body: $json.body } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ],
+      "id": "verify-signature",
+      "name": "Verify Signature"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "type": "string"
+          },
+          "conditions": [
+            {
+              "id": "check-verified",
+              "leftValue": "={{ $json.verified }}",
+              "operator": "isTrue",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "is-verified",
+      "name": "Is Signature Verified?"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "type": "string"
+                },
+                "conditions": [
+                  {
+                    "id": "is-created",
+                    "leftValue": "={{ $json.body.triggerEvent }}",
+                    "operator": "equals",
+                    "rightValue": "BOOKING_CREATED"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameKeys": {},
+              "outputIndex": 0
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "type": "string"
+                },
+                "conditions": [
+                  {
+                    "id": "is-rescheduled",
+                    "leftValue": "={{ $json.body.triggerEvent }}",
+                    "operator": "equals",
+                    "rightValue": "BOOKING_RESCHEDULED"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameKeys": {},
+              "outputIndex": 1
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "type": "string"
+                },
+                "conditions": [
+                  {
+                    "id": "is-cancelled",
+                    "leftValue": "={{ $json.body.triggerEvent }}",
+                    "operator": "equals",
+                    "rightValue": "BOOKING_CANCELLED"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameKeys": {},
+              "outputIndex": 2
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        600,
+        0
+      ],
+      "id": "route-event",
+      "name": "Route Event Type"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.leads (name, email, source, status) VALUES ($1, $2, 'book_a_call', 'meeting_booked') ON CONFLICT (email) DO UPDATE SET status = 'meeting_booked' RETURNING id;",
+        "additionalFields": {
+          "queryParams": "={{ [$json.body.payload.attendees[0].name, $json.body.payload.attendees[0].email] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        850,
+        -150
+      ],
+      "id": "sync-lead-creation",
+      "name": "Upsert Lead (Created)"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.bookings (lead_id, cal_booking_id, start_time, end_time, reschedule_url, cancel_url, status) VALUES ($1, $2, $3, $4, $5, $6, 'confirmed') ON CONFLICT (cal_booking_id) DO UPDATE SET start_time = $3, end_time = $4, status = 'confirmed' RETURNING id;",
+        "additionalFields": {
+          "queryParams": "={{ [$node[\"Upsert Lead (Created)\"].json.id, $json.body.payload.bookingId, $json.body.payload.startTime, $json.body.payload.endTime, $json.body.payload.rescheduleUrl, $json.body.payload.cancelUrl] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        1050,
+        -150
+      ],
+      "id": "sync-booking-creation",
+      "name": "Insert Booking"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.bookings SET start_time = $1, end_time = $2, status = 'rescheduled', reschedule_url = $3, cancel_url = $4 WHERE cal_booking_id = $5 RETURNING lead_id;",
+        "additionalFields": {
+          "queryParams": "={{ [$json.body.payload.startTime, $json.body.payload.endTime, $json.body.payload.rescheduleUrl, $json.body.payload.cancelUrl, $json.body.payload.bookingId] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        850,
+        0
+      ],
+      "id": "sync-booking-reschedule",
+      "name": "Update Booking (Rescheduled)"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.bookings SET status = 'cancelled' WHERE cal_booking_id = $1 RETURNING lead_id;",
+        "additionalFields": {
+          "queryParams": "={{ [$json.body.payload.bookingId] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        850,
+        150
+      ],
+      "id": "sync-booking-cancellation",
+      "name": "Update Booking (Cancelled)"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.leads SET status = 'cancelled' WHERE id = $1 RETURNING id;",
+        "additionalFields": {
+          "queryParams": "={{ [$node[\"Update Booking (Cancelled)\"].json.lead_id] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        1050,
+        150
+      ],
+      "id": "cancel-lead-status",
+      "name": "Cancel Lead Status"
+    }
+  ],
+  "connections": {
+    "Cal.com Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Verify Signature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Signature": {
+      "main": [
+        [
+          {
+            "node": "Is Signature Verified?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Signature Verified?": {
+      "main": [
+        [
+          {
+            "node": "Route Event Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Event Type": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead (Created)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Booking (Rescheduled)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Booking (Cancelled)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Lead (Created)": {
+      "main": [
+        [
+          {
+            "node": "Insert Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Booking (Cancelled)": {
+      "main": [
+        [
+          {
+            "node": "Cancel Lead Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {}
+}

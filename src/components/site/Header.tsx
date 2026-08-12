@@ -6,6 +6,7 @@ import { mainNav, brand } from "@/content/site";
 import { cn } from "@/lib/utils";
 
 import { BookingModal } from "./BookingModal";
+import { ExperienceModal } from "./ExperienceModal";
 import { ArrowRight, Container } from "./primitives";
 
 function Wordmark({ tone = "light" }: { tone?: "light" | "dark" }) {
@@ -54,6 +55,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [experienceOpen, setExperienceOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -115,18 +117,19 @@ export function Header() {
 
             <div className="flex items-center justify-end gap-2">
               <div className="hidden items-center gap-2 lg:flex">
-                <Link
-                  to="/careers"
-                  className="flex h-9 items-center rounded-full px-3.5 text-[0.875rem] text-muted-foreground transition-colors hover:text-foreground"
+                <button
+                  type="button"
+                  onClick={() => setExperienceOpen(true)}
+                  className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
                 >
-                  Careers
-                </Link>
+                  Experience Service
+                </button>
                 <button
                   type="button"
                   onClick={() => setBookingOpen(true)}
                   className="group inline-flex h-9 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-float active:translate-y-0"
                 >
-                  Book a discovery call
+                  Book a call
                   <ArrowRight />
                 </button>
               </div>
@@ -269,17 +272,29 @@ export function Header() {
                     </Link>
                   </li>
                 </ul>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setBookingOpen(true);
-                  }}
-                  className="group mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-primary px-7 text-[0.95rem] font-medium text-primary-foreground shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-float active:translate-y-0"
-                >
-                  Book a discovery call
-                  <ArrowRight />
-                </button>
+                <div className="mt-5 flex flex-col gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setExperienceOpen(true);
+                    }}
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
+                  >
+                    Experience Our Service
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setBookingOpen(true);
+                    }}
+                    className="group flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-[0.95rem] font-medium text-primary-foreground shadow-lift transition-all duration-300"
+                  >
+                    Book a call
+                    <ArrowRight />
+                  </button>
+                </div>
               </Container>
             </motion.div>
           ) : null}
@@ -287,6 +302,7 @@ export function Header() {
       </header>
 
       <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
+      <ExperienceModal isOpen={experienceOpen} onClose={() => setExperienceOpen(false)} />
     </>
   );
 }

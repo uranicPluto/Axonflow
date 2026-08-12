@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { checkAdminAuthFn, cookieHelper, getAdminSessionCookieFn, getLeadsFn, getPostsFn } from "@/lib/db";
-import { Cpu, LayoutDashboard, Users, Activity, Sliders, LogOut, ChevronRight, Menu, X, Globe } from "lucide-react";
+import { Cpu, LayoutDashboard, Users, Activity, Sliders, LogOut, ChevronRight, Menu, X, Globe, BarChart3 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location, cause }) => {
@@ -88,7 +88,10 @@ function AdminLayout() {
   }
 
   const navItems = [
-    { section: "OVERVIEW", items: [{ label: "Dashboard", to: "/admin/dashboard", icon: LayoutDashboard }] },
+    { section: "OVERVIEW", items: [
+      { label: "Dashboard", to: "/admin/dashboard", icon: LayoutDashboard },
+      { label: "Analytics", to: "/admin/analytics", icon: BarChart3 },
+    ] },
     {
       section: "LEADS",
       items: [

@@ -1,0 +1,185 @@
+{
+  "name": "Flow A: Production Book-a-Call Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "calcom-webhook",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "1d9482f3-1811-4bc0-9d0d-27b3bde6579b",
+      "name": "Cal.com Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 350]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://houseofworkflow.com/api/webhook/calcom",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-cal-signature-256",
+              "value": "={{ $input.first().headers['x-cal-signature-256'] || $input.first().headers['X-Cal-Signature-256'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $input.first().rawBody }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true
+            }
+          },
+          "retry": {
+            "enabled": true,
+            "maxRetries": 2,
+            "waitBetweenTries": 5000
+          }
+        }
+      },
+      "id": "e4f5a6b7-c8d9-4e0f-9a1b-2c3d4e5f6a7b",
+      "name": "Forward Raw Webhook to AxonFlow API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [550, 350],
+      "continueOnFail": true,
+      "notes": "IMPORTANT: Forwards the original raw body bytes and the original Cal.com signature header.\nDo NOT parse or re-serialize the body before sending — the HMAC is verified\nagainst the exact bytes received from Cal.com. The application API performs\nthe authoritative signature verification.\n\nERROR HANDLING:\n- HTTP 2xx: normal completion — no further action.\n- HTTP 4xx: client error (bad signature, duplicate, unsupported event).\n  These are NOT retried (retrying a 400/401 will always fail again).\n  A log entry is written via the '4xx Client Error Log' node.\n- HTTP 5xx: server error — controlled retry (up to 2 retries, 5s apart).\n  Persistent failure routes to Slack alert.\n- continueOnFail=true so the error branch executes instead of halting the workflow."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "4xx-check",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 400,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "4xx-upper-check",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 500,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "f6g7h8i9-j0k1-4l2m-3n4o-5p6q7r8s9t0u",
+      "name": "Is 4xx Client Error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [850, 350]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log the 4xx rejection without retrying.\n// 4xx means the request was structurally invalid (bad signature, duplicate,\n// unsupported event). Retrying will never help — log and drop cleanly.\nconst statusCode = $input.first().json.statusCode || 'unknown';\nconst body = JSON.stringify($input.first().json.body || $input.first().json);\nconsole.log(`[Flow-A] Cal.com webhook rejected by AxonFlow API. Status: ${statusCode}. Body: ${body}. Not retried.`);\nreturn [{ json: { logged: true, statusCode, body } }];"
+      },
+      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "4xx Client Error Log",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1150, 250],
+      "notes": "Do NOT retry 4xx responses. They indicate a permanent client-side error:\n- 400 Bad Request (malformed payload, unsupported event type)\n- 401 Unauthorized (invalid or missing HMAC signature)\n- 413 Payload Too Large\nRetrying these will always produce the same failure. Log and complete cleanly."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"[ALERT - Flow A] Persistent 5xx error from AxonFlow API after retries. Status: \" + ($json.statusCode || 'unknown') + \" — \" + JSON.stringify($json.body || $json.message || $json)\n}",
+        "options": {}
+      },
+      "id": "d5e6f7a8-b9c0-4d1e-2f3a-4b5c6d7e8f9a",
+      "name": "Slack Error Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1150, 450],
+      "notes": "Fires only on persistent 5xx failures after retry exhaustion.\nSLACK_WEBHOOK_URL must be configured as an n8n environment variable.\nNo Slack credentials or webhook URLs are hardcoded in this workflow."
+    }
+  ],
+  "connections": {
+    "Cal.com Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Forward Raw Webhook to AxonFlow API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forward Raw Webhook to AxonFlow API": {
+      "main": [
+        [
+          {
+            "node": "Is 4xx Client Error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is 4xx Client Error?": {
+      "main": [
+        [
+          {
+            "node": "4xx Client Error Log",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Slack Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "_meta": {
+    "axonflow": {
+      "version": "2.0.0",
+      "lastModified": "2026-08-12",
+      "securityPolicy": {
+        "noHardcodedSecrets": true,
+        "slackWebhookSource": "$env.SLACK_WEBHOOK_URL",
+        "hmacVerificationBoundary": "AxonFlow API (/api/webhook/calcom)",
+        "n8nRole": "raw body relay only — no HMAC implementation in n8n"
+      },
+      "errorHandling": {
+        "2xx": "normal completion",
+        "4xx": "log and drop — no retry (client errors are permanent)",
+        "5xx": "retry up to 2 times (5s apart) then Slack alert"
+      }
+    }
+  }
+}

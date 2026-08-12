@@ -3,6 +3,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { useRef, useState } from "react";
 
 import { BookingModal } from "@/components/site/BookingModal";
+import { ExperienceModal } from "@/components/site/ExperienceModal";
 import { CtaBand } from "@/components/site/CtaBand";
 import { Faq, LogoTicker } from "@/components/site/Testimonials";
 import { VideoPlaceholder } from "@/components/site/VideoPlaceholder";
@@ -49,6 +50,7 @@ const problems = [
 function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [experienceOpen, setExperienceOpen] = useState(false);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const graphY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : 70]);
@@ -95,20 +97,25 @@ function Home() {
                   your team gets hours back, operations run without intervention, and revenue
                   compounds on its own.
                 </p>
-                <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <button
                     type="button"
                     onClick={() => setBookingOpen(true)}
                     className="group inline-flex h-13 items-center justify-center gap-2 rounded-full bg-primary px-7 text-[0.95rem] font-medium text-primary-foreground shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-float active:translate-y-0"
                   >
-                    Book a discovery call
+                    Book a call
                     <ArrowRight />
                   </button>
-                  <ButtonLink to="/case-studies" size="lg" variant="outline">
-                    View Portfolio
-                  </ButtonLink>
+                  <button
+                    type="button"
+                    onClick={() => setExperienceOpen(true)}
+                    className="group inline-flex h-13 items-center justify-center gap-2 rounded-full border border-hairline bg-card px-7 text-[0.95rem] font-medium text-foreground transition-all duration-300 hover:border-primary/40 hover:bg-muted/40"
+                  >
+                    Experience Our Service
+                  </button>
                 </div>
                 <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
+                <ExperienceModal isOpen={experienceOpen} onClose={() => setExperienceOpen(false)} />
                 <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-hairline pt-8">
                   {heroMetrics.map((m) => (
                     <div key={m.label}>

@@ -1,4 +1,8 @@
 import "./lib/error-capture";
+import { assertProductionEnv } from "./server/env-check";
+
+// Fail fast on startup in production if any required environment variable is missing
+assertProductionEnv();
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";

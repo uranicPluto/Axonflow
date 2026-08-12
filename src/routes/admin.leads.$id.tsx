@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { getLeadFn, updateLeadStatusFn, updateLeadNotesFn, deleteLeadFn, Lead } from "@/lib/db";
+import { getLeadFn, updateLeadStatusFn, updateLeadNotesFn, deleteLeadFn, updateLeadQualificationFn, getCommunicationLogsByLeadFn, Lead } from "@/lib/db";
 import { ArrowLeft, Mail, Phone, ExternalLink, Trash2, Copy, CheckCircle, Clock, Calendar, Flame, AlertCircle } from "lucide-react";
 
 export const Route = createFileRoute("/admin/leads/$id")({
@@ -11,6 +11,7 @@ function LeadDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const [lead, setLead] = useState<Lead | null>(null);
+  const [commLogs, setCommLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
   // Action states
@@ -21,6 +22,12 @@ function LeadDetail() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [transcriptExpanded, setTranscriptExpanded] = useState(false);
 
+  // Override states
+  const [manualScore, setManualScore] = useState<number>(0);
+  const [manualOverride, setManualOverride] = useState<boolean>(false);
+  const [overrideReason, setOverrideReason] = useState<string>("");
+  const [savingOverride, setSavingOverride] = useState(false);
+
   const loadLead = async () => {
     try {
       const data = await getLeadFn({ data: id });
@@ -28,9 +35,14 @@ function LeadDetail() {
         setLead(data);
         setStatus(data.status);
         setNotes(data.internal_notes || "");
+        setManualScore(data.lead_score || 0);
+        setManualOverride(!!data.lead_score_manual_override);
+        setOverrideReason(data.lead_score_override_reason || "");
       }
+      const logs = await getCommunicationLogsByLeadFn({ data: id });
+      setCommLogs(logs || []);
     } catch (err) {
-      console.error("Failed to load lead details:", err);
+      console.error("Failed to load lead details or communication logs:", err);
     } finally {
       setLoading(false);
     }
@@ -63,6 +75,29 @@ function LeadDetail() {
       alert("Failed to update notes");
     } finally {
       setSavingNotes(false);
+    }
+  };
+
+  const handleSaveOverride = async () => {
+    setSavingOverride(true);
+    try {
+      await updateLeadQualificationFn({
+        data: {
+          leadId: id,
+          qualificationData: {
+            lead_score: manualOverride ? Number(manualScore) : undefined,
+            lead_score_manual_override: manualOverride,
+            lead_score_override_reason: manualOverride ? overrideReason : ""
+          }
+        }
+      });
+      await loadLead();
+      alert("Override settings saved successfully!");
+    } catch (err: any) {
+      console.error(err);
+      alert("Failed to save override settings: " + (err.message || err));
+    } finally {
+      setSavingOverride(false);
     }
   };
 
@@ -166,8 +201,8 @@ function LeadDetail() {
             <h1 className="font-display text-2xl font-bold text-[#0D0D0D] tracking-tight">{lead.name}</h1>
             {lead.lead_score !== undefined && (
               <span className="flex items-center gap-1 bg-[#3B5BDB]/10 text-[#3B5BDB] text-xs font-bold px-2.5 py-0.5 rounded font-mono">
-                {lead.lead_score >= 8 && <Flame size={12} className="fill-current text-[#E05555]" />}
-                Score: {lead.lead_score}/10
+                {lead.lead_score >= 70 && <Flame size={12} className="fill-current text-[#E05555]" />}
+                Score: {lead.lead_score}/100
               </span>
             )}
           </div>
@@ -391,6 +426,72 @@ function LeadDetail() {
               )}
             </div>
           )}
+
+          {/* Outbound Communication History */}
+          <div className="rounded-xl border border-[#E5E4E0] bg-white p-6 shadow-sm space-y-4">
+            <h3 className="text-xs font-bold text-[#6B6B6B] font-mono tracking-wider uppercase border-b border-[#E5E4E0] pb-2">
+              COMMUNICATION HISTORY
+            </h3>
+            {commLogs.length === 0 ? (
+              <p className="text-xs text-[#9B9B9B] italic">No communication logs recorded for this lead.</p>
+            ) : (
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                {commLogs.map((log) => (
+                  <div key={log.id} className="p-3.5 rounded-xl border border-[#E5E4E0] bg-[#F8F7F4]/30 space-y-2 text-xs">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold capitalize flex items-center gap-1">
+                          {log.channel === "whatsapp" && "📱 WhatsApp"}
+                          {log.channel === "email" && "✉️ Email"}
+                          {log.channel === "voice" && "📞 Outbound Call"}
+                        </span>
+                        <span className="text-[10px] text-[#9B9B9B] font-mono bg-[#E5E4E0]/40 px-1.5 py-0.5 rounded">
+                          {log.provider}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          log.status === "sent" || log.status === "delivered" || log.status === "read"
+                            ? "bg-[#2EA86B]/15 text-[#2EA86B]"
+                            : log.status === "failed"
+                            ? "bg-[#E05555]/15 text-[#E05555]"
+                            : "bg-[#F0A500]/15 text-[#F0A500]"
+                        }`}>
+                          {log.status.toUpperCase()}
+                        </span>
+                        <span className="text-[10px] text-[#9B9B9B] font-mono">
+                          {formatDate(log.created_at)}
+                        </span>
+                      </div>
+                    </div>
+                    {log.template_name && (
+                      <div>
+                        <span className="text-[10px] text-[#9B9B9B] font-mono font-bold block">TEMPLATE USED</span>
+                        <span className="font-mono text-[11px] text-[#0D0D0D]">{log.template_name}</span>
+                      </div>
+                    )}
+                    {log.message_type && !log.template_name && (
+                      <div>
+                        <span className="text-[10px] text-[#9B9B9B] font-mono font-bold block">MESSAGE TYPE</span>
+                        <span className="text-[11px] text-[#0D0D0D]">{log.message_type}</span>
+                      </div>
+                    )}
+                    {log.idempotency_key && (
+                      <div>
+                        <span className="text-[10px] text-[#9B9B9B] font-mono font-bold block">IDEMPOTENCY KEY</span>
+                        <span className="font-mono text-[10px] text-[#6B6B6B] break-all">{log.idempotency_key}</span>
+                      </div>
+                    )}
+                    {log.error_message && (
+                      <div className="bg-[#E05555]/5 border border-[#E05555]/15 p-2 rounded-lg mt-1 text-[11px] text-[#E05555]">
+                        <strong>Error:</strong> {log.error_message}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column — Sidebar actions (1 col wide) */}
@@ -442,6 +543,65 @@ function LeadDetail() {
               className="w-full rounded-xl border border-[#E5E4E0] bg-white text-[#0D0D0D] hover:bg-[#F8F7F4] py-2 text-xs font-semibold tracking-wide disabled:opacity-50 transition shadow-sm"
             >
               {savingNotes ? "Saving..." : "Save Notes"}
+            </button>
+          </div>
+
+          {/* Lead Scoring Override */}
+          <div className="rounded-xl border border-[#E5E4E0] bg-white p-6 shadow-sm space-y-4">
+            <h4 className="text-[10px] font-bold tracking-wider text-[#6B6B6B] uppercase font-mono border-b border-[#E5E4E0] pb-2">
+              LEAD SCORE OVERRIDE
+            </h4>
+            
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-[#0d0d0d]">Enable Manual Override</span>
+              <input
+                type="checkbox"
+                checked={manualOverride}
+                onChange={(e) => setManualOverride(e.target.checked)}
+                className="h-4 w-4 rounded border-[#E5E4E0] text-[#3B5BDB] focus:ring-[#3B5BDB]/50 cursor-pointer"
+              />
+            </div>
+
+            {manualOverride && (
+              <div className="space-y-4 mt-2">
+                <div>
+                  <label className="block text-[10px] font-bold text-[#6B6B6B] uppercase font-mono mb-1">
+                    Manual Score (0 - 100)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={manualScore}
+                    onChange={(e) => setManualScore(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
+                    className="w-full rounded-xl border border-[#E5E4E0] bg-white px-3 py-2 text-xs text-[#0D0D0D] focus:border-[#3B5BDB]/50 focus:outline-none transition font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-[#6B6B6B] uppercase font-mono mb-1">
+                    Override Reason
+                  </label>
+                  <input
+                    type="text"
+                    value={overrideReason}
+                    onChange={(e) => setOverrideReason(e.target.value)}
+                    placeholder="e.g. VIP client referral..."
+                    className="w-full rounded-xl border border-[#E5E4E0] bg-white px-3 py-2 text-xs text-[#0D0D0D] focus:border-[#3B5BDB]/50 focus:outline-none transition"
+                  />
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={handleSaveOverride}
+              disabled={savingOverride || (
+                lead.lead_score_manual_override === manualOverride &&
+                lead.lead_score === manualScore &&
+                lead.lead_score_override_reason === overrideReason
+              )}
+              className="w-full rounded-xl bg-[#3B5BDB] text-white py-2 text-xs font-semibold tracking-wide hover:bg-[#2f4bc4] disabled:opacity-50 transition shadow-sm"
+            >
+              {savingOverride ? "Saving..." : "Save Override"}
             </button>
           </div>
 

@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useMemo } from "react";
 import { getLeadsFn, updateLeadStatusFn, Lead } from "@/lib/db";
 import { Search, Filter, Kanban, Table, ArrowUpDown, Flame } from "lucide-react";
+import { LeadWorkspaceModal } from "@/components/admin/LeadWorkspaceModal";
 
 export const Route = createFileRoute("/admin/leads/")({
   component: LeadsInbox,
@@ -12,6 +13,7 @@ function LeadsInbox() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
+  const [selectedWorkspaceLead, setSelectedWorkspaceLead] = useState<Lead | null>(null);
   
   // Filters & Search State
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -69,10 +71,10 @@ function LeadsInbox() {
 
     // Apply Custom Sorting
     result.sort((a, b) => {
-      // Hot leads (score >= 8) are always sorted to the top under the "new" filter
+      // Hot leads (score >= 70) are always sorted to the top under the "new" filter
       if (statusFilter === "new") {
-        const aIsHot = (a.lead_score || 0) >= 8;
-        const bIsHot = (b.lead_score || 0) >= 8;
+        const aIsHot = (a.lead_score || 0) >= 70;
+        const bIsHot = (b.lead_score || 0) >= 70;
         if (aIsHot && !bIsHot) return -1;
         if (!aIsHot && bIsHot) return 1;
       }
@@ -289,12 +291,12 @@ function LeadsInbox() {
                     <tr
                       key={lead.id}
                       className="hover:bg-[#F8F7F4]/30 transition cursor-pointer"
-                      onClick={() => navigate({ to: `/admin/leads/${lead.id}` })}
+                      onClick={() => setSelectedWorkspaceLead(lead)}
                     >
                       <td className="p-4 font-semibold text-[#0D0D0D]">
                         <div className="flex items-center gap-1.5">
                           <span>{lead.name}</span>
-                          {(lead.lead_score || 0) >= 8 && (
+                          {(lead.lead_score || 0) >= 70 && (
                             <span className="flex items-center gap-0.5 bg-[#E05555]/10 text-[#E05555] text-[9px] font-bold px-1 py-0.2 rounded">
                               <Flame size={10} className="fill-current" /> Hot
                             </span>
@@ -312,14 +314,14 @@ function LeadsInbox() {
                       <td className="p-4 text-[#6B6B6B]">{formatDate(lead.created_at)}</td>
                       <td className="p-4">{getStatusBadge(lead.status)}</td>
                       <td className="p-4 font-mono font-bold text-[#3B5BDB]">
-                        {lead.lead_score !== undefined ? `${lead.lead_score}/10` : "—"}
+                        {lead.lead_score !== undefined ? `${lead.lead_score}/100` : "—"}
                       </td>
                       <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <button
-                          onClick={() => navigate({ to: `/admin/leads/${lead.id}` })}
+                          onClick={() => setSelectedWorkspaceLead(lead)}
                           className="bg-white border border-[#E5E4E0] text-[#0D0D0D] font-semibold px-3 py-1.5 rounded-lg hover:bg-[#F8F7F4] transition shadow-sm"
                         >
-                          View
+                          Workspace
                         </button>
                       </td>
                     </tr>
@@ -395,7 +397,7 @@ function LeadsInbox() {
                     >
                       <div className="flex items-start justify-between gap-1.5">
                         <span className="font-bold text-[#0D0D0D] truncate">{lead.name}</span>
-                        {(lead.lead_score || 0) >= 8 && (
+                        {(lead.lead_score || 0) >= 70 && (
                           <span className="flex items-center gap-0.5 bg-[#E05555]/10 text-[#E05555] text-[9px] font-bold px-1 py-0.2 rounded shrink-0">
                             <Flame size={10} className="fill-current" /> Hot
                           </span>
@@ -411,7 +413,7 @@ function LeadsInbox() {
 
                       {lead.lead_score !== undefined && (
                         <div className="text-[10px] font-medium text-[#6B6B6B] font-mono">
-                          Score: <span className="font-bold text-[#3B5BDB]">{lead.lead_score}/10</span>
+                          Score: <span className="font-bold text-[#3B5BDB]">{lead.lead_score}/100</span>
                         </div>
                       )}
 
@@ -430,6 +432,15 @@ function LeadsInbox() {
             );
           })}
         </div>
+      )}
+
+      {/* LEAD WORKSPACE MODAL */}
+      {selectedWorkspaceLead && (
+        <LeadWorkspaceModal
+          lead={selectedWorkspaceLead}
+          onClose={() => setSelectedWorkspaceLead(null)}
+          onLeadUpdated={loadLeads}
+        />
       )}
     </div>
   );

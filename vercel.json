@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/_serverFn/runLogCleanupFn",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

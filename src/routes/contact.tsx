@@ -1,40 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "motion/react";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 
 import { Container, Eyebrow, Reveal, Section } from "@/components/site/primitives";
 import { Faq } from "@/components/site/Testimonials";
 import { jsonLd, pageMeta } from "@/components/site/seo";
-import { serviceNav } from "@/content/site";
 import { brand } from "@/content/site";
+import { ExperienceForm } from "@/components/site/ExperienceForm";
+
+declare global {
+  interface Window {
+    Cal?: any;
+  }
+}
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     ...pageMeta({
-      title: "Contact Axonflow — book a discovery call",
+      title: "Contact House Of Workflow — Book a Call or Experience Service",
       description:
-        "Tell us about your team and the workflow you want to fix. We reply within one business day with next steps or a scoped discovery call.",
+        "Tell us about your team and the workflow you want to fix. Experience our automated AI intake or schedule a direct call with Jay.",
       path: "/contact",
     }),
     ...jsonLd({
       "@context": "https://schema.org",
       "@type": "ContactPage",
-      name: "Contact Axonflow",
+      name: "Contact House Of Workflow",
       url: `${brand.url}/contact`,
     }),
   }),
   component: Contact,
 });
-
-const teamSizes = ["1–10", "11–50", "51–200", "201–1,000", "1,000+"];
-const budgetRanges = [
-  "Under $25k",
-  "$25k–$75k",
-  "$75k–$150k",
-  "$150k–$300k",
-  "$300k+",
-  "Not sure yet",
-];
 
 const faqs = [
   {
@@ -55,58 +50,54 @@ const faqs = [
   },
 ];
 
-type FormState = {
-  name: string;
-  email: string;
-  company: string;
-  teamSize: string;
-  budget: string;
-  interest: string;
-  message: string;
-};
-
-const initialState: FormState = {
-  name: "",
-  email: "",
-  company: "",
-  teamSize: "",
-  budget: "",
-  interest: "",
-  message: "",
-};
-
 function Contact() {
-  const [form, setForm] = useState<FormState>(initialState);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [activeTab, setActiveTab] = useState<"message" | "schedule">(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get("tab") === "schedule" ? "schedule" : "message";
+    }
+    return "message";
+  });
 
-  const inputClass =
-    "mt-2 w-full rounded-xl border border-hairline bg-surface px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-ring/30";
+  useEffect(() => {
+    if (activeTab === "schedule" && typeof window !== "undefined") {
+      (function (C: any, A: any, L: any) {
+        let p = function (a: any, ar: any) { a.q.push(ar); };
+        let c = C.document;
+        C.Cal = C.Cal || function () {
+          let a = C.Cal;
+          if (!a.loaded) {
+            a.loaded = true;
+            a.q = [];
+            let s = c.createElement("script");
+            s.src = "https://embed.cal.com/embed/parent.js";
+            let h = c.getElementsByTagName("head")[0];
+            if (h) {
+              h.appendChild(s);
+            }
+          }
+          a.p = p;
+          a.ar = arguments;
+          return a;
+        };
+      })(window, "clean", null);
 
-  const errorFor = useMemo(() => errors, [errors]);
-
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((f) => ({ ...f, [key]: value }));
-  }
-
-  function validate(): boolean {
-    const next: Partial<Record<keyof FormState, string>> = {};
-    if (!form.name.trim()) next.name = "Please enter your name.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) next.email = "Enter a valid work email.";
-    if (!form.company.trim()) next.company = "Please enter your company.";
-    if (!form.teamSize) next.teamSize = "Select a team size.";
-    if (!form.budget) next.budget = "Select a budget range.";
-    if (!form.interest) next.interest = "Select an area of interest.";
-    if (!form.message.trim() || form.message.trim().length < 20)
-      next.message = "Tell us a little more — at least 20 characters.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }
-
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (validate()) setSubmitted(true);
-  }
+      if (window.Cal) {
+        window.Cal("init", { origin: "https://cal.com" });
+        window.Cal("inline", {
+          elementOrSelector: "#cal-booking-widget",
+          calLink: "houseofworkflow/discovery",
+          config: { layout: "month_view" }
+        });
+        window.Cal("ui", {
+          theme: "dark",
+          styles: { branding: { brandColor: "#000000" } },
+          hideEventTypeDetails: false,
+          layout: "month_view"
+        });
+      }
+    }
+  }, [activeTab]);
 
   return (
     <>
@@ -119,8 +110,7 @@ function Contact() {
               Tell us about the work your team shouldn't be doing.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              We read every submission ourselves. A founder or delivery lead replies within one
-              business day — usually with a discovery call time.
+              Experience our instant AI intake flow below or pick a direct time on Jay's calendar.
             </p>
           </Reveal>
         </Container>
@@ -130,160 +120,41 @@ function Contact() {
         <Container size="wide">
           <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
             <Reveal className="rounded-3xl border border-hairline bg-surface p-7 sm:p-9">
-              {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col items-start py-10"
+              <div className="mb-8 flex border-b border-hairline">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("message")}
+                  className={`pb-4 text-sm font-medium transition-colors border-b-2 pr-6 focus:outline-none cursor-pointer ${
+                    activeTab === "message"
+                      ? "border-primary text-foreground font-semibold"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                    <svg viewBox="0 0 16 16" className="h-5 w-5" fill="none">
-                      <path
-                        d="M3 8.5l3 3 7-7"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
-                  <h2 className="mt-6 font-display text-2xl font-medium">Message received.</h2>
-                  <p className="mt-3 max-w-md leading-relaxed text-muted-foreground">
-                    Thanks, {form.name.split(" ")[0] || "there"}. Someone from Axonflow will reply
-                    at {form.email} within one business day with next steps.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForm(initialState);
-                      setSubmitted(false);
-                    }}
-                    className="mt-8 text-sm font-medium text-primary underline underline-offset-4"
-                  >
-                    Send another message
-                  </button>
-                </motion.div>
+                  Experience Our Service
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("schedule")}
+                  className={`pb-4 text-sm font-medium transition-colors border-b-2 px-6 focus:outline-none cursor-pointer ${
+                    activeTab === "schedule"
+                      ? "border-primary text-foreground font-semibold"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Book A Call (Cal.com)
+                </button>
+              </div>
+
+              {activeTab === "schedule" ? (
+                <div className="relative min-h-[600px] w-full rounded-2xl overflow-hidden bg-surface">
+                  <div id="cal-booking-widget" className="h-full w-full" />
+                </div>
               ) : (
-                <form noValidate onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <label className="block text-sm font-medium">
-                      Full name
-                      <input
-                        className={inputClass}
-                        value={form.name}
-                        onChange={(e) => update("name", e.target.value)}
-                        placeholder="Jordan Reyes"
-                      />
-                      {errorFor.name ? (
-                        <p className="mt-1.5 text-xs text-ember">{errorFor.name}</p>
-                      ) : null}
-                    </label>
-                    <label className="block text-sm font-medium">
-                      Work email
-                      <input
-                        type="email"
-                        className={inputClass}
-                        value={form.email}
-                        onChange={(e) => update("email", e.target.value)}
-                        placeholder="jordan@company.com"
-                      />
-                      {errorFor.email ? (
-                        <p className="mt-1.5 text-xs text-ember">{errorFor.email}</p>
-                      ) : null}
-                    </label>
-                  </div>
-
-                  <label className="block text-sm font-medium">
-                    Company
-                    <input
-                      className={inputClass}
-                      value={form.company}
-                      onChange={(e) => update("company", e.target.value)}
-                      placeholder="Company, Inc."
-                    />
-                    {errorFor.company ? (
-                      <p className="mt-1.5 text-xs text-ember">{errorFor.company}</p>
-                    ) : null}
-                  </label>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <label className="block text-sm font-medium">
-                      Team size
-                      <select
-                        className={inputClass}
-                        value={form.teamSize}
-                        onChange={(e) => update("teamSize", e.target.value)}
-                      >
-                        <option value="">Select…</option>
-                        {teamSizes.map((t) => (
-                          <option key={t} value={t}>
-                            {t}
-                          </option>
-                        ))}
-                      </select>
-                      {errorFor.teamSize ? (
-                        <p className="mt-1.5 text-xs text-ember">{errorFor.teamSize}</p>
-                      ) : null}
-                    </label>
-                    <label className="block text-sm font-medium">
-                      Budget range
-                      <select
-                        className={inputClass}
-                        value={form.budget}
-                        onChange={(e) => update("budget", e.target.value)}
-                      >
-                        <option value="">Select…</option>
-                        {budgetRanges.map((b) => (
-                          <option key={b} value={b}>
-                            {b}
-                          </option>
-                        ))}
-                      </select>
-                      {errorFor.budget ? (
-                        <p className="mt-1.5 text-xs text-ember">{errorFor.budget}</p>
-                      ) : null}
-                    </label>
-                  </div>
-
-                  <label className="block text-sm font-medium">
-                    Area of interest
-                    <select
-                      className={inputClass}
-                      value={form.interest}
-                      onChange={(e) => update("interest", e.target.value)}
-                    >
-                      <option value="">Select…</option>
-                      {serviceNav.map((s) => (
-                        <option key={s.to} value={s.label}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                    {errorFor.interest ? (
-                      <p className="mt-1.5 text-xs text-ember">{errorFor.interest}</p>
-                    ) : null}
-                  </label>
-
-                  <label className="block text-sm font-medium">
-                    What's the workflow or problem?
-                    <textarea
-                      className={`${inputClass} min-h-[120px] resize-y`}
-                      value={form.message}
-                      onChange={(e) => update("message", e.target.value)}
-                      placeholder="Tell us who touches this process today, what's manual, and what you'd consider a win."
-                    />
-                    {errorFor.message ? (
-                      <p className="mt-1.5 text-xs text-ember">{errorFor.message}</p>
-                    ) : null}
-                  </label>
-
-                  <button
-                    type="submit"
-                    className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-medium text-primary-foreground shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-float"
-                  >
-                    Send message
-                  </button>
-                </form>
+                <ExperienceForm
+                  onPickTime={() => setActiveTab("schedule")}
+                  title="Experience Our Automation"
+                  subtitle="Submit your details to experience our automated intake flow and outbound AI call options."
+                />
               )}
             </Reveal>
 
@@ -324,13 +195,12 @@ function Contact() {
                     Reply within one business day, from a founder or delivery lead.
                   </li>
                   <li className="flex gap-2">
-                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />A
-                    30-minute discovery call to scope the process and rough automation candidates.
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                    A 30-minute discovery call to scope the process and rough automation candidates.
                   </li>
                   <li className="flex gap-2">
-                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />A
-                    written proposal with fixed-price phases where scope allows — no obligation to
-                    proceed.
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                    A written proposal with fixed-price phases where scope allows — no obligation to proceed.
                   </li>
                 </ul>
               </div>

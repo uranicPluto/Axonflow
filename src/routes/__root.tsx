@@ -15,6 +15,7 @@ import { Header } from "../components/site/Header";
 import { Footer } from "../components/site/Footer";
 import { brand } from "../content/site";
 import { CustomCursor } from "../components/site/CustomCursor";
+import { SmoothScroll } from "../components/site/SmoothScroll";
 
 function NotFoundComponent() {
   return (
@@ -132,6 +133,7 @@ function RootComponent() {
         {!isAdmin && <Footer />}
       </div>
       {!isAdmin && <CustomCursor />}
+      {!isAdmin && <SmoothScroll />}
     </QueryClientProvider>
   );
 }
