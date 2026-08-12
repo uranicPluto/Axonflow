@@ -71,10 +71,15 @@ export async function getHealthStatus(_testOverride?: HealthCheckOverride): Prom
 
   const { enabled, client } = _testOverride ?? getSupabaseState();
 
+  const hasUrl = !!(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
+  const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const hasAnonKey = !!(process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
+
   // CRITICAL CONFIGURATION GUARD: In production, Supabase is mandatory.
   // If Supabase is disabled or the admin client is not instantiated,
   // the server is misconfigured and must return unhealthy (HTTP 503).
   if (process.env.NODE_ENV === "production" && (!enabled || !client)) {
+    console.error(`[SUPABASE_HEALTH] Configuration check failed: SUPABASE_URL=${hasUrl ? "configured" : "MISSING"}, SUPABASE_SERVICE_ROLE_KEY=${hasServiceKey ? "configured" : "MISSING"}, SUPABASE_ANON_KEY=${hasAnonKey ? "configured" : "MISSING"}, supabaseAdmin=${client ? "initialized" : "null"}`);
     return {
       status: "unhealthy",
       timestamp,
@@ -96,8 +101,9 @@ export async function getHealthStatus(_testOverride?: HealthCheckOverride): Prom
           uptimeSeconds,
         };
       }
-    } catch {
-      // Catch connectivity errors without leaking details
+      console.error(`[SUPABASE_HEALTH] Database query failed: code=${error.code}, message=${error.message}`);
+    } catch (err: any) {
+      console.error(`[SUPABASE_HEALTH] Database connection thrown exception: ${err?.message || String(err)}`);
     }
 
     return {

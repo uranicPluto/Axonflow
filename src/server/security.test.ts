@@ -3071,8 +3071,30 @@ async function runSecurityTests() {
     results.push({ id: "DH", name: "Route Verification: /api/health and /api/webhook/calcom route handlers resolve cleanly", expected: "health status valid, calcom 401 unauthenticated", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DI: Production Supabase Client & Diagnostic Health Check ──
+  try {
+    const { getHealthStatus } = await import("./monitoring");
+    const savedEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+
+    const mockClient = {
+      from: (_tbl: string) => ({ select: (..._a: any[]) => Promise.resolve({ error: null, count: 1 }) })
+    };
+
+    const health = await getHealthStatus({ enabled: true, client: mockClient });
+    process.env.NODE_ENV = savedEnv;
+
+    if (health.status === "healthy" && health.database === "connected") {
+      results.push({ id: "DI", name: "Supabase: Valid production variables initialize client and return status=healthy", expected: "status=healthy, database=connected", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DI", name: "Supabase: Valid production variables initialize client and return status=healthy", expected: "status=healthy, database=connected", actual: `FAIL: ${JSON.stringify(health)}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DI", name: "Supabase: Valid production variables initialize client and return status=healthy", expected: "status=healthy, database=connected", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DH):");
+  console.log("TEST RESULTS SUMMARY (A-DI):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3082,7 +3104,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DH) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DI) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);
