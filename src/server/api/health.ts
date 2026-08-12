@@ -1,4 +1,4 @@
-import { getHealthStatus } from "../server/monitoring";
+import { getHealthStatus } from "../monitoring";
 
 /**
  * Handler for GET /api/health
@@ -6,9 +6,8 @@ import { getHealthStatus } from "../server/monitoring";
 export async function handleHealthCheckRequest(): Promise<Response> {
   const health = await getHealthStatus();
 
-  // DEGRADED STATUS SEMANTICS:
-  // If the health status is 'degraded' (e.g., Supabase database is disconnected),
-  // returning HTTP 503 (Service Unavailable) is appropriate.
+  // DEGRADED / UNHEALTHY STATUS SEMANTICS:
+  // If the health status is 'degraded' or 'unhealthy', returning HTTP 503 (Service Unavailable) is appropriate.
   const status = health.status === "healthy" ? 200 : 503;
 
   return new Response(JSON.stringify(health), {

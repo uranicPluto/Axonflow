@@ -68,12 +68,12 @@ async function handleApiRoute(request: Request): Promise<Response | null> {
 
   try {
     if (url.pathname === "/api/health") {
-      const { handleHealthCheckRequest } = await import("./routes/api.health");
+      const { handleHealthCheckRequest } = await import("./server/api/health");
       return await handleHealthCheckRequest();
     }
 
     if (url.pathname === "/api/webhook/calcom") {
-      const { handleCalcomWebhookRequest } = await import("./routes/api.webhook.calcom");
+      const { handleCalcomWebhookRequest } = await import("./server/api/calcom-webhook");
       return await handleCalcomWebhookRequest(request);
     }
   } catch (err: any) {

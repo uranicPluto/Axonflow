@@ -3124,7 +3124,7 @@ async function runSecurityTests() {
   try {
     const fs = await import("fs");
     const path = await import("path");
-    const monitoringPath = path.resolve(__dirname, "./monitoring.ts");
+    const monitoringPath = path.resolve(process.cwd(), "src/server/monitoring.ts");
     const code = fs.readFileSync(monitoringPath, "utf-8");
     const topImports = code.split("\n").filter((l) => l.startsWith("import "));
     const importsDb = topImports.some((l) => l.includes('from "./db"') || l.includes("from './db'"));
