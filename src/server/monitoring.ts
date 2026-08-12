@@ -3,7 +3,7 @@
  * Implements logic for /api/health and /api/metrics endpoints.
  */
 
-import { isSupabaseEnabled, supabaseAdmin } from "./supabase";
+import { isSupabaseEnabled, supabaseAdmin, getSupabaseAdmin } from "./supabase";
 import { db } from "./db";
 
 export interface HealthCheckResult {

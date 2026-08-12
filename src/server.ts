@@ -62,15 +62,46 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 async function handleApiRoute(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-
-  if (url.pathname === "/api/health") {
-    const { handleHealthCheckRequest } = await import("./routes/api.health");
-    return handleHealthCheckRequest();
+  if (url.pathname !== "/api/health" && url.pathname !== "/api/webhook/calcom") {
+    return null;
   }
 
-  if (url.pathname === "/api/webhook/calcom") {
-    const { handleCalcomWebhookRequest } = await import("./routes/api.webhook.calcom");
-    return handleCalcomWebhookRequest(request);
+  try {
+    if (url.pathname === "/api/health") {
+      const { handleHealthCheckRequest } = await import("./routes/api.health");
+      return await handleHealthCheckRequest();
+    }
+
+    if (url.pathname === "/api/webhook/calcom") {
+      const { handleCalcomWebhookRequest } = await import("./routes/api.webhook.calcom");
+      return await handleCalcomWebhookRequest(request);
+    }
+  } catch (err: any) {
+    console.error(`[API_ROUTE_ERROR] Uncaught exception in ${url.pathname}:`, err?.stack || err?.message || err);
+    if (url.pathname === "/api/health") {
+      return new Response(
+        JSON.stringify({
+          status: "unhealthy",
+          timestamp: new Date().toISOString(),
+          database: "disconnected",
+          environment: process.env.NODE_ENV || "production",
+          uptimeSeconds: 0,
+        }),
+        {
+          status: 503,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+          },
+        }
+      );
+    }
+    return new Response(JSON.stringify({ error: true, message: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   return null;

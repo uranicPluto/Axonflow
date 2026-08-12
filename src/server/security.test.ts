@@ -3093,8 +3093,35 @@ async function runSecurityTests() {
     results.push({ id: "DI", name: "Supabase: Valid production variables initialize client and return status=healthy", expected: "status=healthy, database=connected", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DJ: Production Runtime Environment Enabled Path & getSupabaseAdmin Import Verification ──
+  try {
+    const { getHealthStatus } = await import("./monitoring");
+    const savedUrl = process.env.SUPABASE_URL;
+    const savedKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const savedEnv = process.env.NODE_ENV;
+
+    process.env.SUPABASE_URL = "https://mockproject.supabase.co";
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "mock_service_role_key";
+    process.env.NODE_ENV = "production";
+
+    // Calling getHealthStatus without test override exercises getSupabaseState() -> getSupabaseAdmin()
+    const health = await getHealthStatus();
+
+    if (savedUrl) process.env.SUPABASE_URL = savedUrl; else delete process.env.SUPABASE_URL;
+    if (savedKey) process.env.SUPABASE_SERVICE_ROLE_KEY = savedKey; else delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    process.env.NODE_ENV = savedEnv;
+
+    if (health.status === "healthy" || health.status === "degraded") {
+      results.push({ id: "DJ", name: "Runtime Environment: getSupabaseState executes getSupabaseAdmin without throwing ReferenceError", expected: "status=healthy or degraded without exception", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DJ", name: "Runtime Environment: getSupabaseState executes getSupabaseAdmin without throwing ReferenceError", expected: "status=healthy or degraded without exception", actual: `FAIL: ${JSON.stringify(health)}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DJ", name: "Runtime Environment: getSupabaseState executes getSupabaseAdmin without throwing ReferenceError", expected: "status=healthy or degraded without exception", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DI):");
+  console.log("TEST RESULTS SUMMARY (A-DJ):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3104,7 +3131,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DI) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DJ) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);
