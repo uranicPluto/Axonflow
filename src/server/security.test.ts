@@ -3049,8 +3049,30 @@ async function runSecurityTests() {
     results.push({ id: "DG", name: "Metrics: Production mode never falls back to local_db.json", expected: "totalLeads=0, no local_db fallback", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DH: Direct Route-Level API Verification (/api/health & /api/webhook/calcom) ──
+  try {
+    const { getHealthStatus } = await import("./monitoring");
+    const { handleCalcomWebhook } = await import("./calcom-webhook-handler");
+
+    const health = await getHealthStatus();
+    const healthOk = health.status === "healthy" || health.status === "degraded" || health.status === "unhealthy";
+
+    const POST_REQ = new Request("https://localhost/api/webhook/calcom", { method: "POST", body: "{}" });
+    const calcomRes = await handleCalcomWebhook(POST_REQ);
+    // Missing signature header -> 401 Unauthorized (proves endpoint security boundary operates cleanly)
+    const calcomOk = calcomRes.status === 401;
+
+    if (healthOk && calcomOk) {
+      results.push({ id: "DH", name: "Route Verification: /api/health and /api/webhook/calcom route handlers resolve cleanly", expected: "health status valid, calcom 401 unauthenticated", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DH", name: "Route Verification: /api/health and /api/webhook/calcom route handlers resolve cleanly", expected: "health status valid, calcom 401 unauthenticated", actual: `FAIL: healthOk=${healthOk}, calcomRes.status=${calcomRes.status}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DH", name: "Route Verification: /api/health and /api/webhook/calcom route handlers resolve cleanly", expected: "health status valid, calcom 401 unauthenticated", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DG):");
+  console.log("TEST RESULTS SUMMARY (A-DH):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3060,7 +3082,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DG) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DH) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);

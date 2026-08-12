@@ -1,17 +1,20 @@
-import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { handleCalcomWebhook } from "../server/calcom-webhook-handler";
 
-// Re-export so any code that previously imported from this route file still works.
+// Re-export so any code importing handleCalcomWebhook from this file still works
 export { handleCalcomWebhook };
 
-export const APIRoute = createAPIFileRoute("/api/webhook/calcom")({
-  GET: async () => {
+/**
+ * Handler for /api/webhook/calcom (GET & POST)
+ */
+export async function handleCalcomWebhookRequest(request: Request): Promise<Response> {
+  if (request.method === "GET") {
     return new Response("Cal.com Webhook Receiver Active", {
       status: 200,
-      headers: { "Content-Type": "text/plain" }
+      headers: { "Content-Type": "text/plain" },
     });
-  },
-  POST: async ({ request }) => {
+  }
+  if (request.method === "POST") {
     return handleCalcomWebhook(request);
   }
-});
+  return new Response("Method Not Allowed", { status: 405 });
+}

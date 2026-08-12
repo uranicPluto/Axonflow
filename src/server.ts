@@ -60,32 +60,33 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+async function handleApiRoute(request: Request): Promise<Response | null> {
+  const url = new URL(request.url);
+
+  if (url.pathname === "/api/health") {
+    const { handleHealthCheckRequest } = await import("./routes/api.health");
+    return handleHealthCheckRequest();
+  }
+
+  if (url.pathname === "/api/webhook/calcom") {
+    const { handleCalcomWebhookRequest } = await import("./routes/api.webhook.calcom");
+    return handleCalcomWebhookRequest(request);
+  }
+
+  return null;
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // 1. Direct API route dispatching (bypasses UI TanStack Router 404)
+    const apiResponse = await handleApiRoute(request);
+    if (apiResponse) {
+      return apiResponse;
+    }
+
+    // 2. Lazy production environment verification
     const err = checkProductionEnvLazy();
     if (err) {
-      const url = new URL(request.url);
-      if (url.pathname === "/api/health") {
-        return new Response(
-          JSON.stringify({
-            status: "unhealthy",
-            timestamp: new Date().toISOString(),
-            database: "disconnected",
-            environment: "production",
-            uptimeSeconds: 0,
-            error: err.message,
-          }),
-          {
-            status: 503,
-            headers: {
-              "Content-Type": "application/json",
-              "Cache-Control": "no-store, no-cache, must-revalidate",
-              "Pragma": "no-cache",
-              "Expires": "0",
-            },
-          }
-        );
-      }
       return new Response(
         `<!DOCTYPE html><html><head><title>Configuration Required - House of Workflow</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>` +
         `<body style="font-family:system-ui,-apple-system,sans-serif;background:#090d16;color:#f3f4f6;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:1.5rem;">` +
@@ -104,6 +105,7 @@ export default {
       );
     }
 
+    // 3. SSR UI Router handling
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
