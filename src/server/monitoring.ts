@@ -12,6 +12,7 @@ export interface HealthCheckResult {
   database: "connected" | "disconnected" | "mock_mode";
   environment: string;
   uptimeSeconds: number;
+  error?: string;
 }
 
 export interface MetricsResult {
@@ -24,30 +25,21 @@ export interface MetricsResult {
   timestamp: string;
 }
 
-const startTime = Date.now();
-
 /**
  * Returns a live snapshot of the Supabase state.
  * In tests: override process.env.SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY to control the result.
- * In production: values are identical to the cached module-level exports from supabase.ts.
- *
- * We read process.env at call time so that the test environment can set/unset these variables
- * without needing to reassign read-only ESM module bindings.
+ * In production: values are read dynamically at request time.
  */
 function getSupabaseState(): {
   enabled: boolean;
   client: typeof supabaseAdmin;
 } {
-  // If test has monkey-patched process.env, honour that.
   const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "";
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || "";
   const anonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
 
   const runtimeEnabled = url !== "" && (serviceKey !== "" || anonKey !== "");
-
-  // In a real server run, supabaseAdmin is already initialized; defer to it.
-  // In test runs (no real client), fall back to null when the env is stripped.
-  const runtimeClient = runtimeEnabled ? (supabaseAdmin ?? null) : null;
+  const runtimeClient = runtimeEnabled ? (getSupabaseAdmin() ?? supabaseAdmin) : null;
 
   return { enabled: runtimeEnabled, client: runtimeClient };
 }
@@ -72,7 +64,7 @@ export async function getHealthStatus(_testOverride?: HealthCheckOverride): Prom
   const { enabled, client } = _testOverride ?? getSupabaseState();
 
   const hasUrl = !!(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);
-  const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const hasServiceKey = !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY);
   const hasAnonKey = !!(process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
 
   // CRITICAL CONFIGURATION GUARD: In production, Supabase is mandatory.
