@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
+      "#tanstack-router-entry": path.resolve(import.meta.dirname, "./src/router.tsx"),
     },
     dedupe: [
       "react",

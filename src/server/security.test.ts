@@ -3186,8 +3186,32 @@ async function runSecurityTests() {
     results.push({ id: "DM", name: "Full Server Entry: server.ts fetch handler dispatches /api/health and /api/webhook/calcom correctly", expected: "health 200/503 JSON with cache headers, calcom 200 text", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DN: UI Route SSR Homepage & Public Page Rendering (server.ts) ──
+  try {
+    const serverModule = await import("../server");
+    const serverEntry = serverModule.default;
+
+    const homeReq = new Request("https://houseofworkflow.com/", { method: "GET" });
+    const homeRes = await serverEntry.fetch(homeReq, {}, {});
+
+    const homeBody = await homeRes.text();
+
+    const isHomeOk = homeRes.status === 200 &&
+                     homeRes.headers.get("content-type")?.includes("text/html") &&
+                     (homeBody.includes("<html") || homeBody.includes("<!DOCTYPE html>")) &&
+                     !homeBody.includes("This page didn't load");
+
+    if (isHomeOk) {
+      results.push({ id: "DN", name: "UI SSR Homepage: server.ts renders / homepage successfully without 500 error page", expected: "HTTP 200 text/html without error page", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DN", name: "UI SSR Homepage: server.ts renders / homepage successfully without 500 error page", expected: "HTTP 200 text/html without error page", actual: `FAIL: status=${homeRes.status}, body=${homeBody.substring(0, 200)}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DN", name: "UI SSR Homepage: server.ts renders / homepage successfully without 500 error page", expected: "HTTP 200 text/html without error page", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DM):");
+  console.log("TEST RESULTS SUMMARY (A-DN):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3197,7 +3221,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DM) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DN) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);
