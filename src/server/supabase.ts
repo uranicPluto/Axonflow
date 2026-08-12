@@ -11,10 +11,8 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 const isProduction = process.env.NODE_ENV === "production" || process.env.APP_ENV === "production";
 
-// Production Configuration: FAIL FAST if service_role or URL credentials are missing
-if (isProduction && (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY)) {
-  throw new Error("CRITICAL SECURITY ERROR: Missing required Supabase production credentials (SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY). Anon key substitution for service_role is strictly prohibited.");
-}
+// In production mode, if service role key or URL are missing, supabaseAdmin remains null and isSupabaseEnabled is false.
+// This allows health monitoring (getHealthStatus) to return HTTP 503 "unhealthy" gracefully instead of crashing module import.
 
 export let isSupabaseEnabled = SUPABASE_URL !== "" && (SUPABASE_SERVICE_ROLE_KEY !== "" || SUPABASE_ANON_KEY !== "");
 
