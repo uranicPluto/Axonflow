@@ -3120,8 +3120,26 @@ async function runSecurityTests() {
     results.push({ id: "DJ", name: "Runtime Environment: getSupabaseState executes getSupabaseAdmin without throwing ReferenceError", expected: "status=healthy or degraded without exception", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DK: Health Endpoint Dependency Graph Isolation ──
+  try {
+    const fs = await import("fs");
+    const path = await import("path");
+    const monitoringPath = path.resolve(__dirname, "./monitoring.ts");
+    const code = fs.readFileSync(monitoringPath, "utf-8");
+    const topImports = code.split("\n").filter((l) => l.startsWith("import "));
+    const importsDb = topImports.some((l) => l.includes('from "./db"') || l.includes("from './db'"));
+
+    if (!importsDb) {
+      results.push({ id: "DK", name: "Health Isolation: monitoring.ts contains zero top-level imports of db.ts", expected: "no top-level db.ts import", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DK", name: "Health Isolation: monitoring.ts contains zero top-level imports of db.ts", expected: "no top-level db.ts import", actual: "FAIL: top-level db import found in monitoring.ts", status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DK", name: "Health Isolation: monitoring.ts contains zero top-level imports of db.ts", expected: "no top-level db.ts import", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DJ):");
+  console.log("TEST RESULTS SUMMARY (A-DK):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3131,7 +3149,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DJ) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DK) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);

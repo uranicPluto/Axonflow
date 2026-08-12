@@ -4,7 +4,8 @@
  */
 
 import { isSupabaseEnabled, supabaseAdmin, getSupabaseAdmin } from "./supabase";
-import { db } from "./db";
+
+const startTime = Date.now();
 
 export interface HealthCheckResult {
   status: "healthy" | "degraded" | "unhealthy";
@@ -155,6 +156,7 @@ export async function getSystemMetrics(_testOverride?: HealthCheckOverride): Pro
     }
   } else if (!isProd) {
     // Local DB metrics (strictly disallowed in production mode)
+    const { db } = await import("./db");
     const leads = await db.getLeads();
     totalLeads = leads.length;
     totalCalls = leads.filter((l) => l.call_opted_in).length;
