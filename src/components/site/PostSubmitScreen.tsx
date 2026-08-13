@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowRight, CheckCircle2, PhoneCall, Calendar } from "lucide-react";
 import { motion } from "motion/react";
 import { requestLeadCallFn } from "@/lib/db";
+import { CALCOM_EVENT_SLUG, openCalcomBookingModal } from "@/lib/calcom";
 
 interface PostSubmitScreenProps {
   leadId?: string;
@@ -100,7 +101,10 @@ export function PostSubmitScreen({ leadId, leadName, phone, callToken, onPickTim
 
             <button
               type="button"
-              onClick={onPickTime}
+              onClick={() => {
+                openCalcomBookingModal(CALCOM_EVENT_SLUG, { name: leadName });
+                if (onPickTime) onPickTime();
+              }}
               className="group flex flex-col items-center justify-between rounded-xl border border-hairline bg-background p-5 text-left transition-all hover:border-foreground/30 hover:bg-muted/30 active:scale-[0.98]"
             >
               <div className="flex w-full items-center justify-between">

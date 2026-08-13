@@ -6,6 +6,7 @@ import { Faq } from "@/components/site/Testimonials";
 import { jsonLd, pageMeta } from "@/components/site/seo";
 import { brand } from "@/content/site";
 import { ExperienceForm } from "@/components/site/ExperienceForm";
+import { CALCOM_EVENT_SLUG, initCalcomEmbed } from "@/lib/calcom";
 
 declare global {
   interface Window {
@@ -61,39 +62,18 @@ function Contact() {
 
   useEffect(() => {
     if (activeTab === "schedule" && typeof window !== "undefined") {
-      (function (C: any, A: any, L: any) {
-        let p = function (a: any, ar: any) { a.q.push(ar); };
-        let c = C.document;
-        C.Cal = C.Cal || function () {
-          let a = C.Cal;
-          if (!a.loaded) {
-            a.loaded = true;
-            a.q = [];
-            let s = c.createElement("script");
-            s.src = "https://embed.cal.com/embed/parent.js";
-            let h = c.getElementsByTagName("head")[0];
-            if (h) {
-              h.appendChild(s);
-            }
-          }
-          a.p = p;
-          a.ar = arguments;
-          return a;
-        };
-      })(window, "clean", null);
-
+      initCalcomEmbed();
       if (window.Cal) {
-        window.Cal("init", { origin: "https://cal.com" });
         window.Cal("inline", {
           elementOrSelector: "#cal-booking-widget",
-          calLink: "houseofworkflow/discovery",
-          config: { layout: "month_view" }
+          calLink: CALCOM_EVENT_SLUG,
+          config: { layout: "month_view" },
         });
         window.Cal("ui", {
           theme: "dark",
-          styles: { branding: { brandColor: "#000000" } },
+          styles: { branding: { brandColor: "#6366f1" } },
           hideEventTypeDetails: false,
-          layout: "month_view"
+          layout: "month_view",
         });
       }
     }
