@@ -2770,23 +2770,33 @@ SYSTEM ENVIRONMENT & HEALTH:
   },
 
   async markWebhookProcessed(id: string, leadId?: string): Promise<void> {
-    const updates = {
-      processed: true,
-      processed_at: new Date().toISOString(),
-      lead_id: leadId || null
-    };
+    const nowStr = new Date().toISOString();
 
     if (isSupabaseEnabled && supabaseAdmin) {
-      const { error } = await supabaseAdmin
-        .from("webhook_events")
-        .update(updates)
-        .eq("id", id);
-      if (error) throw error;
+      const { error: wfError } = await supabaseAdmin
+        .from("workflow_events")
+        .update({
+          status: "processed",
+          processed_at: nowStr,
+        })
+        .eq("event_id", id);
+
+      if (wfError && wfError.code === "PGRST205") {
+        await supabaseAdmin
+          .from("webhook_events")
+          .update({
+            processed: true,
+            processed_at: nowStr,
+            lead_id: leadId || null,
+          })
+          .eq("id", id);
+      }
     } else {
       const local = readLocalDb();
-      const idx = local.webhook_events.findIndex((e: any) => e.id === id);
+      if (!local.webhook_events) local.webhook_events = [];
+      const idx = local.webhook_events.findIndex((e: any) => e.id === id || e.provider_event_id === id);
       if (idx !== -1) {
-        local.webhook_events[idx] = { ...local.webhook_events[idx], ...updates };
+        local.webhook_events[idx] = { ...local.webhook_events[idx], processed: true, processed_at: nowStr, lead_id: leadId || null };
         writeLocalDb(local);
       }
     }
@@ -2799,82 +2809,73 @@ SYSTEM ENVIRONMENT & HEALTH:
     payload: any
   ): Promise<'processed' | 'in_flight' | 'claimed'> {
     const nowStr = new Date().toISOString();
-    
+
     if (isSupabaseEnabled && supabaseAdmin) {
-      // Query existing event
+      const sourceVal = provider === "calcom" ? "cal.com" : provider;
+
       const { data: existing, error: selectError } = await supabaseAdmin
-        .from("webhook_events")
+        .from("workflow_events")
         .select("*")
-        .eq("provider", provider)
-        .eq("provider_event_id", providerEventId);
-      
-      if (selectError) throw selectError;
-      
-      if (existing && existing.length > 0) {
+        .eq("source", sourceVal)
+        .eq("event_id", providerEventId);
+
+      if (!selectError && existing && existing.length > 0) {
         const event = existing[0];
-        if (event.processed) {
+        if (event.status === "processed") {
           return "processed";
         }
-        
-        const receivedAt = new Date(event.received_at).getTime();
-        const ageSec = (Date.now() - receivedAt) / 1000;
+
+        const createdAt = new Date(event.created_at || nowStr).getTime();
+        const ageSec = (Date.now() - createdAt) / 1000;
         if (ageSec < 30) {
           return "in_flight";
         }
-        
-        // Re-claim after 30 seconds of inactivity (failed attempt)
-        const { error: updateError } = await supabaseAdmin
-          .from("webhook_events")
-          .update({ received_at: nowStr })
+
+        await supabaseAdmin
+          .from("workflow_events")
+          .update({ status: "processing", created_at: nowStr })
           .eq("id", event.id);
-        if (updateError) throw updateError;
-        
+
         return "claimed";
       }
-      
-      // Try inserting
+
       const entry = {
-        provider,
+        event_id: providerEventId,
+        source: sourceVal,
         event_type: eventType,
-        provider_event_id: providerEventId,
-        payload_hash: null,
-        received_at: nowStr,
-        processed: false,
-        processed_at: null,
-        lead_id: null,
-        workflow_triggered: "flow_a",
-        error_message: null
+        payload,
+        status: "processing",
+        attempt_count: 1,
+        created_at: nowStr,
       };
-      
+
       const { error: insertError } = await supabaseAdmin
-        .from("webhook_events")
+        .from("workflow_events")
         .insert([entry]);
-      
+
       if (insertError) {
-        // Fallback if concurrent insert race occurred
-        if (insertError.code === "23505") { // unique constraint violation
+        if (insertError.code === "23505") {
           const { data: retryData } = await supabaseAdmin
-            .from("webhook_events")
+            .from("workflow_events")
             .select("*")
-            .eq("provider", provider)
-            .eq("provider_event_id", providerEventId);
+            .eq("source", sourceVal)
+            .eq("event_id", providerEventId);
           if (retryData && retryData.length > 0) {
-            return retryData[0].processed ? "processed" : "in_flight";
+            return retryData[0].status === "processed" ? "processed" : "in_flight";
           }
         }
         throw insertError;
       }
-      
+
       return "claimed";
     } else {
-      // Mock / Local DB Mode
       const local = readLocalDb();
       if (!local.webhook_events) local.webhook_events = [];
-      
+
       const existing = local.webhook_events.find(
         (e: any) => e.provider === provider && e.provider_event_id === providerEventId
       );
-      
+
       if (existing) {
         if (existing.processed) {
           return "processed";
@@ -2888,7 +2889,7 @@ SYSTEM ENVIRONMENT & HEALTH:
         writeLocalDb(local);
         return "claimed";
       }
-      
+
       const entry = {
         id: `wh-${Date.now()}`,
         provider,
@@ -3050,14 +3051,26 @@ SYSTEM ENVIRONMENT & HEALTH:
     }
   },
 
-  async findLeadByIdentity(email: string, phone?: string): Promise<Lead | null> {
+  async findLeadByIdentity(email: string, phone?: string, calBookingUid?: string): Promise<Lead | null> {
     const normEmail = email.toLowerCase().trim();
     const normPhone = phone ? phone.replace(/[^\d+]/g, "") : "";
 
     if (isSupabaseEnabled && supabaseAdmin) {
-      let query = supabaseAdmin.from("leads").select("*").eq("email", normEmail);
-      const { data: emailData } = await query;
-      if (emailData && emailData.length > 0) return emailData[0];
+      if (calBookingUid) {
+        const { data: uidData } = await supabaseAdmin
+          .from("leads")
+          .select("*")
+          .eq("cal_booking_uid", calBookingUid);
+        if (uidData && uidData.length > 0) return uidData[0];
+      }
+
+      if (normEmail) {
+        const { data: emailData } = await supabaseAdmin
+          .from("leads")
+          .select("*")
+          .eq("email", normEmail);
+        if (emailData && emailData.length > 0) return emailData[0];
+      }
 
       if (normPhone) {
         const { data: phoneData } = await supabaseAdmin
@@ -3070,8 +3083,16 @@ SYSTEM ENVIRONMENT & HEALTH:
     } else {
       const local = readLocalDb();
       const leads = local.leads || [];
-      const matchEmail = leads.find((l: any) => l.email.toLowerCase().trim() === normEmail);
-      if (matchEmail) return matchEmail;
+
+      if (calBookingUid) {
+        const matchUid = leads.find((l: any) => l.cal_booking_uid === calBookingUid || l.cal_event_id === calBookingUid);
+        if (matchUid) return matchUid;
+      }
+
+      if (normEmail) {
+        const matchEmail = leads.find((l: any) => l.email && l.email.toLowerCase().trim() === normEmail);
+        if (matchEmail) return matchEmail;
+      }
 
       if (normPhone) {
         const matchPhone = leads.find((l: any) => l.phone && l.phone.replace(/[^\d+]/g, "") === normPhone);
@@ -3105,10 +3126,38 @@ SYSTEM ENVIRONMENT & HEALTH:
     };
 
     if (isSupabaseEnabled && supabaseAdmin) {
-      const { error } = await supabaseAdmin
-        .from("meetings")
-        .upsert([meetingEntry], { onConflict: "cal_event_id" });
-      if (error) throw error;
+      const nowStr = new Date().toISOString();
+      const endTime = new Date(new Date(scheduledAt).getTime() + 30 * 60000).toISOString();
+
+      const { data: existing } = await supabaseAdmin
+        .from("bookings")
+        .select("id")
+        .eq("cal_booking_uid", calEventId);
+
+      const bookingRecord = {
+        lead_id: leadId,
+        cal_booking_uid: calEventId,
+        title: "House Of Workflow Discovery Call",
+        status,
+        start_time: scheduledAt,
+        end_time: endTime,
+        timezone,
+        meeting_link: link,
+        updated_at: nowStr,
+      };
+
+      if (existing && existing.length > 0) {
+        const { error } = await supabaseAdmin
+          .from("bookings")
+          .update(bookingRecord)
+          .eq("id", existing[0].id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabaseAdmin
+          .from("bookings")
+          .insert([{ ...bookingRecord, created_at: nowStr }]);
+        if (error) throw error;
+      }
     } else {
       const local = readLocalDb();
       if (!local.meetings) local.meetings = [];
@@ -3134,49 +3183,33 @@ SYSTEM ENVIRONMENT & HEALTH:
     const booking = payload.payload;
     if (!booking) throw new Error("Invalid Cal.com webhook structure: missing payload property.");
 
-    const bookingId = String(booking.bookingId || booking.uid);
-    const eventType = booking.eventTitle || booking.title || "House Of Workflow Discovery Call";
-    const startTime = booking.startTime;
-    const meetingLink = booking.videoCallData?.url || booking.location || "";
+    const bookingUid = String(booking.uid || booking.bookingId || booking.id || "");
+    const bookingId = bookingUid;
+    const eventType = booking.eventTitle || booking.title || booking.eventType?.title || "House Of Workflow Discovery Call";
+    const startTime = booking.startTime || new Date().toISOString();
+    const meetingLink = booking.videoCallData?.url || booking.location || booking.meetingUrl || "";
     const attendee = booking.attendees?.[0] || {};
-    
-    const name = attendee.name || "Booking Attendee";
-    const email = (attendee.email || "").toLowerCase().trim();
-    
-    // Normalize phone number
-    let rawPhone = attendee.phoneNumber || "";
+
+    const name = attendee.name || booking.responses?.name?.value || booking.responses?.name || booking.user?.name || "Booking Attendee";
+    const email = (attendee.email || booking.responses?.email?.value || booking.responses?.email || booking.user?.email || "").toLowerCase().trim();
+
+    let rawPhone = attendee.phoneNumber || attendee.phone || booking.responses?.phone?.value || booking.responses?.phone || booking.responses?.phoneNumber?.value || booking.responses?.phoneNumber || "";
     let phone = rawPhone.replace(/[^\d+]/g, "");
     if (phone.length === 10 && !phone.startsWith("+")) {
       phone = `+91${phone}`;
     }
-    const timezone = attendee.timeZone || "Asia/Kolkata";
+    const timezone = attendee.timeZone || booking.timezone || "Asia/Kolkata";
 
     // 1. Webhook Idempotency Check using Atomic Claim
-    const uniqueEventId = `${eventTrigger}:${bookingId}`;
+    const uniqueEventId = `${eventTrigger}:${bookingUid}`;
     const claimStatus = await this.claimWebhookEvent("calcom", uniqueEventId, eventTrigger, payload);
     if (claimStatus === "processed") {
-      console.log(`Cal.com webhook already processed for booking ID: ${bookingId}. Skipping.`);
+      console.log(`Cal.com webhook already processed for booking ID: ${bookingUid}. Skipping.`);
       return { success: true, duplicate: true };
     }
     if (claimStatus === "in_flight") {
-      console.log(`Cal.com webhook is currently in_flight for booking ID: ${bookingId}. Skipping.`);
+      console.log(`Cal.com webhook is currently in_flight for booking ID: ${bookingUid}. Skipping.`);
       return { success: true, inFlight: true };
-    }
-
-    // Retrieve the claimed webhook event ID to mark as processed later
-    let webhookEventId: string | undefined;
-    if (isSupabaseEnabled && supabaseAdmin) {
-      const { data } = await supabaseAdmin
-        .from("webhook_events")
-        .select("id")
-        .eq("provider", "calcom")
-        .eq("provider_event_id", uniqueEventId);
-      webhookEventId = data?.[0]?.id;
-    } else {
-      const local = readLocalDb();
-      webhookEventId = local.webhook_events?.find(
-        (e: any) => e.provider === "calcom" && e.provider_event_id === uniqueEventId
-      )?.id;
     }
 
     let lead: Lead | null = null;
@@ -3185,25 +3218,27 @@ SYSTEM ENVIRONMENT & HEALTH:
     const formattedDate = new Date(startTime).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     const formattedTime = new Date(startTime).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-    const { sendWhatsAppMessage, sendEmailNotification, dispatchVoiceCall } = await import("./notifications");
+    const { sendWhatsAppMessage, sendEmailNotification } = await import("./notifications");
 
     // ==========================================
     // CASE A: BOOKING_CREATED
     // ==========================================
     if (eventTrigger === "BOOKING_CREATED") {
-      lead = await this.findLeadByIdentity(email, phone);
-      
-      const leadUpdates: Partial<Lead> = {
+      lead = await this.findLeadByIdentity(email, phone, bookingUid);
+
+      const leadRecord: any = {
         name,
+        first_name: name.split(" ")[0],
         email,
         phone,
         source: "book_a_call",
         status: "meeting_booked",
+        cal_booking_uid: bookingUid,
         meeting_datetime: startTime,
-        attendee_timezone: timezone,
+        meeting_timezone: timezone,
         meeting_link: meetingLink,
         meeting_confirmed: true,
-        cal_event_id: bookingId,
+        meeting_status: "scheduled",
         reminder_sent: false,
         updated_at: new Date().toISOString()
       };
@@ -3212,7 +3247,7 @@ SYSTEM ENVIRONMENT & HEALTH:
         if (isSupabaseEnabled && supabaseAdmin) {
           const { data, error } = await supabaseAdmin
             .from("leads")
-            .update(leadUpdates)
+            .update(leadRecord)
             .eq("id", lead.id)
             .select()
             .single();
@@ -3222,7 +3257,7 @@ SYSTEM ENVIRONMENT & HEALTH:
           const local = readLocalDb();
           const idx = local.leads.findIndex((l: any) => l.id === lead!.id);
           if (idx !== -1) {
-            local.leads[idx] = { ...local.leads[idx], ...leadUpdates };
+            local.leads[idx] = { ...local.leads[idx], ...leadRecord, cal_event_id: bookingUid };
             syncMockAnalyticsAndScoring(local, lead!.id);
             writeLocalDb(local);
             lead = local.leads[idx];
@@ -3232,7 +3267,7 @@ SYSTEM ENVIRONMENT & HEALTH:
         if (isSupabaseEnabled && supabaseAdmin) {
           const { data, error } = await supabaseAdmin
             .from("leads")
-            .insert([{ ...leadUpdates, consent_given: true, consent_timestamp: new Date().toISOString() }])
+            .insert([{ ...leadRecord, created_at: new Date().toISOString() }])
             .select()
             .single();
           if (error) throw error;
@@ -3242,9 +3277,8 @@ SYSTEM ENVIRONMENT & HEALTH:
           const newLead = {
             id: `lead-${Date.now()}`,
             created_at: new Date().toISOString(),
-            consent_given: true,
-            consent_timestamp: new Date().toISOString(),
-            ...leadUpdates
+            cal_event_id: bookingUid,
+            ...leadRecord
           };
           if (!local.leads) local.leads = [];
           local.leads.push(newLead);
@@ -3254,16 +3288,18 @@ SYSTEM ENVIRONMENT & HEALTH:
         }
       }
 
-      await this.upsertMeeting(lead.id, bookingId, startTime, timezone, meetingLink, "scheduled");
+      await this.upsertMeeting(lead.id, bookingUid, startTime, timezone, meetingLink, "scheduled");
 
-      const activityDesc = `Discovery call booked: ${eventType} (Booking ID: ${bookingId}, Link: ${meetingLink})`;
-      await this.addActivityLog(activityDesc);
-      await this.addLeadActivity(lead.id, "meeting_booked", activityDesc, "system");
+      try {
+        const activityDesc = `Discovery call booked: ${eventType} (Booking ID: ${bookingUid}, Link: ${meetingLink})`;
+        await this.addActivityLog(activityDesc);
+        await this.addLeadActivity(lead.id, "meeting_booked", activityDesc, "system");
+      } catch (logErr) {}
 
-      const whatsappKey = `booking_confirmation_whatsapp:${bookingId}`;
-      const emailKey = `booking_confirmation_email:${bookingId}`;
-      const jayWaKey = `jay_booking_alert:${bookingId}`;
-      const jayEmailKey = `jay_booking_email:${bookingId}`;
+      const whatsappKey = `booking_confirmation_whatsapp:${bookingUid}`;
+      const emailKey = `booking_confirmation_email:${bookingUid}`;
+      const jayWaKey = `jay_booking_alert:${bookingUid}`;
+      const jayEmailKey = `jay_booking_email:${bookingUid}`;
 
       const leadHtml = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e4e0; border-radius: 8px;">
@@ -3290,7 +3326,6 @@ SYSTEM ENVIRONMENT & HEALTH:
           <p><strong>Event:</strong> ${eventType}</p>
           <p><strong>Time:</strong> ${formattedDate} at ${formattedTime} (${timezone})</p>
           <p><strong>Meeting Link:</strong> <a href="${meetingLink}">${meetingLink}</a></p>
-          <p><strong>Lead Score:</strong> ${lead.lead_score || "N/A"}/100</p>
         </div>
       `;
 
@@ -3324,10 +3359,6 @@ SYSTEM ENVIRONMENT & HEALTH:
           html: jayHtml,
           idempotencyKey: jayEmailKey,
           leadId: lead.id
-        }),
-        dispatchVoiceCall({
-          phone: phone || "",
-          leadId: lead.id
         })
       ]);
     }
@@ -3336,29 +3367,18 @@ SYSTEM ENVIRONMENT & HEALTH:
     // CASE B: BOOKING_RESCHEDULED
     // ==========================================
     else if (eventTrigger === "BOOKING_RESCHEDULED") {
-      // Lookup lead by cal_event_id or identity
-      if (isSupabaseEnabled && supabaseAdmin) {
-        const { data } = await supabaseAdmin.from("leads").select("*").eq("cal_event_id", bookingId);
-        if (data && data.length > 0) lead = data[0];
-      } else {
-        const local = readLocalDb();
-        lead = (local.leads || []).find((l: any) => l.cal_event_id === bookingId) || null;
-      }
+      lead = await this.findLeadByIdentity(email, phone, bookingUid);
 
       if (!lead) {
-        lead = await this.findLeadByIdentity(email, phone);
-      }
-
-      if (!lead) {
-        // Rescheduled booking for a lead we don't have — log and return gracefully.
-        // This can happen if the booking was created before AxonFlow was live.
-        console.warn(`[calcom] BOOKING_RESCHEDULED: no lead found for booking ${bookingId} — skipping.`);
+        console.warn(`[calcom] BOOKING_RESCHEDULED: no lead found for booking ${bookingUid} — skipping.`);
         return { success: true, skipped: true, reason: "lead_not_found" };
       }
 
-      const leadUpdates: Partial<Lead> = {
+      const leadUpdates: any = {
         meeting_datetime: startTime,
+        meeting_timezone: timezone,
         meeting_link: meetingLink,
+        meeting_status: "rescheduled",
         reminder_sent: false,
         updated_at: new Date().toISOString()
       };
@@ -3382,16 +3402,18 @@ SYSTEM ENVIRONMENT & HEALTH:
         }
       }
 
-      await this.upsertMeeting(lead.id, bookingId, startTime, timezone, meetingLink, "rescheduled");
+      await this.upsertMeeting(lead.id, bookingUid, startTime, timezone, meetingLink, "rescheduled");
 
-      const activityDesc = `Discovery call rescheduled: ${eventType} (Booking ID: ${bookingId}, New Time: ${startTime})`;
-      await this.addActivityLog(activityDesc);
-      await this.addLeadActivity(lead.id, "meeting_rescheduled", activityDesc, "system");
+      try {
+        const activityDesc = `Discovery call rescheduled: ${eventType} (Booking ID: ${bookingUid}, New Time: ${startTime})`;
+        await this.addActivityLog(activityDesc);
+        await this.addLeadActivity(lead.id, "meeting_rescheduled", activityDesc, "system");
+      } catch (logErr) {}
 
-      const whatsappKey = `booking_reschedule_whatsapp:${bookingId}`;
-      const emailKey = `booking_reschedule_email:${bookingId}`;
-      const jayWaKey = `jay_reschedule_alert:${bookingId}`;
-      const jayEmailKey = `jay_reschedule_email:${bookingId}`;
+      const whatsappKey = `booking_reschedule_whatsapp:${bookingUid}`;
+      const emailKey = `booking_reschedule_email:${bookingUid}`;
+      const jayWaKey = `jay_reschedule_alert:${bookingUid}`;
+      const jayEmailKey = `jay_reschedule_email:${bookingUid}`;
 
       const leadHtml = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e4e0; border-radius: 8px;">
@@ -3457,26 +3479,16 @@ SYSTEM ENVIRONMENT & HEALTH:
     // CASE C: BOOKING_CANCELLED
     // ==========================================
     else if (eventTrigger === "BOOKING_CANCELLED") {
-      if (isSupabaseEnabled && supabaseAdmin) {
-        const { data } = await supabaseAdmin.from("leads").select("*").eq("cal_event_id", bookingId);
-        if (data && data.length > 0) lead = data[0];
-      } else {
-        const local = readLocalDb();
-        lead = (local.leads || []).find((l: any) => l.cal_event_id === bookingId) || null;
-      }
+      lead = await this.findLeadByIdentity(email, phone, bookingUid);
 
       if (!lead) {
-        lead = await this.findLeadByIdentity(email, phone);
-      }
-
-      if (!lead) {
-        // Cancelled booking for a lead we don't have — log and return gracefully.
-        console.warn(`[calcom] BOOKING_CANCELLED: no lead found for booking ${bookingId} — skipping.`);
+        console.warn(`[calcom] BOOKING_CANCELLED: no lead found for booking ${bookingUid} — skipping.`);
         return { success: true, skipped: true, reason: "lead_not_found" };
       }
 
-      const leadUpdates: Partial<Lead> = {
+      const leadUpdates: any = {
         meeting_confirmed: false,
+        meeting_status: "cancelled",
         reminder_sent: false,
         updated_at: new Date().toISOString()
       };
@@ -3500,16 +3512,18 @@ SYSTEM ENVIRONMENT & HEALTH:
         }
       }
 
-      await this.upsertMeeting(lead.id, bookingId, startTime, timezone, meetingLink, "cancelled");
+      await this.upsertMeeting(lead.id, bookingUid, startTime, timezone, meetingLink, "cancelled");
 
-      const activityDesc = `Discovery call cancelled: ${eventType} (Booking ID: ${bookingId})`;
-      await this.addActivityLog(activityDesc);
-      await this.addLeadActivity(lead.id, "meeting_cancelled", activityDesc, "system");
+      try {
+        const activityDesc = `Discovery call cancelled: ${eventType} (Booking ID: ${bookingUid})`;
+        await this.addActivityLog(activityDesc);
+        await this.addLeadActivity(lead.id, "meeting_cancelled", activityDesc, "system");
+      } catch (logErr) {}
 
-      const whatsappKey = `booking_cancel_whatsapp:${bookingId}`;
-      const emailKey = `booking_cancel_email:${bookingId}`;
-      const jayWaKey = `jay_cancel_alert:${bookingId}`;
-      const jayEmailKey = `jay_cancel_email:${bookingId}`;
+      const whatsappKey = `booking_cancel_whatsapp:${bookingUid}`;
+      const emailKey = `booking_cancel_email:${bookingUid}`;
+      const jayWaKey = `jay_cancel_alert:${bookingUid}`;
+      const jayEmailKey = `jay_cancel_email:${bookingUid}`;
 
       const leadHtml = `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e4e0; border-radius: 8px;">
@@ -3526,7 +3540,7 @@ SYSTEM ENVIRONMENT & HEALTH:
           <h3>[CALL CANCELLED ALERT]</h3>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Booking ID:</strong> ${bookingId}</p>
+          <p><strong>Booking ID:</strong> ${bookingUid}</p>
         </div>
       `;
 
@@ -3565,15 +3579,16 @@ SYSTEM ENVIRONMENT & HEALTH:
     }
 
     // Mark Webhook as Processed
-    if (webhookEventId && lead) {
-      await this.markWebhookProcessed(webhookEventId, lead.id);
+    if (lead) {
+      await this.markWebhookProcessed(uniqueEventId, lead.id);
     }
 
     return {
       success: true,
       leadId: lead?.id,
-      bookingId,
-      notifications: notificationResults.map((r) => r.status)
+      bookingId: bookingUid,
+      eventTrigger,
+      notifications: notificationResults
     };
   }
 };
