@@ -378,7 +378,7 @@ function generateDefaultDb() {
     { id: "c-2", key: "hero_headline", value: "Your business should not run on manual work.", type: "html", section: "hero", label: "Headline", updated_at: new Date().toISOString() },
     { id: "c-3", key: "hero_subheadline", value: "We build high-performance websites and AI automation systems for startups, SaaS companies, agencies, enterprises, and growing businesses across 14 industries — so your team gets hours back, operations run without intervention, and revenue compounds on its own.", type: "text", section: "hero", label: "Subheadline", updated_at: new Date().toISOString() },
     { id: "c-4", key: "hero_cta1_text", value: "Book a discovery call", type: "text", section: "hero", label: "CTA Button 1 Text", updated_at: new Date().toISOString() },
-    { id: "c-5", key: "hero_cta1_url", value: "https://cal.com/houseofworkflow", type: "url", section: "hero", label: "CTA Button 1 URL", updated_at: new Date().toISOString() },
+    { id: "c-5", key: "hero_cta1_url", value: "https://cal.com/jay-mahajan-euwk62/j", type: "url", section: "hero", label: "CTA Button 1 URL", updated_at: new Date().toISOString() },
     { id: "c-6", key: "hero_cta2_text", value: "View Portfolio", type: "text", section: "hero", label: "CTA Button 2 Text", updated_at: new Date().toISOString() },
     { id: "c-7", key: "hero_cta2_url", value: "/portfolio", type: "url", section: "hero", label: "CTA Button 2 URL", updated_at: new Date().toISOString() },
     { id: "c-8", key: "hero_stat1_num", value: "40%", type: "text", section: "hero", label: "Stat 1 - Value", updated_at: new Date().toISOString() },

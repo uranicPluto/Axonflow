@@ -3,8 +3,8 @@
  * Connects website CTAs to the official Cal.com booking experience.
  */
 
-export const CALCOM_EVENT_SLUG = "houseofworkflow/discovery";
-export const CALCOM_BOOKING_URL = "https://cal.com/houseofworkflow/discovery";
+export const CALCOM_EVENT_SLUG = "jay-mahajan-euwk62/j";
+export const CALCOM_BOOKING_URL = "https://cal.com/jay-mahajan-euwk62/j";
 
 declare global {
   interface Window {
