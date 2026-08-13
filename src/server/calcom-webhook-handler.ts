@@ -66,15 +66,18 @@ function validateWebhookStructure(payload: any): string | null {
     return "Invalid payload: expected JSON object";
   }
 
-  const { eventTrigger, payload: inner } = payload;
+  const rawTrigger = payload.eventTrigger || payload.triggerEvent;
+  const eventTrigger = typeof rawTrigger === "string" ? rawTrigger.toUpperCase() : "";
 
-  if (!eventTrigger || typeof eventTrigger !== "string") {
-    return "Invalid payload: missing eventTrigger";
+  if (!eventTrigger) {
+    return "Invalid payload: missing eventTrigger / triggerEvent";
   }
 
   if (!SUPPORTED_EVENTS.has(eventTrigger)) {
     return `Invalid payload: unsupported eventTrigger '${eventTrigger}'`;
   }
+
+  const inner = payload.payload || payload.data || payload;
 
   if (!inner || typeof inner !== "object") {
     return "Invalid payload: missing payload body";
@@ -82,17 +85,22 @@ function validateWebhookStructure(payload: any): string | null {
 
   // Require a booking identifier on every event
   const bookingId = inner.bookingId ?? inner.id ?? inner.uid;
-  if (bookingId === undefined || bookingId === null) {
+  if (bookingId === undefined || bookingId === null || String(bookingId).trim() === "") {
     return "Invalid payload: missing booking identifier (bookingId / id / uid)";
   }
 
   // BOOKING_CREATED requires attendee information
   if (eventTrigger === "BOOKING_CREATED") {
-    if (
-      !Array.isArray(inner.attendees) ||
-      inner.attendees.length === 0 ||
-      !inner.attendees[0]?.email
-    ) {
+    const email = (
+      inner.attendees?.[0]?.email ||
+      inner.responses?.email?.value ||
+      inner.responses?.email ||
+      inner.user?.email ||
+      inner.attendeeEmail ||
+      ""
+    ).toString().trim();
+
+    if (!email) {
       return "Invalid payload: BOOKING_CREATED requires at least one attendee with an email";
     }
   }
@@ -113,6 +121,8 @@ function validateWebhookStructure(payload: any): string | null {
  *   4. Sanitised error responses (no internals exposed to caller)
  */
 export async function handleCalcomWebhook(request: Request): Promise<Response> {
+  console.log("[CALCOM] Request received");
+
   // ── 1. Request size limit ──────────────────────────────────────────────────
   const contentLength = request.headers.get("content-length");
   if (contentLength && parseInt(contentLength, 10) > MAX_WEBHOOK_BYTES) {
@@ -192,6 +202,8 @@ export async function handleCalcomWebhook(request: Request): Promise<Response> {
     }
   }
 
+  console.log("[CALCOM] Authentication passed");
+
   // ── 4. Parse JSON ──────────────────────────────────────────────────────────
   let parsedPayload: any;
   try {
@@ -200,19 +212,28 @@ export async function handleCalcomWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: "Malformed JSON payload" }, 400);
   }
 
+  const inner = parsedPayload.payload || parsedPayload.data || parsedPayload;
+  console.log("[CALCOM] Parsed payload", {
+    triggerEvent: parsedPayload.triggerEvent || parsedPayload.eventTrigger,
+    bookingId: inner.bookingId ?? inner.id ?? inner.uid,
+    attendeeEmail: inner.attendees?.[0]?.email || inner.responses?.email?.value || inner.responses?.email || inner.user?.email,
+  });
+
   // ── 5. Structure validation ────────────────────────────────────────────────
   const structureError = validateWebhookStructure(parsedPayload);
   if (structureError) {
+    console.warn("[CALCOM] Structure validation error:", structureError);
     return jsonResponse({ error: structureError }, 400);
   }
 
   // ── 6. Business logic (idempotent) ─────────────────────────────────────────
+  console.log("[CALCOM] Entering db.processCalcomBooking()");
   try {
     const result = await db.processCalcomBooking(parsedPayload);
-
+    console.log("[CALCOM] DB processing completed", result);
     return jsonResponse(result, 200);
   } catch (err: any) {
-    // Log the real error internally — never expose it to the caller
+    console.error("[CALCOM] DB processing failed", err);
     const sanitised = sanitizeData({ message: err?.message, stack: err?.stack });
     console.error("[calcom-webhook] Processing error:", sanitised);
 

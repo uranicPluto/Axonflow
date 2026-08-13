@@ -3179,19 +3179,20 @@ SYSTEM ENVIRONMENT & HEALTH:
   },
 
   async processCalcomBooking(payload: any): Promise<any> {
-    const eventTrigger = (payload.eventTrigger || "BOOKING_CREATED").toUpperCase();
-    const booking = payload.payload;
-    if (!booking) throw new Error("Invalid Cal.com webhook structure: missing payload property.");
+    const rawTrigger = payload.eventTrigger || payload.triggerEvent || "BOOKING_CREATED";
+    const eventTrigger = String(rawTrigger).toUpperCase();
+    const booking = payload.payload || payload.data || payload;
+    if (!booking || typeof booking !== "object") throw new Error("Invalid Cal.com webhook structure: missing payload or data property.");
 
     const bookingUid = String(booking.uid || booking.bookingId || booking.id || "");
     const bookingId = bookingUid;
     const eventType = booking.eventTitle || booking.title || booking.eventType?.title || "House Of Workflow Discovery Call";
-    const startTime = booking.startTime || new Date().toISOString();
+    const startTime = booking.startTime || booking.start_time || new Date().toISOString();
     const meetingLink = booking.videoCallData?.url || booking.location || booking.meetingUrl || "";
     const attendee = booking.attendees?.[0] || {};
 
-    const name = attendee.name || booking.responses?.name?.value || booking.responses?.name || booking.user?.name || "Booking Attendee";
-    const email = (attendee.email || booking.responses?.email?.value || booking.responses?.email || booking.user?.email || "").toLowerCase().trim();
+    const name = attendee.name || booking.responses?.name?.value || booking.responses?.name || booking.user?.name || booking.attendeeName || "Booking Attendee";
+    const email = (attendee.email || booking.responses?.email?.value || booking.responses?.email || booking.user?.email || booking.attendeeEmail || "").toLowerCase().trim();
 
     let rawPhone = attendee.phoneNumber || attendee.phone || booking.responses?.phone?.value || booking.responses?.phone || booking.responses?.phoneNumber?.value || booking.responses?.phoneNumber || "";
     let phone = rawPhone.replace(/[^\d+]/g, "");
