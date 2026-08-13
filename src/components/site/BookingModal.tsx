@@ -6,21 +6,22 @@ import { CALCOM_EVENT_SLUG, initCalcomEmbed } from "@/lib/calcom";
 export function BookingModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   useEffect(() => {
     if (isOpen && typeof window !== "undefined") {
-      initCalcomEmbed();
-
-      if (window.Cal) {
-        window.Cal("inline", {
-          elementOrSelector: "#cal-booking-modal-widget",
-          calLink: CALCOM_EVENT_SLUG,
-          config: { layout: "month_view" },
-        });
-        window.Cal("ui", {
-          theme: "dark",
-          styles: { branding: { brandColor: "#6366f1" } },
-          hideEventTypeDetails: false,
-          layout: "month_view",
-        });
-      }
+      (async () => {
+        const cal = await initCalcomEmbed();
+        if (cal) {
+          cal("inline", {
+            elementOrSelector: "#cal-booking-modal-widget",
+            calLink: CALCOM_EVENT_SLUG,
+            config: { layout: "month_view", useSlotsViewOnSmallScreen: "true" },
+          });
+          cal("ui", {
+            theme: "dark",
+            styles: { branding: { brandColor: "#6366f1" } },
+            hideEventTypeDetails: false,
+            layout: "month_view",
+          });
+        }
+      })();
     }
   }, [isOpen]);
 

@@ -1,8 +1,9 @@
-/**
- * Central Cal.com Configuration & Embed Utility
- * Connects website CTAs to the official Cal.com booking experience.
- */
+import { getCalApi } from "@calcom/embed-react";
 
+/**
+ * Central Cal.com Configuration & Embed Utility using official @calcom/embed-react API
+ */
+export const CALCOM_NAMESPACE = "j";
 export const CALCOM_EVENT_SLUG = "jay-mahajan-euwk62/j";
 export const CALCOM_BOOKING_URL = "https://cal.com/jay-mahajan-euwk62/j";
 
@@ -13,44 +14,23 @@ declare global {
 }
 
 /**
- * Initialize Cal.com embed script on the client side (SSR safe).
+ * Initialize Cal.com embed API with namespace "j" (SSR safe).
  */
-export function initCalcomEmbed() {
-  if (typeof window === "undefined") return;
+export async function initCalcomEmbed() {
+  if (typeof window === "undefined") return null;
 
-  (function (C: any, A: any, L: any) {
-    let p = function (a: any, ar: any) {
-      a.q.push(ar);
-    };
-    let c = C.document;
-    C.Cal =
-      C.Cal ||
-      function () {
-        let a = C.Cal;
-        if (!a.loaded) {
-          a.loaded = true;
-          a.q = [];
-          let s = c.createElement("script");
-          s.src = "https://embed.cal.com/embed/parent.js";
-          let h = c.getElementsByTagName("head")[0];
-          if (h) {
-            h.appendChild(s);
-          }
-        }
-        a.p = p;
-        a.ar = arguments;
-        return a;
-      };
-  })(window, "clean", null);
-
-  if (window.Cal) {
-    window.Cal("init", { origin: "https://cal.com" });
-    window.Cal("ui", {
+  try {
+    const cal = await getCalApi({ namespace: CALCOM_NAMESPACE });
+    cal("ui", {
       theme: "dark",
       styles: { branding: { brandColor: "#6366f1" } },
       hideEventTypeDetails: false,
       layout: "month_view",
     });
+    return cal;
+  } catch (err) {
+    console.error("Failed to initialize Cal.com API:", err);
+    return null;
   }
 }
 
@@ -64,13 +44,13 @@ export interface CalcomPrefillOptions {
  * Programmatically trigger the Cal.com popup scheduling modal.
  * Preserves UTM parameters from current window URL.
  */
-export function openCalcomBookingModal(
+export async function openCalcomBookingModal(
   customCalLink: string = CALCOM_EVENT_SLUG,
   prefill?: CalcomPrefillOptions
 ) {
   if (typeof window === "undefined") return;
 
-  initCalcomEmbed();
+  const cal = await initCalcomEmbed();
 
   // Extract UTM parameters to pass to Cal.com tracking
   const urlParams = new URLSearchParams(window.location.search);
@@ -81,11 +61,18 @@ export function openCalcomBookingModal(
   }
 
   const configObj: Record<string, any> = {
+    layout: "month_view",
+    useSlotsViewOnSmallScreen: "true",
     ...utmParams,
     ...prefill,
   };
 
-  if (window.Cal) {
+  if (cal) {
+    cal("popup", {
+      calLink: customCalLink,
+      config: configObj,
+    });
+  } else if (window.Cal) {
     window.Cal("popup", {
       calLink: customCalLink,
       config: configObj,
@@ -98,12 +85,12 @@ export function openCalcomBookingModal(
 /**
  * Register a listener for successful Cal.com bookings.
  */
-export function onCalcomBookingSuccess(callback: (eventData: any) => void) {
+export async function onCalcomBookingSuccess(callback: (eventData: any) => void) {
   if (typeof window === "undefined") return;
-  initCalcomEmbed();
+  const cal = await initCalcomEmbed();
 
-  if (window.Cal) {
-    window.Cal("on", {
+  if (cal) {
+    cal("on", {
       action: "bookingSuccessful",
       callback: (e: any) => {
         callback(e?.detail || e);
