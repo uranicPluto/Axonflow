@@ -56,7 +56,7 @@
       "typeVersion": 4,
       "position": [550, 350],
       "continueOnFail": true,
-      "notes": "IMPORTANT: Forwards the original raw body bytes and the original Cal.com signature header.\nDo NOT parse or re-serialize the body before sending — the HMAC is verified\nagainst the exact bytes received from Cal.com. The application API performs\nthe authoritative signature verification.\n\nERROR HANDLING:\n- HTTP 2xx: normal completion — no further action.\n- HTTP 4xx: client error (bad signature, duplicate, unsupported event).\n  These are NOT retried (retrying a 400/401 will always fail again).\n  A log entry is written via the '4xx Client Error Log' node.\n- HTTP 5xx: server error — controlled retry (up to 2 retries, 5s apart).\n  Persistent failure routes to Slack alert.\n- continueOnFail=true so the error branch executes instead of halting the workflow."
+      "notes": "IMPORTANT: Forwards the original raw body bytes and the original Cal.com signature header.\nDo NOT parse or re-serialize the body before sending — the HMAC is verified\nagainst the exact bytes received from Cal.com. The application API performs\nthe authoritative signature verification.\n\nERROR HANDLING:\n- HTTP 2xx: normal completion — no further action.\n- HTTP 4xx: client error (bad signature, duplicate, unsupported event).\n  These are NOT retried (retrying a 400/401 will always fail again).\n  A log entry is written via the '4xx Client Error Log' node.\n- HTTP 5xx: server error — controlled retry (up to 2 retries, 5s apart).\n  Persistent failure routes to AxonFlow Alert Engine.\n- continueOnFail=true so the error branch executes instead of halting the workflow."
     },
     {
       "parameters": {
@@ -109,18 +109,26 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "url": "https://houseofworkflow.com/api/internal/n8n-alert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \"[ALERT - Flow A] Persistent 5xx error from AxonFlow API after retries. Status: \" + ($json.statusCode || 'unknown') + \" — \" + JSON.stringify($json.body || $json.message || $json)\n}",
+        "jsonBody": "={\n  \"severity\": \"warning\",\n  \"title\": \"[ALERT - Flow A] Persistent 5xx failure from AxonFlow API\",\n  \"message\": \"Cal.com webhook execution failed after retries with status: \" + ($json.statusCode || 'unknown'),\n  \"context\": {\n    \"statusCode\": $json.statusCode,\n    \"errorBody\": $json.body || $json.message || $json\n  }\n}",
         "options": {}
       },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "axonflow-n8n-alert-secret-cred",
+          "name": "AxonFlow Alert Secret Header Credential"
+        }
+      },
       "id": "d5e6f7a8-b9c0-4d1e-2f3a-4b5c6d7e8f9a",
-      "name": "Slack Error Alert",
+      "name": "Notify AxonFlow Alert Engine",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 3,
+      "typeVersion": 4.2,
       "position": [1150, 450],
-      "notes": "Fires only on persistent 5xx failures after retry exhaustion.\nSLACK_WEBHOOK_URL must be configured as an n8n environment variable.\nNo Slack credentials or webhook URLs are hardcoded in this workflow."
+      "notes": "Fires on persistent 5xx failures after retry exhaustion.\nCalls AxonFlow internal alert engine at /api/internal/n8n-alert.\nAuthenticates using native n8n 'Header Auth' credential (x-n8n-alert-secret).\nNo Slack webhook URL or secret is hardcoded in this workflow."
     }
   ],
   "connections": {
@@ -157,7 +165,7 @@
         ],
         [
           {
-            "node": "Slack Error Alert",
+            "node": "Notify AxonFlow Alert Engine",
             "type": "main",
             "index": 0
           }
@@ -167,18 +175,19 @@
   },
   "_meta": {
     "axonflow": {
-      "version": "2.0.0",
-      "lastModified": "2026-08-12",
+      "version": "2.1.0",
+      "lastModified": "2026-08-13",
       "securityPolicy": {
         "noHardcodedSecrets": true,
-        "slackWebhookSource": "$env.SLACK_WEBHOOK_URL",
+        "slackDeliveryArchitecture": "Delegated entirely to AxonFlow API (/api/internal/n8n-alert)",
+        "credentialType": "n8n Header Auth credential (x-n8n-alert-secret)",
         "hmacVerificationBoundary": "AxonFlow API (/api/webhook/calcom)",
         "n8nRole": "raw body relay only — no HMAC implementation in n8n"
       },
       "errorHandling": {
         "2xx": "normal completion",
         "4xx": "log and drop — no retry (client errors are permanent)",
-        "5xx": "retry up to 2 times (5s apart) then Slack alert"
+        "5xx": "retry up to 2 times (5s apart) then call AxonFlow Alert Engine"
       }
     }
   }

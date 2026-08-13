@@ -62,7 +62,11 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 async function handleApiRoute(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/health" && url.pathname !== "/api/webhook/calcom") {
+  if (
+    url.pathname !== "/api/health" &&
+    url.pathname !== "/api/webhook/calcom" &&
+    url.pathname !== "/api/internal/n8n-alert"
+  ) {
     return null;
   }
 
@@ -75,6 +79,11 @@ async function handleApiRoute(request: Request): Promise<Response | null> {
     if (url.pathname === "/api/webhook/calcom") {
       const { handleCalcomWebhookRequest } = await import("./server/api/calcom-webhook");
       return await handleCalcomWebhookRequest(request);
+    }
+
+    if (url.pathname === "/api/internal/n8n-alert") {
+      const { handleN8nAlertRequest } = await import("./server/api/n8n-alert");
+      return await handleN8nAlertRequest(request);
     }
   } catch (err: any) {
     console.error(`[API_ROUTE_ERROR] Uncaught exception in ${url.pathname}:`, err?.stack || err?.message || err);

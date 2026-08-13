@@ -3202,8 +3202,149 @@ async function runSecurityTests() {
     results.push({ id: "DN", name: "UI SSR Homepage: Nitro production build bundles #tanstack-router-entry into .output/server/index.mjs", expected: ".output/server/index.mjs compiled successfully", actual: `FAIL: ${err?.message}`, status: "FAIL" });
   }
 
+  // ── DO: n8n Internal Alert Endpoint — Missing Header Authentication → 401 ──
+  try {
+    process.env.N8N_ALERT_SECRET = "test-n8n-alert-secret-998877";
+    const { handleN8nAlertRequest } = await import("./api/n8n-alert");
+    const req = new Request("https://houseofworkflow.com/api/internal/n8n-alert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Test Alert", message: "Missing header test" }),
+    });
+
+    const res = await handleN8nAlertRequest(req);
+    const body = await res.json();
+
+    if (res.status === 401 && body.error === "Unauthorized") {
+      results.push({ id: "DO", name: "n8n Alert Endpoint: Missing x-n8n-alert-secret header rejects with 401 Unauthorized", expected: "401 Unauthorized", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DO", name: "n8n Alert Endpoint: Missing x-n8n-alert-secret header rejects with 401 Unauthorized", expected: "401 Unauthorized", actual: `FAIL: status=${res.status}, body=${JSON.stringify(body)}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DO", name: "n8n Alert Endpoint: Missing x-n8n-alert-secret header rejects with 401 Unauthorized", expected: "401 Unauthorized", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
+  // ── DP: n8n Internal Alert Endpoint — Incorrect Secret Header → 401 ──
+  try {
+    process.env.N8N_ALERT_SECRET = "test-n8n-alert-secret-998877";
+    const { handleN8nAlertRequest } = await import("./api/n8n-alert");
+    const req = new Request("https://houseofworkflow.com/api/internal/n8n-alert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-n8n-alert-secret": "wrong-secret-12345",
+      },
+      body: JSON.stringify({ title: "Test Alert", message: "Wrong secret test" }),
+    });
+
+    const res = await handleN8nAlertRequest(req);
+    const body = await res.json();
+
+    if (res.status === 401 && body.error === "Unauthorized") {
+      results.push({ id: "DP", name: "n8n Alert Endpoint: Incorrect x-n8n-alert-secret rejects with 401 Unauthorized", expected: "401 Unauthorized", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DP", name: "n8n Alert Endpoint: Incorrect x-n8n-alert-secret rejects with 401 Unauthorized", expected: "401 Unauthorized", actual: `FAIL: status=${res.status}, body=${JSON.stringify(body)}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DP", name: "n8n Alert Endpoint: Incorrect x-n8n-alert-secret rejects with 401 Unauthorized", expected: "401 Unauthorized", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
+  // ── DQ: n8n Internal Alert Endpoint — Malformed Payload → 400 ──
+  try {
+    process.env.N8N_ALERT_SECRET = "test-n8n-alert-secret-998877";
+    const { handleN8nAlertRequest } = await import("./api/n8n-alert");
+    const req = new Request("https://houseofworkflow.com/api/internal/n8n-alert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-n8n-alert-secret": "test-n8n-alert-secret-998877",
+      },
+      body: "{ malformed json",
+    });
+
+    const res = await handleN8nAlertRequest(req);
+    const body = await res.json();
+
+    if (res.status === 400 && body.error.includes("Invalid JSON")) {
+      results.push({ id: "DQ", name: "n8n Alert Endpoint: Malformed JSON body rejects with 400 Bad Request", expected: "400 Bad Request", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DQ", name: "n8n Alert Endpoint: Malformed JSON body rejects with 400 Bad Request", expected: "400 Bad Request", actual: `FAIL: status=${res.status}, body=${JSON.stringify(body)}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DQ", name: "n8n Alert Endpoint: Malformed JSON body rejects with 400 Bad Request", expected: "400 Bad Request", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
+  // ── DR: n8n Internal Alert Endpoint — Valid Secret & Body → 200 OK + dispatchCriticalAlert ──
+  try {
+    process.env.N8N_ALERT_SECRET = "test-n8n-alert-secret-998877";
+    const { handleN8nAlertRequest } = await import("./api/n8n-alert");
+    const req = new Request("https://houseofworkflow.com/api/internal/n8n-alert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-n8n-alert-secret": "test-n8n-alert-secret-998877",
+      },
+      body: JSON.stringify({
+        severity: "warning",
+        title: "[SMOKE TEST] AxonFlow Production Integration Verification",
+        message: "Automated test alert from n8n internal alert endpoint",
+        context: { testRunId: "dr-test-123" },
+      }),
+    });
+
+    const res = await handleN8nAlertRequest(req);
+    const bodyText = await res.text();
+    const body = JSON.parse(bodyText);
+
+    const isOk = res.status === 200 &&
+                 body.success === true &&
+                 typeof body.dispatchedCount === "number" &&
+                 !bodyText.includes("test-n8n-alert-secret-998877") &&
+                 !bodyText.includes("SLACK_WEBHOOK_URL");
+
+    if (isOk) {
+      results.push({ id: "DR", name: "n8n Alert Endpoint: Valid secret dispatches alert cleanly and returns 200 OK", expected: "200 OK { success: true, dispatchedCount: number }", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DR", name: "n8n Alert Endpoint: Valid secret dispatches alert cleanly and returns 200 OK", expected: "200 OK { success: true, dispatchedCount: number }", actual: `FAIL: status=${res.status}, body=${bodyText}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DR", name: "n8n Alert Endpoint: Valid secret dispatches alert cleanly and returns 200 OK", expected: "200 OK { success: true, dispatchedCount: number }", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
+  // ── DS: Full Server Entry Dispatch for /api/internal/n8n-alert (server.ts) ──
+  try {
+    process.env.N8N_ALERT_SECRET = "test-n8n-alert-secret-998877";
+    const serverModule = await import("../server");
+    const serverEntry = serverModule.default;
+
+    const req = new Request("https://houseofworkflow.com/api/internal/n8n-alert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-n8n-alert-secret": "test-n8n-alert-secret-998877",
+      },
+      body: JSON.stringify({
+        severity: "critical",
+        title: "[SMOKE TEST] server.ts fetch dispatch test",
+        message: "Verifying full server.ts routing dispatch for /api/internal/n8n-alert",
+      }),
+    });
+
+    const res = await serverEntry.fetch(req, {}, {});
+    const bodyText = await res.text();
+    const body = JSON.parse(bodyText);
+
+    if (res.status === 200 && body.success === true && typeof body.dispatchedCount === "number") {
+      results.push({ id: "DS", name: "Full Server Entry: server.ts fetch handler dispatches /api/internal/n8n-alert correctly", expected: "200 OK with success=true", actual: "PASS", status: "PASS" });
+    } else {
+      results.push({ id: "DS", name: "Full Server Entry: server.ts fetch handler dispatches /api/internal/n8n-alert correctly", expected: "200 OK with success=true", actual: `FAIL: status=${res.status}, body=${bodyText}`, status: "FAIL" });
+    }
+  } catch (err: any) {
+    results.push({ id: "DS", name: "Full Server Entry: server.ts fetch handler dispatches /api/internal/n8n-alert correctly", expected: "200 OK with success=true", actual: `FAIL: ${err?.message}`, status: "FAIL" });
+  }
+
   console.log("\n--------------------------------------------------");
-  console.log("TEST RESULTS SUMMARY (A-DN):");
+  console.log("TEST RESULTS SUMMARY (A-DS):");
   console.log("--------------------------------------------------");
   results.forEach((r) => {
     console.log(`[${r.status}] Test ${r.id}: ${r.name}`);
@@ -3213,7 +3354,7 @@ async function runSecurityTests() {
 
   const allPassed = results.every((r) => r.status === "PASS");
   if (allPassed) {
-    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DN) PASSED PERFECTLY!\n`);
+    console.log(`🎉 ALL ${results.length} SECURITY, INFRASTRUCTURE & FEATURE TESTS (A-DS) PASSED PERFECTLY!\n`);
   } else {
     console.error("❌ SOME TESTS FAILED.\n");
     process.exit(1);
