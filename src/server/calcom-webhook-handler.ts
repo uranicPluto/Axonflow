@@ -132,39 +132,63 @@ export async function handleCalcomWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: "Webhook payload too large" }, 413);
   }
 
-  // ── 3. Signature verification ─────────────────────────────────────────────
+  // ── 3. Signature & Token verification ─────────────────────────────────────
   const secret = process.env.CAL_WEBHOOK_SECRET;
+  const n8nAlertSecret = process.env.N8N_ALERT_SECRET;
   const isProduction = process.env.NODE_ENV === "production";
   // Only NODE_ENV=test triggers bypass — NO generic env-var escape hatch
   const isTestMode = process.env.NODE_ENV === "test";
 
-  if (!secret && isProduction) {
-    // Fail closed — never silently downgrade
-    console.error("[calcom-webhook] FAIL CLOSED: CAL_WEBHOOK_SECRET missing in production.");
-    return jsonResponse({ error: "Webhook configuration error" }, 500);
-  }
+  const n8nTokenHeader = request.headers.get("x-internal-token") ??
+                         request.headers.get("x-n8n-alert-secret") ??
+                         request.headers.get("X-Internal-Token") ??
+                         request.headers.get("X-N8n-Alert-Secret");
 
-  if (!isTestMode || secret) {
-    // Enforce signature whenever: (a) not in test mode, OR (b) secret is configured (test with sig)
-    const rawSig = request.headers.get("x-cal-signature-256") ??
-                   request.headers.get("X-Cal-Signature-256");
-    const normSig = normaliseSignature(rawSig);
-
-    if (!normSig) {
-      console.warn("[calcom-webhook] Rejected: missing signature header.");
-      return jsonResponse({ error: "Unauthorized" }, 401);
+  if (n8nTokenHeader) {
+    // Authenticate via n8n forwarded shared secret token
+    const validSecret = n8nAlertSecret || secret;
+    if (!validSecret && isProduction) {
+      console.error("[calcom-webhook] FAIL CLOSED: Secret missing for n8n internal token validation in production.");
+      return jsonResponse({ error: "Webhook configuration error" }, 500);
     }
-
-    if (!secret) {
-      // Secret absent but not production and not test — deny
-      console.error("[calcom-webhook] Secret missing while signature verification is required.");
+    if (validSecret) {
+      const tokenBuf = Buffer.from(n8nTokenHeader);
+      const secretBuf = Buffer.from(validSecret);
+      if (tokenBuf.length !== secretBuf.length || !crypto.timingSafeEqual(tokenBuf, secretBuf)) {
+        console.warn("[calcom-webhook] Rejected: internal token mismatch.");
+        return jsonResponse({ error: "Unauthorized" }, 401);
+      }
+    }
+  } else {
+    // Standard Cal.com direct HMAC verification
+    if (!secret && isProduction) {
+      // Fail closed — never silently downgrade
+      console.error("[calcom-webhook] FAIL CLOSED: CAL_WEBHOOK_SECRET missing in production.");
       return jsonResponse({ error: "Webhook configuration error" }, 500);
     }
 
-    const expected = computeHmac(secret, rawBody);
-    if (!verifyHmacHex(normSig, expected)) {
-      console.warn("[calcom-webhook] Rejected: signature mismatch.");
-      return jsonResponse({ error: "Unauthorized" }, 401);
+    if (!isTestMode || secret) {
+      // Enforce signature whenever: (a) not in test mode, OR (b) secret is configured (test with sig)
+      const rawSig = request.headers.get("x-cal-signature-256") ??
+                     request.headers.get("X-Cal-Signature-256");
+      const normSig = normaliseSignature(rawSig);
+
+      if (!normSig) {
+        console.warn("[calcom-webhook] Rejected: missing signature header.");
+        return jsonResponse({ error: "Unauthorized" }, 401);
+      }
+
+      if (!secret) {
+        // Secret absent but not production and not test — deny
+        console.error("[calcom-webhook] Secret missing while signature verification is required.");
+        return jsonResponse({ error: "Webhook configuration error" }, 500);
+      }
+
+      const expected = computeHmac(secret, rawBody);
+      if (!verifyHmacHex(normSig, expected)) {
+        console.warn("[calcom-webhook] Rejected: signature mismatch.");
+        return jsonResponse({ error: "Unauthorized" }, 401);
+      }
     }
   }
 
