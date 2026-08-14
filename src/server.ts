@@ -475,66 +475,6 @@ async function handleApiRoute(request: Request): Promise<Response | null> {
   return null;
 }
 
-    if (url.pathname === "/api/admin/strategic-alerts") {
-      const { handleGetStrategicAlertsRequest } = await import("./server/api/growth-intelligence");
-      return await handleGetStrategicAlertsRequest();
-    }
-
-    if (url.pathname === "/api/admin/finance-agent") {
-      const { handleGetFinanceAgentRequest } = await import("./server/api/finance-operations");
-      return await handleGetFinanceAgentRequest();
-    }
-
-    if (url.pathname === "/api/admin/client-profitability") {
-      const { handleGetClientProfitabilityRequest } = await import("./server/api/finance-operations");
-      return await handleGetClientProfitabilityRequest();
-    }
-
-    if (url.pathname === "/api/admin/service-profitability") {
-      const { handleGetServiceProfitabilityRequest } = await import("./server/api/finance-operations");
-      return await handleGetServiceProfitabilityRequest();
-    }
-
-    if (url.pathname === "/api/admin/cashflow-forecast") {
-      const { handleGetCashflowForecastRequest } = await import("./server/api/finance-operations");
-      return await handleGetCashflowForecastRequest();
-    }
-
-    if (url.pathname === "/api/admin/financial-alerts") {
-      const { handleGetFinancialAlertsRequest } = await import("./server/api/finance-operations");
-      return await handleGetFinancialAlertsRequest();
-    }
-  } catch (err: any) {
-    console.error(`[API_ROUTE_ERROR] Uncaught exception in ${url.pathname}:`, err?.stack || err?.message || err);
-    if (url.pathname === "/api/health") {
-      return new Response(
-        JSON.stringify({
-          status: "unhealthy",
-          timestamp: new Date().toISOString(),
-          database: "disconnected",
-          environment: process.env.NODE_ENV || "production",
-          uptimeSeconds: 0,
-        }),
-        {
-          status: 503,
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-store, no-cache, must-revalidate",
-            "Pragma": "no-cache",
-            "Expires": "0",
-          },
-        }
-      );
-    }
-    return new Response(JSON.stringify({ error: true, message: "Internal Server Error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  return null;
-}
-
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     // 1. Direct API route dispatching (bypasses UI TanStack Router 404)
