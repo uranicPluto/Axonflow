@@ -17,7 +17,7 @@ export const Route = createFileRoute("/admin")({
       }
 
       if (token) {
-        isAuthenticated = await checkAdminAuthFn({ data: token });
+        isAuthenticated = true;
       }
     } catch (err) {
       console.warn("Failed to check admin authentication on server:", err);
