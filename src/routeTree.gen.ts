@@ -15,10 +15,24 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ExperienceRouteImport } from './routes/experience'
 import { Route as ProcessRouteImport } from './routes/process'
+import { Route as QuestionnaireRouteImport } from './routes/questionnaire'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminActionCenterRouteImport } from './routes/admin.action-center'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
+import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
+import { Route as AdminCommandCenterRouteImport } from './routes/admin.command-center'
+import { Route as AdminCompanyOsRouteImport } from './routes/admin.company-os'
+import { Route as AdminCustomerSuccessWarRoomRouteImport } from './routes/admin.customer-success-war-room'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminDeliveryWarRoomRouteImport } from './routes/admin.delivery-war-room'
+import { Route as AdminExecutiveIntelligenceRouteImport } from './routes/admin.executive-intelligence'
+import { Route as AdminGrowthWarRoomRouteImport } from './routes/admin.growth-war-room'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminPipelineRouteImport } from './routes/admin.pipeline'
+import { Route as AdminPipelineControlCenterRouteImport } from './routes/admin.pipeline-control-center'
+import { Route as AdminProfitabilityWarRoomRouteImport } from './routes/admin.profitability-war-room'
+import { Route as AdminRevenueWarRoomRouteImport } from './routes/admin.revenue-war-room'
+import { Route as AdminSalesWorkspaceRouteImport } from './routes/admin.sales-workspace'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as BlogsIndexRouteImport } from './routes/blogs.index'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
@@ -47,6 +61,7 @@ import { Route as AdminContentProblemRouteImport } from './routes/admin.content.
 import { Route as AdminContentServicesRouteImport } from './routes/admin.content.services'
 import { Route as AdminContentTeamRouteImport } from './routes/admin.content.team'
 import { Route as AdminContentTestimonialsRouteImport } from './routes/admin.content.testimonials'
+import { Route as AdminDealRoomIdRouteImport } from './routes/admin.deal-room.$id'
 import { Route as AdminLeadsIndexRouteImport } from './routes/admin.leads.index'
 import { Route as AdminLeadsIdRouteImport } from './routes/admin.leads.$id'
 import { Route as AdminPortfolioIndexRouteImport } from './routes/admin.portfolio.index'
@@ -83,9 +98,19 @@ const ProcessRoute = ProcessRouteImport.update({
   path: '/process',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestionnaireRoute = QuestionnaireRouteImport.update({
+  id: '/questionnaire',
+  path: '/questionnaire',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminActionCenterRoute = AdminActionCenterRouteImport.update({
+  id: '/action-center',
+  path: '/action-center',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
@@ -93,14 +118,78 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCommandCenterRoute = AdminCommandCenterRouteImport.update({
+  id: '/command-center',
+  path: '/command-center',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCompanyOsRoute = AdminCompanyOsRouteImport.update({
+  id: '/company-os',
+  path: '/company-os',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCustomerSuccessWarRoomRoute =
+  AdminCustomerSuccessWarRoomRouteImport.update({
+    id: '/customer-success-war-room',
+    path: '/customer-success-war-room',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDeliveryWarRoomRoute = AdminDeliveryWarRoomRouteImport.update({
+  id: '/delivery-war-room',
+  path: '/delivery-war-room',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExecutiveIntelligenceRoute =
+  AdminExecutiveIntelligenceRouteImport.update({
+    id: '/executive-intelligence',
+    path: '/executive-intelligence',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminGrowthWarRoomRoute = AdminGrowthWarRoomRouteImport.update({
+  id: '/growth-war-room',
+  path: '/growth-war-room',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPipelineRoute = AdminPipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPipelineControlCenterRoute =
+  AdminPipelineControlCenterRouteImport.update({
+    id: '/pipeline-control-center',
+    path: '/pipeline-control-center',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminProfitabilityWarRoomRoute =
+  AdminProfitabilityWarRoomRouteImport.update({
+    id: '/profitability-war-room',
+    path: '/profitability-war-room',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminRevenueWarRoomRoute = AdminRevenueWarRoomRouteImport.update({
+  id: '/revenue-war-room',
+  path: '/revenue-war-room',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSalesWorkspaceRoute = AdminSalesWorkspaceRouteImport.update({
+  id: '/sales-workspace',
+  path: '/sales-workspace',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -244,6 +333,11 @@ const AdminContentTestimonialsRoute =
     path: '/content/testimonials',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminDealRoomIdRoute = AdminDealRoomIdRouteImport.update({
+  id: '/deal-room/$id',
+  path: '/deal-room/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLeadsIndexRoute = AdminLeadsIndexRouteImport.update({
   id: '/leads/',
   path: '/leads/',
@@ -277,9 +371,23 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/experience': typeof ExperienceRoute
   '/process': typeof ProcessRoute
+  '/questionnaire': typeof QuestionnaireRoute
+  '/admin/action-center': typeof AdminActionCenterRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/command-center': typeof AdminCommandCenterRoute
+  '/admin/company-os': typeof AdminCompanyOsRoute
+  '/admin/customer-success-war-room': typeof AdminCustomerSuccessWarRoomRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/delivery-war-room': typeof AdminDeliveryWarRoomRoute
+  '/admin/executive-intelligence': typeof AdminExecutiveIntelligenceRoute
+  '/admin/growth-war-room': typeof AdminGrowthWarRoomRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/pipeline': typeof AdminPipelineRoute
+  '/admin/pipeline-control-center': typeof AdminPipelineControlCenterRoute
+  '/admin/profitability-war-room': typeof AdminProfitabilityWarRoomRoute
+  '/admin/revenue-war-room': typeof AdminRevenueWarRoomRoute
+  '/admin/sales-workspace': typeof AdminSalesWorkspaceRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -306,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/admin/content/services': typeof AdminContentServicesRoute
   '/admin/content/team': typeof AdminContentTeamRoute
   '/admin/content/testimonials': typeof AdminContentTestimonialsRoute
+  '/admin/deal-room/$id': typeof AdminDealRoomIdRoute
   '/admin/leads/$id': typeof AdminLeadsIdRoute
   '/admin/portfolio/$id': typeof AdminPortfolioIdRoute
   '/admin/portfolio/new': typeof AdminPortfolioNewRoute
@@ -321,9 +430,23 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/experience': typeof ExperienceRoute
   '/process': typeof ProcessRoute
+  '/questionnaire': typeof QuestionnaireRoute
+  '/admin/action-center': typeof AdminActionCenterRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/command-center': typeof AdminCommandCenterRoute
+  '/admin/company-os': typeof AdminCompanyOsRoute
+  '/admin/customer-success-war-room': typeof AdminCustomerSuccessWarRoomRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/delivery-war-room': typeof AdminDeliveryWarRoomRoute
+  '/admin/executive-intelligence': typeof AdminExecutiveIntelligenceRoute
+  '/admin/growth-war-room': typeof AdminGrowthWarRoomRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/pipeline': typeof AdminPipelineRoute
+  '/admin/pipeline-control-center': typeof AdminPipelineControlCenterRoute
+  '/admin/profitability-war-room': typeof AdminProfitabilityWarRoomRoute
+  '/admin/revenue-war-room': typeof AdminRevenueWarRoomRoute
+  '/admin/sales-workspace': typeof AdminSalesWorkspaceRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -350,6 +473,7 @@ export interface FileRoutesByTo {
   '/admin/content/services': typeof AdminContentServicesRoute
   '/admin/content/team': typeof AdminContentTeamRoute
   '/admin/content/testimonials': typeof AdminContentTestimonialsRoute
+  '/admin/deal-room/$id': typeof AdminDealRoomIdRoute
   '/admin/leads/$id': typeof AdminLeadsIdRoute
   '/admin/portfolio/$id': typeof AdminPortfolioIdRoute
   '/admin/portfolio/new': typeof AdminPortfolioNewRoute
@@ -367,9 +491,23 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/experience': typeof ExperienceRoute
   '/process': typeof ProcessRoute
+  '/questionnaire': typeof QuestionnaireRoute
+  '/admin/action-center': typeof AdminActionCenterRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/command-center': typeof AdminCommandCenterRoute
+  '/admin/company-os': typeof AdminCompanyOsRoute
+  '/admin/customer-success-war-room': typeof AdminCustomerSuccessWarRoomRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/delivery-war-room': typeof AdminDeliveryWarRoomRoute
+  '/admin/executive-intelligence': typeof AdminExecutiveIntelligenceRoute
+  '/admin/growth-war-room': typeof AdminGrowthWarRoomRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/pipeline': typeof AdminPipelineRoute
+  '/admin/pipeline-control-center': typeof AdminPipelineControlCenterRoute
+  '/admin/profitability-war-room': typeof AdminProfitabilityWarRoomRoute
+  '/admin/revenue-war-room': typeof AdminRevenueWarRoomRoute
+  '/admin/sales-workspace': typeof AdminSalesWorkspaceRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -396,6 +534,7 @@ export interface FileRoutesById {
   '/admin/content/services': typeof AdminContentServicesRoute
   '/admin/content/team': typeof AdminContentTeamRoute
   '/admin/content/testimonials': typeof AdminContentTestimonialsRoute
+  '/admin/deal-room/$id': typeof AdminDealRoomIdRoute
   '/admin/leads/$id': typeof AdminLeadsIdRoute
   '/admin/portfolio/$id': typeof AdminPortfolioIdRoute
   '/admin/portfolio/new': typeof AdminPortfolioNewRoute
@@ -414,9 +553,23 @@ export interface FileRouteTypes {
     | '/contact'
     | '/experience'
     | '/process'
+    | '/questionnaire'
+    | '/admin/action-center'
     | '/admin/analytics'
+    | '/admin/approvals'
+    | '/admin/command-center'
+    | '/admin/company-os'
+    | '/admin/customer-success-war-room'
     | '/admin/dashboard'
+    | '/admin/delivery-war-room'
+    | '/admin/executive-intelligence'
+    | '/admin/growth-war-room'
     | '/admin/login'
+    | '/admin/pipeline'
+    | '/admin/pipeline-control-center'
+    | '/admin/profitability-war-room'
+    | '/admin/revenue-war-room'
+    | '/admin/sales-workspace'
     | '/admin/settings'
     | '/careers/$slug'
     | '/case-studies/$slug'
@@ -443,6 +596,7 @@ export interface FileRouteTypes {
     | '/admin/content/services'
     | '/admin/content/team'
     | '/admin/content/testimonials'
+    | '/admin/deal-room/$id'
     | '/admin/leads/$id'
     | '/admin/portfolio/$id'
     | '/admin/portfolio/new'
@@ -458,9 +612,23 @@ export interface FileRouteTypes {
     | '/contact'
     | '/experience'
     | '/process'
+    | '/questionnaire'
+    | '/admin/action-center'
     | '/admin/analytics'
+    | '/admin/approvals'
+    | '/admin/command-center'
+    | '/admin/company-os'
+    | '/admin/customer-success-war-room'
     | '/admin/dashboard'
+    | '/admin/delivery-war-room'
+    | '/admin/executive-intelligence'
+    | '/admin/growth-war-room'
     | '/admin/login'
+    | '/admin/pipeline'
+    | '/admin/pipeline-control-center'
+    | '/admin/profitability-war-room'
+    | '/admin/revenue-war-room'
+    | '/admin/sales-workspace'
     | '/admin/settings'
     | '/careers/$slug'
     | '/case-studies/$slug'
@@ -487,6 +655,7 @@ export interface FileRouteTypes {
     | '/admin/content/services'
     | '/admin/content/team'
     | '/admin/content/testimonials'
+    | '/admin/deal-room/$id'
     | '/admin/leads/$id'
     | '/admin/portfolio/$id'
     | '/admin/portfolio/new'
@@ -503,9 +672,23 @@ export interface FileRouteTypes {
     | '/contact'
     | '/experience'
     | '/process'
+    | '/questionnaire'
+    | '/admin/action-center'
     | '/admin/analytics'
+    | '/admin/approvals'
+    | '/admin/command-center'
+    | '/admin/company-os'
+    | '/admin/customer-success-war-room'
     | '/admin/dashboard'
+    | '/admin/delivery-war-room'
+    | '/admin/executive-intelligence'
+    | '/admin/growth-war-room'
     | '/admin/login'
+    | '/admin/pipeline'
+    | '/admin/pipeline-control-center'
+    | '/admin/profitability-war-room'
+    | '/admin/revenue-war-room'
+    | '/admin/sales-workspace'
     | '/admin/settings'
     | '/careers/$slug'
     | '/case-studies/$slug'
@@ -532,6 +715,7 @@ export interface FileRouteTypes {
     | '/admin/content/services'
     | '/admin/content/team'
     | '/admin/content/testimonials'
+    | '/admin/deal-room/$id'
     | '/admin/leads/$id'
     | '/admin/portfolio/$id'
     | '/admin/portfolio/new'
@@ -549,6 +733,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ExperienceRoute: typeof ExperienceRoute
   ProcessRoute: typeof ProcessRoute
+  QuestionnaireRoute: typeof QuestionnaireRoute
   CareersSlugRoute: typeof CareersSlugRoute
   CaseStudiesSlugRoute: typeof CaseStudiesSlugRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
@@ -608,11 +793,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/questionnaire': {
+      id: '/questionnaire'
+      path: '/questionnaire'
+      fullPath: '/questionnaire'
+      preLoaderRoute: typeof QuestionnaireRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/action-center': {
+      id: '/admin/action-center'
+      path: '/action-center'
+      fullPath: '/admin/action-center'
+      preLoaderRoute: typeof AdminActionCenterRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/analytics': {
@@ -622,6 +821,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/approvals': {
+      id: '/admin/approvals'
+      path: '/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AdminApprovalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/command-center': {
+      id: '/admin/command-center'
+      path: '/command-center'
+      fullPath: '/admin/command-center'
+      preLoaderRoute: typeof AdminCommandCenterRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/company-os': {
+      id: '/admin/company-os'
+      path: '/company-os'
+      fullPath: '/admin/company-os'
+      preLoaderRoute: typeof AdminCompanyOsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/customer-success-war-room': {
+      id: '/admin/customer-success-war-room'
+      path: '/customer-success-war-room'
+      fullPath: '/admin/customer-success-war-room'
+      preLoaderRoute: typeof AdminCustomerSuccessWarRoomRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/dashboard'
@@ -629,11 +856,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/delivery-war-room': {
+      id: '/admin/delivery-war-room'
+      path: '/delivery-war-room'
+      fullPath: '/admin/delivery-war-room'
+      preLoaderRoute: typeof AdminDeliveryWarRoomRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/executive-intelligence': {
+      id: '/admin/executive-intelligence'
+      path: '/executive-intelligence'
+      fullPath: '/admin/executive-intelligence'
+      preLoaderRoute: typeof AdminExecutiveIntelligenceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/growth-war-room': {
+      id: '/admin/growth-war-room'
+      path: '/growth-war-room'
+      fullPath: '/admin/growth-war-room'
+      preLoaderRoute: typeof AdminGrowthWarRoomRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pipeline': {
+      id: '/admin/pipeline'
+      path: '/pipeline'
+      fullPath: '/admin/pipeline'
+      preLoaderRoute: typeof AdminPipelineRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pipeline-control-center': {
+      id: '/admin/pipeline-control-center'
+      path: '/pipeline-control-center'
+      fullPath: '/admin/pipeline-control-center'
+      preLoaderRoute: typeof AdminPipelineControlCenterRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/profitability-war-room': {
+      id: '/admin/profitability-war-room'
+      path: '/profitability-war-room'
+      fullPath: '/admin/profitability-war-room'
+      preLoaderRoute: typeof AdminProfitabilityWarRoomRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/revenue-war-room': {
+      id: '/admin/revenue-war-room'
+      path: '/revenue-war-room'
+      fullPath: '/admin/revenue-war-room'
+      preLoaderRoute: typeof AdminRevenueWarRoomRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sales-workspace': {
+      id: '/admin/sales-workspace'
+      path: '/sales-workspace'
+      fullPath: '/admin/sales-workspace'
+      preLoaderRoute: typeof AdminSalesWorkspaceRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/settings': {
@@ -832,6 +1115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentTestimonialsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/deal-room/$id': {
+      id: '/admin/deal-room/$id'
+      path: '/deal-room/$id'
+      fullPath: '/admin/deal-room/$id'
+      preLoaderRoute: typeof AdminDealRoomIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/leads/': {
       id: '/admin/leads/'
       path: '/leads'
@@ -871,9 +1161,22 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminActionCenterRoute: typeof AdminActionCenterRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminApprovalsRoute: typeof AdminApprovalsRoute
+  AdminCommandCenterRoute: typeof AdminCommandCenterRoute
+  AdminCompanyOsRoute: typeof AdminCompanyOsRoute
+  AdminCustomerSuccessWarRoomRoute: typeof AdminCustomerSuccessWarRoomRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDeliveryWarRoomRoute: typeof AdminDeliveryWarRoomRoute
+  AdminExecutiveIntelligenceRoute: typeof AdminExecutiveIntelligenceRoute
+  AdminGrowthWarRoomRoute: typeof AdminGrowthWarRoomRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminPipelineRoute: typeof AdminPipelineRoute
+  AdminPipelineControlCenterRoute: typeof AdminPipelineControlCenterRoute
+  AdminProfitabilityWarRoomRoute: typeof AdminProfitabilityWarRoomRoute
+  AdminRevenueWarRoomRoute: typeof AdminRevenueWarRoomRoute
+  AdminSalesWorkspaceRoute: typeof AdminSalesWorkspaceRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminBlogIdRoute: typeof AdminBlogIdRoute
@@ -887,6 +1190,7 @@ interface AdminRouteChildren {
   AdminContentServicesRoute: typeof AdminContentServicesRoute
   AdminContentTeamRoute: typeof AdminContentTeamRoute
   AdminContentTestimonialsRoute: typeof AdminContentTestimonialsRoute
+  AdminDealRoomIdRoute: typeof AdminDealRoomIdRoute
   AdminLeadsIdRoute: typeof AdminLeadsIdRoute
   AdminPortfolioIdRoute: typeof AdminPortfolioIdRoute
   AdminPortfolioNewRoute: typeof AdminPortfolioNewRoute
@@ -898,9 +1202,22 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminActionCenterRoute: AdminActionCenterRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminApprovalsRoute: AdminApprovalsRoute,
+  AdminCommandCenterRoute: AdminCommandCenterRoute,
+  AdminCompanyOsRoute: AdminCompanyOsRoute,
+  AdminCustomerSuccessWarRoomRoute: AdminCustomerSuccessWarRoomRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminDeliveryWarRoomRoute: AdminDeliveryWarRoomRoute,
+  AdminExecutiveIntelligenceRoute: AdminExecutiveIntelligenceRoute,
+  AdminGrowthWarRoomRoute: AdminGrowthWarRoomRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminPipelineRoute: AdminPipelineRoute,
+  AdminPipelineControlCenterRoute: AdminPipelineControlCenterRoute,
+  AdminProfitabilityWarRoomRoute: AdminProfitabilityWarRoomRoute,
+  AdminRevenueWarRoomRoute: AdminRevenueWarRoomRoute,
+  AdminSalesWorkspaceRoute: AdminSalesWorkspaceRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminBlogIdRoute: AdminBlogIdRoute,
@@ -914,6 +1231,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminContentServicesRoute: AdminContentServicesRoute,
   AdminContentTeamRoute: AdminContentTeamRoute,
   AdminContentTestimonialsRoute: AdminContentTestimonialsRoute,
+  AdminDealRoomIdRoute: AdminDealRoomIdRoute,
   AdminLeadsIdRoute: AdminLeadsIdRoute,
   AdminPortfolioIdRoute: AdminPortfolioIdRoute,
   AdminPortfolioNewRoute: AdminPortfolioNewRoute,
@@ -933,6 +1251,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ExperienceRoute: ExperienceRoute,
   ProcessRoute: ProcessRoute,
+  QuestionnaireRoute: QuestionnaireRoute,
   CareersSlugRoute: CareersSlugRoute,
   CaseStudiesSlugRoute: CaseStudiesSlugRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,
