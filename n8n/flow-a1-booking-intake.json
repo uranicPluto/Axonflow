@@ -1,0 +1,251 @@
+{
+  "name": "Flow A1 - Booking Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "flow-a1-booking-intake",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "node-1-trigger",
+      "name": "Cal.com BOOKING_CREATED Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Normalize intake fields from Cal.com webhook\nconst rawBody = $input.first().json.body || $input.first().json;\nconst booking = rawBody.payload || rawBody.data || rawBody;\nconst attendee = booking.attendees?.[0] || {};\n\nconst rawPhone = attendee.phoneNumber || attendee.phone || booking.responses?.phone?.value || booking.responses?.phone || '';\nlet phone = rawPhone.replace(/[^\\d+]/g, '');\nif (phone.length === 10 && !phone.startsWith('+')) {\n  phone = `+91${phone}`;\n}\n\nconst email = (attendee.email || booking.responses?.email?.value || booking.responses?.email || '').toLowerCase().trim();\nconst name = attendee.name || booking.responses?.name?.value || booking.responses?.name || 'Discovery Client';\nconst startTime = booking.startTime || booking.start_time || new Date().toISOString();\nconst timezone = attendee.timeZone || booking.timezone || 'Asia/Kolkata';\nconst meetingLink = booking.videoCallData?.url || booking.location || booking.meetingUrl || '';\nconst bookingUid = String(booking.uid || booking.bookingId || booking.id || `bk-${Date.now()}`);\nconst notes = booking.responses?.problem?.value || booking.responses?.problem || booking.description || 'Discovery Call Intake';\n\nreturn [{\n  json: {\n    booking_uid: bookingUid,\n    name,\n    email,\n    phone,\n    meeting_time: startTime,\n    timezone,\n    meeting_link: meetingLink,\n    notes\n  }\n}];"
+      },
+      "id": "node-2-normalize",
+      "name": "Normalize Booking Intake Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation, resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.name }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone\": \"{{ $json.phone }}\",\n  \"source\": \"book_a_call\",\n  \"status\": \"meeting_booked\",\n  \"meeting_confirmed\": true,\n  \"meeting_datetime\": \"{{ $json.meeting_time }}\",\n  \"meeting_link\": \"{{ $json.meeting_link }}\",\n  \"cal_event_id\": \"{{ $json.booking_uid }}\"\n}",
+        "options": {}
+      },
+      "id": "node-3-upsert-lead",
+      "name": "Upsert Lead in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/meetings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['Upsert Lead in Supabase'].json[0].id }}\",\n  \"cal_uid\": \"{{ $node['Normalize Booking Intake Data'].json.booking_uid }}\",\n  \"cal_booking_uid\": \"{{ $node['Normalize Booking Intake Data'].json.booking_uid }}\",\n  \"scheduled_at\": \"{{ $node['Normalize Booking Intake Data'].json.meeting_time }}\",\n  \"meeting_link\": \"{{ $node['Normalize Booking Intake Data'].json.meeting_link }}\",\n  \"status\": \"scheduled\",\n  \"reminder_sent\": false\n}",
+        "options": {}
+      },
+      "id": "node-4-create-meeting",
+      "name": "Create Meeting Record in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bolna.ai/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.BOLNA_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"{{ $env.BOLNA_AGENT_ID || 'houseofworkflow-sdr-v1' }}\",\n  \"recipient_phone_number\": \"{{ $node['Normalize Booking Intake Data'].json.phone }}\",\n  \"user_data\": {\n    \"lead_id\": \"{{ $node['Upsert Lead in Supabase'].json[0].id }}\",\n    \"booking_uid\": \"{{ $node['Normalize Booking Intake Data'].json.booking_uid }}\",\n    \"name\": \"{{ $node['Normalize Booking Intake Data'].json.name }}\",\n    \"email\": \"{{ $node['Normalize Booking Intake Data'].json.email }}\",\n    \"meeting_time\": \"{{ $node['Normalize Booking Intake Data'].json.meeting_time }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-5-bolna-call",
+      "name": "Trigger Outbound Bolna Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/communication_logs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['Upsert Lead in Supabase'].json[0].id }}\",\n  \"channel\": \"voice\",\n  \"recipient\": \"{{ $node['Normalize Booking Intake Data'].json.phone }}\",\n  \"message_type\": \"outbound_qualification_call\",\n  \"status\": \"dispatched\",\n  \"provider_message_id\": \"{{ $node['Trigger Outbound Bolna Call'].json.call_id || $node['Trigger Outbound Bolna Call'].json.id || 'bolna-call-dispatched' }}\",\n  \"idempotency_key\": \"bolna_call:{{ $node['Normalize Booking Intake Data'].json.booking_uid }}\"\n}",
+        "options": {}
+      },
+      "id": "node-6-save-call-record",
+      "name": "Save Bolna Call Record in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $node['Upsert Lead in Supabase'].json[0];\nconst meeting = $node['Create Meeting Record in Supabase'].json[0];\nconst bolnaCall = $node['Trigger Outbound Bolna Call'].json;\n\nconsole.log('[FLOW A1] Intake execution completed successfully:', {\n  lead_id: lead.id,\n  meeting_id: meeting.id,\n  booking_uid: meeting.cal_uid,\n  bolna_call_id: bolnaCall.call_id || bolnaCall.id\n});\n\nreturn [{\n  json: {\n    success: true,\n    workflow: 'Flow A1 - Booking Intake',\n    lead_id: lead.id,\n    meeting_id: meeting.id,\n    booking_uid: meeting.cal_uid,\n    call_id: bolnaCall.call_id || bolnaCall.id || 'dispatched'\n  }\n}];"
+      },
+      "id": "node-7-log-execution",
+      "name": "Log Execution & Return Success",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1520, 300]
+    }
+  ],
+  "connections": {
+    "Cal.com BOOKING_CREATED Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Booking Intake Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Booking Intake Data": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Lead in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Create Meeting Record in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Meeting Record in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Trigger Outbound Bolna Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Outbound Bolna Call": {
+      "main": [
+        [
+          {
+            "node": "Save Bolna Call Record in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Bolna Call Record in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Log Execution & Return Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "_meta": {
+    "axonflow": {
+      "version": "1.0.0",
+      "workflowName": "Flow A1 - Booking Intake",
+      "scope": "Cal.com -> n8n -> Supabase Lead & Meeting -> Outbound Bolna Call -> Supabase Call Log"
+    }
+  }
+}
