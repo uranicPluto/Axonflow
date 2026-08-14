@@ -2792,30 +2792,35 @@ SYSTEM ENVIRONMENT & HEALTH:
     const nowStr = new Date().toISOString();
 
     if (isSupabaseEnabled && supabaseAdmin) {
-      const { error: wfError } = await supabaseAdmin
+      // 1. Update webhook_events
+      await supabaseAdmin
+        .from("webhook_events")
+        .update({
+          processed: true,
+          processed_at: nowStr,
+          lead_id: leadId || null,
+        })
+        .or(`id.eq.${id},provider_event_id.eq.${id}`);
+
+      // 2. Update workflow_events if present
+      await supabaseAdmin
         .from("workflow_events")
         .update({
           status: "processed",
           processed_at: nowStr,
         })
         .eq("event_id", id);
-
-      if (wfError && wfError.code === "PGRST205") {
-        await supabaseAdmin
-          .from("webhook_events")
-          .update({
-            processed: true,
-            processed_at: nowStr,
-            lead_id: leadId || null,
-          })
-          .eq("id", id);
-      }
     } else {
       const local = readLocalDb();
       if (!local.webhook_events) local.webhook_events = [];
       const idx = local.webhook_events.findIndex((e: any) => e.id === id || e.provider_event_id === id);
       if (idx !== -1) {
-        local.webhook_events[idx] = { ...local.webhook_events[idx], processed: true, processed_at: nowStr, lead_id: leadId || null };
+        local.webhook_events[idx] = {
+          ...local.webhook_events[idx],
+          processed: true,
+          processed_at: nowStr,
+          lead_id: leadId || null
+        };
         writeLocalDb(local);
       }
     }
@@ -2830,60 +2835,42 @@ SYSTEM ENVIRONMENT & HEALTH:
     const nowStr = new Date().toISOString();
 
     if (isSupabaseEnabled && supabaseAdmin) {
-      const sourceVal = provider === "calcom" ? "cal.com" : provider;
-
-      const { data: existing, error: selectError } = await supabaseAdmin
-        .from("workflow_events")
+      const { data: existing } = await supabaseAdmin
+        .from("webhook_events")
         .select("*")
-        .eq("source", sourceVal)
-        .eq("event_id", providerEventId);
+        .eq("provider", provider)
+        .eq("provider_event_id", providerEventId);
 
-      if (!selectError && existing && existing.length > 0) {
+      if (existing && existing.length > 0) {
         const event = existing[0];
-        if (event.status === "processed") {
+        if (event.processed) {
           return "processed";
         }
-
         const createdAt = new Date(event.created_at || nowStr).getTime();
         const ageSec = (Date.now() - createdAt) / 1000;
         if (ageSec < 30) {
           return "in_flight";
         }
-
-        await supabaseAdmin
-          .from("workflow_events")
-          .update({ status: "processing", created_at: nowStr })
-          .eq("id", event.id);
-
         return "claimed";
       }
 
       const entry = {
-        event_id: providerEventId,
-        source: sourceVal,
+        provider,
+        provider_event_id: providerEventId,
         event_type: eventType,
         payload,
-        status: "processing",
-        attempt_count: 1,
+        processed: false,
         created_at: nowStr,
       };
 
       const { error: insertError } = await supabaseAdmin
-        .from("workflow_events")
+        .from("webhook_events")
         .insert([entry]);
 
       if (insertError) {
         if (insertError.code === "23505") {
-          const { data: retryData } = await supabaseAdmin
-            .from("workflow_events")
-            .select("*")
-            .eq("source", sourceVal)
-            .eq("event_id", providerEventId);
-          if (retryData && retryData.length > 0) {
-            return retryData[0].status === "processed" ? "processed" : "in_flight";
-          }
+          return "processed";
         }
-        throw insertError;
       }
 
       return "claimed";
@@ -2899,7 +2886,7 @@ SYSTEM ENVIRONMENT & HEALTH:
         if (existing.processed) {
           return "processed";
         }
-        const receivedAt = new Date(existing.received_at).getTime();
+        const receivedAt = new Date(existing.received_at || existing.created_at || nowStr).getTime();
         const ageSec = (Date.now() - receivedAt) / 1000;
         if (ageSec < 30) {
           return "in_flight";
@@ -2914,17 +2901,40 @@ SYSTEM ENVIRONMENT & HEALTH:
         provider,
         event_type: eventType,
         provider_event_id: providerEventId,
-        payload_hash: null,
+        payload,
         received_at: nowStr,
+        created_at: nowStr,
         processed: false,
         processed_at: null,
         lead_id: null,
         workflow_triggered: "flow_a",
-        error_message: null
       };
       local.webhook_events.push(entry);
       writeLocalDb(local);
       return "claimed";
+    }
+  },
+
+  async completeWebhookEvent(provider: string, providerEventId: string, leadId?: string): Promise<void> {
+    const nowStr = new Date().toISOString();
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin
+        .from("webhook_events")
+        .update({ processed: true, processed_at: nowStr, lead_id: leadId || null })
+        .eq("provider", provider)
+        .eq("provider_event_id", providerEventId);
+    } else {
+      const local = readLocalDb();
+      if (!local.webhook_events) local.webhook_events = [];
+      const item = local.webhook_events.find(
+        (e: any) => e.provider === provider && e.provider_event_id === providerEventId
+      );
+      if (item) {
+        item.processed = true;
+        item.processed_at = nowStr;
+        item.lead_id = leadId || null;
+        writeLocalDb(local);
+      }
     }
   },
 
@@ -5072,5 +5082,35 @@ SYSTEM ENVIRONMENT & HEALTH:
       stalledDeals: stalledDeals.slice(0, 5),
       todaysMeetings: scheduledMeetings.slice(0, 5)
     };
+  },
+
+  async getMeetingByUid(calUid: string): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data } = await supabaseAdmin.from("meetings").select("*").or(`cal_uid.eq.${calUid},cal_booking_uid.eq.${calUid}`).single();
+      return data || null;
+    }
+    const local = readLocalDb();
+    if (!local.meetings) return null;
+    return local.meetings.find((m: any) => m.cal_uid === calUid || m.cal_booking_uid === calUid) || null;
+  },
+
+  async getCommunicationLog(key: string): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data } = await supabaseAdmin.from("communication_logs").select("*").eq("idempotency_key", key).single();
+      return data || null;
+    }
+    const local = readLocalDb();
+    if (!local.communication_logs) return null;
+    return local.communication_logs.find((c: any) => c.idempotency_key === key) || null;
+  },
+
+  async getWebhookEventLog(provider: string, eventId: string): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data } = await supabaseAdmin.from("webhook_events").select("*").eq("provider", provider).eq("provider_event_id", eventId).single();
+      return data || null;
+    }
+    const local = readLocalDb();
+    if (!local.webhook_events) return null;
+    return local.webhook_events.find((e: any) => e.provider === provider && e.provider_event_id === eventId) || null;
   }
 };

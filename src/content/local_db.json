@@ -15,11 +15,11 @@
   },
   "leads": [
     {
-      "id": "lead-1786708356109",
-      "created_at": "2026-08-14T11:52:36.109Z",
+      "id": "lead-1786708935020",
+      "created_at": "2026-08-14T12:02:15.020Z",
       "source": "experience_form",
       "name": "Priya Sharma",
-      "email": "exp.lead.1786708355175@houseofworkflow.com",
+      "email": "exp.lead.1786708319782@houseofworkflow.com",
       "phone": "+919876543210",
       "service_interest": "ai_sdr",
       "problem_description": "Automate outbound prospecting and lead qualification",
@@ -36,12 +36,45 @@
       "meeting_link": "",
       "meeting_confirmed": false,
       "calendly_event_id": "",
+      "call_token": "b62e989d-3097-4cbf-8e60-7b9f463068ba",
+      "call_token_expires_at": "2026-08-14T12:17:14.572Z",
+      "call_token_used": false,
+      "updated_at": "2026-08-14T12:02:15.467Z",
+      "lead_score_manual_override": false,
+      "lead_score_override_reason": null
+    },
+    {
+      "id": "lead-1786708356109",
+      "created_at": "2026-08-14T11:52:36.109Z",
+      "source": "experience_form",
+      "name": "Priya Sharma",
+      "email": "exp.lead.1786708355175@houseofworkflow.com",
+      "phone": "+919876543210",
+      "service_interest": "ai_sdr",
+      "problem_description": "Automate outbound prospecting and lead qualification",
+      "status": "qualified",
+      "internal_notes": "",
+      "lead_score": 40,
+      "lead_score_reason": "",
+      "pain_points": "",
+      "budget_signal": "",
+      "business_type": "",
+      "call_transcript": "",
+      "call_attempts": 0,
+      "call_outcome": "",
+      "meeting_link": "https://cal.com/meeting/test",
+      "meeting_confirmed": false,
+      "calendly_event_id": "",
       "call_token": "d849e543-5349-4dba-b505-bce71975b819",
       "call_token_expires_at": "2026-08-14T12:07:36.102Z",
       "call_token_used": false,
-      "updated_at": "2026-08-14T11:52:36.129Z",
+      "updated_at": "2026-08-14T11:59:44.013Z",
       "lead_score_manual_override": false,
-      "lead_score_override_reason": null
+      "lead_score_override_reason": null,
+      "meeting_datetime": "2026-08-16T11:54:43.459Z",
+      "meeting_timezone": "Asia/Kolkata",
+      "meeting_status": "cancelled",
+      "reminder_sent": false
     },
     {
       "id": "lead-1786708330401",
@@ -164,6 +197,28 @@
       "close_probability": 85,
       "service_interest": "Software & Defense AI",
       "updated_at": "2026-08-14T09:00:15.750Z"
+    },
+    {
+      "id": "lead-1786709978596",
+      "created_at": "2026-08-14T12:19:38.596Z",
+      "cal_event_id": "bk-flowa-1786709978457",
+      "name": "Vikram Malhotra",
+      "first_name": "Vikram",
+      "email": "flowa.client.1786709978457@houseofworkflow.com",
+      "phone": "+919988776655",
+      "source": "book_a_call",
+      "status": "meeting_booked",
+      "cal_booking_uid": "bk-flowa-1786709978457",
+      "meeting_datetime": "2026-08-16T12:19:38.916Z",
+      "meeting_timezone": "Asia/Kolkata",
+      "meeting_link": "https://cal.com/meeting/flowa-1786709978457",
+      "meeting_confirmed": false,
+      "meeting_status": "cancelled",
+      "reminder_sent": false,
+      "updated_at": "2026-08-14T12:19:39.153Z",
+      "lead_score_manual_override": false,
+      "lead_score_override_reason": null,
+      "lead_score": 50
     }
   ],
   "call_logs": [],
@@ -991,6 +1046,46 @@
     }
   ],
   "activity_log": [
+    {
+      "id": "act-1786709979187",
+      "message": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-flowa-1786709978457)",
+      "timestamp": "2026-08-14T12:19:39.187Z"
+    },
+    {
+      "id": "act-1786709978973",
+      "message": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-flowa-1786709978457, New Time: 2026-08-16T12:19:38.916Z)",
+      "timestamp": "2026-08-14T12:19:38.973Z"
+    },
+    {
+      "id": "act-1786709978627",
+      "message": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-flowa-1786709978457, Link: https://cal.com/meeting/flowa-1786709978457)",
+      "timestamp": "2026-08-14T12:19:38.627Z"
+    },
+    {
+      "id": "act-1786708935467",
+      "message": "Lead status changed: Priya Sharma (new -> meeting_booked)",
+      "timestamp": "2026-08-14T12:02:15.467Z"
+    },
+    {
+      "id": "act-1786708935180",
+      "message": "New lead captured: Priya Sharma (exp.lead.1786708319782@houseofworkflow.com)",
+      "timestamp": "2026-08-14T12:02:15.180Z"
+    },
+    {
+      "id": "act-1786708784014",
+      "message": "Lead status changed: Priya Sharma (meeting_booked -> qualified)",
+      "timestamp": "2026-08-14T11:59:44.014Z"
+    },
+    {
+      "id": "act-1786708633797",
+      "message": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708319782)",
+      "timestamp": "2026-08-14T11:57:13.797Z"
+    },
+    {
+      "id": "act-1786708483550",
+      "message": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708319782, New Time: 2026-08-16T11:54:43.459Z)",
+      "timestamp": "2026-08-14T11:54:43.550Z"
+    },
     {
       "id": "act-1786708356129",
       "message": "Lead status changed: Priya Sharma (new -> meeting_booked)",
@@ -25210,9 +25305,9 @@
       "provider_event_id": "BOOKING_CREATED:bk-test-1786708319782",
       "payload_hash": null,
       "received_at": "2026-08-14T11:51:59.785Z",
-      "processed": false,
-      "processed_at": null,
-      "lead_id": null,
+      "processed": true,
+      "processed_at": "2026-08-14T11:54:43.408Z",
+      "lead_id": "lead-1",
       "workflow_triggered": "flow_a",
       "error_message": null
     },
@@ -25293,6 +25388,121 @@
       "lead_id": "lead-1786708330401",
       "workflow_triggered": "flow_a",
       "error_message": null
+    },
+    {
+      "id": "wh-1786708483475",
+      "provider": "calcom",
+      "event_type": "BOOKING_RESCHEDULED",
+      "provider_event_id": "BOOKING_RESCHEDULED:bk-test-1786708319782",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:54:43.459Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:57:13.718Z",
+      "lead_id": "lead-1786708356109",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708633747",
+      "provider": "calcom",
+      "event_type": "BOOKING_CANCELLED",
+      "provider_event_id": "BOOKING_CANCELLED:bk-test-1786708319782",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:57:13.739Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:59:43.965Z",
+      "lead_id": "lead-1786708356109",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786709978468",
+      "provider": "calcom",
+      "event_type": "BOOKING_CREATED",
+      "provider_event_id": "BOOKING_CREATED:bk-flowa-1786709978457",
+      "payload": {
+        "eventTrigger": "BOOKING_CREATED",
+        "payload": {
+          "uid": "bk-flowa-1786709978457",
+          "eventTitle": "House Of Workflow Discovery Call",
+          "startTime": "2026-08-15T12:19:38.457Z",
+          "timezone": "Asia/Kolkata",
+          "location": "https://cal.com/meeting/flowa-1786709978457",
+          "attendees": [
+            {
+              "name": "Vikram Malhotra",
+              "email": "flowa.client.1786709978457@houseofworkflow.com",
+              "phoneNumber": "+919988776655",
+              "timeZone": "Asia/Kolkata"
+            }
+          ],
+          "responses": {
+            "problem": "We need automated client intake and instant scheduling"
+          }
+        }
+      },
+      "received_at": "2026-08-14T12:19:38.459Z",
+      "created_at": "2026-08-14T12:19:38.459Z",
+      "processed": true,
+      "processed_at": "2026-08-14T12:19:38.852Z",
+      "lead_id": "lead-1786709978596",
+      "workflow_triggered": "flow_a"
+    },
+    {
+      "id": "wh-1786709978923",
+      "provider": "calcom",
+      "event_type": "BOOKING_RESCHEDULED",
+      "provider_event_id": "BOOKING_RESCHEDULED:bk-flowa-1786709978457",
+      "payload": {
+        "eventTrigger": "BOOKING_RESCHEDULED",
+        "payload": {
+          "uid": "bk-flowa-1786709978457",
+          "eventTitle": "House Of Workflow Discovery Call",
+          "startTime": "2026-08-16T12:19:38.916Z",
+          "timezone": "Asia/Kolkata",
+          "location": "https://cal.com/meeting/flowa-1786709978457",
+          "attendees": [
+            {
+              "name": "Vikram Malhotra",
+              "email": "flowa.client.1786709978457@houseofworkflow.com",
+              "phoneNumber": "+919988776655",
+              "timeZone": "Asia/Kolkata"
+            }
+          ]
+        }
+      },
+      "received_at": "2026-08-14T12:19:38.916Z",
+      "created_at": "2026-08-14T12:19:38.916Z",
+      "processed": true,
+      "processed_at": "2026-08-14T12:19:39.114Z",
+      "lead_id": "lead-1786709978596",
+      "workflow_triggered": "flow_a"
+    },
+    {
+      "id": "wh-1786709979139",
+      "provider": "calcom",
+      "event_type": "BOOKING_CANCELLED",
+      "provider_event_id": "BOOKING_CANCELLED:bk-flowa-1786709978457",
+      "payload": {
+        "eventTrigger": "BOOKING_CANCELLED",
+        "payload": {
+          "uid": "bk-flowa-1786709978457",
+          "eventTitle": "House Of Workflow Discovery Call",
+          "attendees": [
+            {
+              "name": "Vikram Malhotra",
+              "email": "flowa.client.1786709978457@houseofworkflow.com",
+              "phoneNumber": "+919988776655"
+            }
+          ]
+        }
+      },
+      "received_at": "2026-08-14T12:19:39.133Z",
+      "created_at": "2026-08-14T12:19:39.133Z",
+      "processed": true,
+      "processed_at": "2026-08-14T12:19:39.328Z",
+      "lead_id": "lead-1786709978596",
+      "workflow_triggered": "flow_a"
     }
   ],
   "lead_scores": [
@@ -25392,8 +25602,24 @@
       }
     },
     {
-      "id": "scr-1786708356129-bg3f7",
+      "id": "scr-1786708784014-tju90",
       "lead_id": "lead-1786708356109",
+      "score": 40,
+      "classification": "Warm",
+      "breakdown": {
+        "service_score": 5,
+        "size_score": 5,
+        "budget_score": 5,
+        "engagement_score": 10,
+        "call_score": 0,
+        "source_score": 5,
+        "base_score": 10
+      },
+      "calculated_at": "2026-08-14T11:59:44.014Z"
+    },
+    {
+      "id": "scr-1786708935467-61gff",
+      "lead_id": "lead-1786708935020",
       "score": 30,
       "classification": "Cold",
       "breakdown": {
@@ -25405,7 +25631,44 @@
         "source_score": 5,
         "base_score": 10
       },
-      "calculated_at": "2026-08-14T11:52:36.129Z"
+      "calculated_at": "2026-08-14T12:02:15.467Z"
+    },
+    {
+      "id": "scr-1786709978596-zw89c",
+      "lead_id": "lead-1786709978596",
+      "score": 50,
+      "classification": "Warm",
+      "breakdown": {
+        "service_score": 5,
+        "size_score": 5,
+        "budget_score": 5,
+        "engagement_score": 15,
+        "call_score": 0,
+        "source_score": 10,
+        "base_score": 10
+      },
+      "calculated_at": "2026-08-14T12:19:38.596Z"
+    },
+    {
+      "lead_id": "lead-1786709978596",
+      "total_score": 46,
+      "category": "Warm",
+      "questionnaire_score": 0,
+      "company_fit_score": 16,
+      "urgency_score": 15,
+      "budget_score": 10,
+      "engagement_score": 5,
+      "discovery_outcome_score": 0,
+      "meeting_intelligence_boost": 0,
+      "score_breakdown_json": {
+        "questionnaire_score": 0,
+        "company_fit_score": 16,
+        "urgency_score": 15,
+        "budget_score": 10,
+        "engagement_score": 5,
+        "discovery_outcome_score": 0,
+        "meeting_intelligence_boost": 0
+      }
     }
   ],
   "analytics_events": [
@@ -25448,6 +25711,30 @@
       "source": "experience_form",
       "metadata": {},
       "created_at": "2026-08-14T11:52:36.109Z"
+    },
+    {
+      "id": "evt-1786708784014-vlihk",
+      "event_type": "qualified",
+      "lead_id": "lead-1786708356109",
+      "source": "experience_form",
+      "metadata": {},
+      "created_at": "2026-08-14T11:59:44.014Z"
+    },
+    {
+      "id": "evt-1786708935151-ppnld",
+      "event_type": "new_lead",
+      "lead_id": "lead-1786708935020",
+      "source": "experience_form",
+      "metadata": {},
+      "created_at": "2026-08-14T12:02:15.180Z"
+    },
+    {
+      "id": "evt-1786709978596-rkci5",
+      "event_type": "new_lead",
+      "lead_id": "lead-1786709978596",
+      "source": "book_a_call",
+      "metadata": {},
+      "created_at": "2026-08-14T12:19:38.596Z"
     }
   ],
   "meetings": [
@@ -25456,14 +25743,14 @@
       "lead_id": "lead-1",
       "cal_event_id": "bk-test-1786708319782",
       "cal_uid": "bk-test-1786708319782",
-      "scheduled_at": "2026-08-15T11:51:59.782Z",
+      "scheduled_at": "2026-08-14T11:57:13.739Z",
       "attendee_timezone": "Asia/Kolkata",
       "duration_min": 30,
-      "meeting_link": "https://cal.com/meeting/test",
-      "status": "scheduled",
+      "meeting_link": "",
+      "status": "cancelled",
       "reminder_sent": false,
       "created_at": "2026-08-14T11:51:59.915Z",
-      "updated_at": "2026-08-14T11:51:59.915Z"
+      "updated_at": "2026-08-14T11:57:13.784Z"
     },
     {
       "id": "mtg-1786708329599-agltr",
@@ -25520,9 +25807,100 @@
       "reminder_sent": false,
       "created_at": "2026-08-14T11:52:36.137Z",
       "updated_at": "2026-08-14T11:52:36.137Z"
+    },
+    {
+      "id": "mtg-1786708935782-80bhp",
+      "lead_id": "lead-1786708935020",
+      "cal_event_id": "bk-1786708935404",
+      "cal_uid": "bk-1786708935404",
+      "scheduled_at": "2026-08-15T12:02:15.207Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "https://cal.com/meeting/bk-1786708935404",
+      "status": "scheduled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T12:02:15.782Z",
+      "updated_at": "2026-08-14T12:02:15.782Z"
+    },
+    {
+      "id": "mtg-1786709978604-05in4",
+      "lead_id": "lead-1786709978596",
+      "cal_event_id": "bk-flowa-1786709978457",
+      "cal_uid": "bk-flowa-1786709978457",
+      "scheduled_at": "2026-08-14T12:19:39.133Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "",
+      "status": "cancelled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T12:19:38.604Z",
+      "updated_at": "2026-08-14T12:19:39.174Z"
     }
   ],
   "lead_activities": [
+    {
+      "id": "act-1786709979195-vguf4",
+      "lead_id": "lead-1786709978596",
+      "activity_type": "meeting_cancelled",
+      "description": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-flowa-1786709978457)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T12:19:39.195Z"
+    },
+    {
+      "id": "act-1786709978981-9mrcc",
+      "lead_id": "lead-1786709978596",
+      "activity_type": "meeting_rescheduled",
+      "description": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-flowa-1786709978457, New Time: 2026-08-16T12:19:38.916Z)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T12:19:38.981Z"
+    },
+    {
+      "id": "act-1786709978723-bylq5",
+      "lead_id": "lead-1786709978596",
+      "activity_type": "ai_brief_generated",
+      "description": "AI Brief 2.0 & Intelligence generated. Deal Score: 46/100 (Warm).",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T12:19:38.723Z"
+    },
+    {
+      "id": "act-1786709978634-t8cdn",
+      "lead_id": "lead-1786709978596",
+      "activity_type": "meeting_booked",
+      "description": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-flowa-1786709978457, Link: https://cal.com/meeting/flowa-1786709978457)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T12:19:38.634Z"
+    },
+    {
+      "id": "act-1786708784048-91oq2",
+      "lead_id": "lead-1786708356109",
+      "activity_type": "ai_qualification_call_completed",
+      "description": "AI Voice Call Completed. Score: 85/100 (Hot). Service: AI Autonomous Revenue & SDR System",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:59:44.048Z"
+    },
+    {
+      "id": "act-1786708633803-wznbi",
+      "lead_id": "lead-1786708356109",
+      "activity_type": "meeting_cancelled",
+      "description": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708319782)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:57:13.803Z"
+    },
+    {
+      "id": "act-1786708483559-cuupp",
+      "lead_id": "lead-1786708356109",
+      "activity_type": "meeting_rescheduled",
+      "description": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708319782, New Time: 2026-08-16T11:54:43.459Z)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:54:43.559Z"
+    },
     {
       "id": "act-1786708356057-d6lnj",
       "lead_id": "lead-1786708330401",
@@ -25692,6 +26070,26 @@
       "raw_enrichment_data": {
         "source": "fallback_enrichment_engine"
       }
+    },
+    {
+      "lead_id": "lead-1786709978596",
+      "industry": "B2B Technology & Professional Services",
+      "company_size": "10-50 employees",
+      "annual_revenue_estimate": "$1M - $5M",
+      "employee_count": 25,
+      "location": "Global / Remote",
+      "linkedin_url": "https://linkedin.com/company/houseofworkflow",
+      "website": "https://houseofworkflow.com",
+      "tech_stack": [
+        "REST APIs",
+        "Modern Web Frontend",
+        "Cloud Databases",
+        "Automation Engine"
+      ],
+      "funding_stage": "Bootstrapped / Growth Stage",
+      "raw_enrichment_data": {
+        "source": "fallback_enrichment_engine"
+      }
     }
   ],
   "company_research_reports": [
@@ -25727,6 +26125,17 @@
       "risk_factors": "Manual task friction delaying deal execution and client onboarding.",
       "buying_signals": "Proactive booking of discovery session to evaluate workflow optimization.",
       "recommended_pitch": "Focus the discovery call on demonstrating how House Of Workflow automates Varma Logistics's end-to-end pipeline with zero manual intervention."
+    },
+    {
+      "lead_id": "lead-1786709978596",
+      "company_name": "Vikram Malhotra's Company",
+      "website": "https://vikrammalhotrascompany.com",
+      "company_summary": "Vikram Malhotra's Company operates in the B2B tech and services market, currently experiencing growth that requires operational automation.",
+      "competitive_landscape": "Competitors are adopting modern AI workflows and automated CRM routing to decrease response latency.",
+      "growth_signals": "High lead velocity and need for scaling delivery without proportional headcount expansion.",
+      "risk_factors": "Manual task friction delaying deal execution and client onboarding.",
+      "buying_signals": "Proactive booking of discovery session to evaluate workflow optimization.",
+      "recommended_pitch": "Focus the discovery call on demonstrating how House Of Workflow automates Vikram Malhotra's Company's end-to-end pipeline with zero manual intervention."
     }
   ],
   "meeting_briefs": [
@@ -25872,6 +26281,69 @@
       ],
       "recommended_offer": "AI Autonomous Revenue & SDR System",
       "created_at": "2026-08-14T11:52:36.209Z"
+    },
+    {
+      "id": "brief-1786708784027-pq7ek",
+      "lead_id": "lead-1786708356109",
+      "lead_name": "Priya Sharma",
+      "lead_email": "exp.lead.1786708355175@houseofworkflow.com",
+      "company_name": "Priya Sharma's Company",
+      "research_summary": "AI Call completed with Priya Sharma. Intent & Fit evaluated as Hot (85/100). Lead expressed strong interest in AI workflow automation.",
+      "key_pain_points": [
+        "Manual data entry & context switching across CRM/Slack",
+        "Slow lead follow-up response times (> 2 hours)",
+        "Lack of automated AI qualification & booking"
+      ],
+      "opportunities": [
+        "Automated AI SDR Deployment",
+        "Cal.com & WhatsApp Workflow Automation"
+      ],
+      "discovery_questions": [
+        "Highlight House Of Workflow's AI SDR & Autonomous Operating System tailored for Priya Sharma",
+        "Demonstrate zero-latency Cal.com + WhatsApp qualification automation",
+        "Present ROI calculation: 4.8x FTE output increase within 30 days"
+      ],
+      "recommended_offer": "AI Autonomous Revenue & SDR System",
+      "created_at": "2026-08-14T11:59:44.027Z"
+    },
+    {
+      "id": "brief-1786709236019-xhw4l",
+      "lead_id": "lead-1786708935020",
+      "booking_id": "bk-1786708935404",
+      "lead_name": "Priya Sharma",
+      "lead_email": "exp.lead.1786708319782@houseofworkflow.com",
+      "company_name": "Priya Sharma's Business",
+      "research_summary": "AI Call completed with Priya Sharma. Intent & Fit evaluated as Warm (72/100). Lead expressed strong interest in AI workflow automation.",
+      "key_pain_points": [
+        "Manual data entry & context switching across CRM/Slack",
+        "Slow lead follow-up response times (> 2 hours)",
+        "Lack of automated AI qualification & booking"
+      ],
+      "opportunities": [
+        "Automated Experience Form Onboarding",
+        "Real-Time AI Booking"
+      ],
+      "discovery_questions": [
+        "Highlight House Of Workflow's AI SDR & Autonomous Operating System tailored for Priya Sharma",
+        "Demonstrate zero-latency Cal.com + WhatsApp qualification automation",
+        "Present ROI calculation: 4.8x FTE output increase within 30 days"
+      ],
+      "recommended_offer": "AI Autonomous Revenue & SDR System",
+      "created_at": "2026-08-14T12:07:16.019Z"
+    },
+    {
+      "id": "brief-1786709978688-26xoq",
+      "lead_id": "lead-1786709978596",
+      "booking_id": "bk-flowa-1786709978457",
+      "lead_name": "Vikram Malhotra",
+      "lead_email": "flowa.client.1786709978457@houseofworkflow.com",
+      "company_name": "Not Specified",
+      "research_summary": "Prospect Vikram Malhotra (Vikram Malhotra's Team) booked a discovery call to explore automation. Initial details indicate strong alignment for process optimization.",
+      "key_pain_points": "- High manual effort required for customer intake & lead follow-up.\n- Disconnected internal data systems creating operational silos.\n- Need for automated qualification before team intervention.",
+      "opportunities": "- Implement n8n/AxonFlow automated workflow pipelines for instant lead routing.\n- Deploy AI assistant for 24/7 client intake & preliminary diagnostic capture.\n- Integrate unified Supabase storage with Slack/CRM real-time notifications.",
+      "discovery_questions": "1. What is the current manual hours spent weekly on this process?\n2. What software platforms currently form your core stack (CRMs, databases)?\n3. What is your timeline for implementing an automated solution?\n4. What budget allocation is targeted for this optimization phase?\n5. Who else on your team will be involved in evaluating this implementation?",
+      "recommended_offer": "House Of Workflow AI Agent Sprint ($5,000)",
+      "created_at": "2026-08-14T12:19:38.688Z"
     }
   ],
   "communication_logs": [
@@ -25883,10 +26355,12 @@
       "template_name": "how_booking_confirm",
       "message_type": "recipient_notification",
       "provider_message_id": null,
-      "status": "sending",
-      "error_message": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
       "idempotency_key": "booking_confirmation_whatsapp:bk-test-1786708319782",
-      "created_at": "2026-08-14T11:52:00.075Z"
+      "created_at": "2026-08-14T11:52:00.075Z",
+      "updated_at": "2026-08-14T11:54:43.274Z",
+      "failed_at": "2026-08-14T11:54:43.274Z"
     },
     {
       "id": "cml-1786708320096",
@@ -25896,10 +26370,12 @@
       "template_name": null,
       "message_type": "email_notification",
       "provider_message_id": null,
-      "status": "sending",
-      "error_message": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
       "idempotency_key": "booking_confirmation_email:bk-test-1786708319782",
-      "created_at": "2026-08-14T11:52:00.090Z"
+      "created_at": "2026-08-14T11:52:00.090Z",
+      "updated_at": "2026-08-14T11:54:43.341Z",
+      "failed_at": "2026-08-14T11:54:43.341Z"
     },
     {
       "id": "cml-1786708320113",
@@ -25909,10 +26385,12 @@
       "template_name": "jay_booking_alert",
       "message_type": "recipient_notification",
       "provider_message_id": null,
-      "status": "sending",
-      "error_message": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
       "idempotency_key": "jay_booking_alert:bk-test-1786708319782",
-      "created_at": "2026-08-14T11:52:00.105Z"
+      "created_at": "2026-08-14T11:52:00.105Z",
+      "updated_at": "2026-08-14T11:54:43.366Z",
+      "failed_at": "2026-08-14T11:54:43.366Z"
     },
     {
       "id": "cml-1786708320127",
@@ -25922,10 +26400,12 @@
       "template_name": null,
       "message_type": "email_notification",
       "provider_message_id": null,
-      "status": "sending",
-      "error_message": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
       "idempotency_key": "jay_booking_email:bk-test-1786708319782",
-      "created_at": "2026-08-14T11:52:00.120Z"
+      "created_at": "2026-08-14T11:52:00.120Z",
+      "updated_at": "2026-08-14T11:54:43.387Z",
+      "failed_at": "2026-08-14T11:54:43.387Z"
     },
     {
       "id": "cml-1786708329741",
@@ -26402,6 +26882,364 @@
       "created_at": "2026-08-14T11:52:36.224Z",
       "updated_at": "2026-08-14T11:52:36.238Z",
       "sent_at": "2026-08-14T11:52:36.238Z"
+    },
+    {
+      "id": "cml-1786708483578",
+      "lead_id": "lead-1786708356109",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_reschedule",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
+      "idempotency_key": "booking_reschedule_whatsapp:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:54:43.572Z",
+      "updated_at": "2026-08-14T11:57:13.647Z",
+      "failed_at": "2026-08-14T11:57:13.647Z"
+    },
+    {
+      "id": "cml-1786708483590",
+      "lead_id": "lead-1786708356109",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "booking_reschedule_email:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:54:43.584Z",
+      "updated_at": "2026-08-14T11:57:13.667Z",
+      "failed_at": "2026-08-14T11:57:13.667Z"
+    },
+    {
+      "id": "cml-1786708483604",
+      "lead_id": "lead-1786708356109",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_reschedule_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
+      "idempotency_key": "jay_reschedule_alert:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:54:43.597Z",
+      "updated_at": "2026-08-14T11:57:13.685Z",
+      "failed_at": "2026-08-14T11:57:13.685Z"
+    },
+    {
+      "id": "cml-1786708483621",
+      "lead_id": "lead-1786708356109",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "jay_reschedule_email:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:54:43.614Z",
+      "updated_at": "2026-08-14T11:57:13.701Z",
+      "failed_at": "2026-08-14T11:57:13.701Z"
+    },
+    {
+      "id": "cml-1786708633823",
+      "lead_id": "lead-1786708356109",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_cancel",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
+      "idempotency_key": "booking_cancel_whatsapp:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:57:13.817Z",
+      "updated_at": "2026-08-14T11:59:43.897Z",
+      "failed_at": "2026-08-14T11:59:43.897Z"
+    },
+    {
+      "id": "cml-1786708633834",
+      "lead_id": "lead-1786708356109",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "booking_cancel_email:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:57:13.828Z",
+      "updated_at": "2026-08-14T11:59:43.914Z",
+      "failed_at": "2026-08-14T11:59:43.914Z"
+    },
+    {
+      "id": "cml-1786708633847",
+      "lead_id": "lead-1786708356109",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_cancel_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
+      "idempotency_key": "jay_cancel_alert:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:57:13.842Z",
+      "updated_at": "2026-08-14T11:59:43.931Z",
+      "failed_at": "2026-08-14T11:59:43.931Z"
+    },
+    {
+      "id": "cml-1786708633859",
+      "lead_id": "lead-1786708356109",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "jay_cancel_email:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:57:13.853Z",
+      "updated_at": "2026-08-14T11:59:43.948Z",
+      "failed_at": "2026-08-14T11:59:43.948Z"
+    },
+    {
+      "id": "cml-1786708784071",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "founder_call_brief_exp.lead.1786708355175@houseofworkflow.com_1786708784064",
+      "created_at": "2026-08-14T11:59:44.064Z",
+      "updated_at": "2026-08-14T12:02:14.388Z",
+      "failed_at": "2026-08-14T12:02:14.388Z"
+    },
+    {
+      "id": "cml-1786708935880",
+      "lead_id": "lead-1786708935020",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_whatsapp after 3 attempts: AiSensy credentials missing in production environment",
+      "idempotency_key": "experience_booking_wa:bk-1786708935404",
+      "created_at": "2026-08-14T12:02:15.864Z",
+      "updated_at": "2026-08-14T12:04:45.914Z",
+      "failed_at": "2026-08-14T12:04:45.914Z"
+    },
+    {
+      "id": "cml-1786709085964",
+      "lead_id": "lead-1786708935020",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "experience_booking_email:bk-1786708935404",
+      "created_at": "2026-08-14T12:04:45.950Z",
+      "updated_at": "2026-08-14T12:07:15.993Z",
+      "failed_at": "2026-08-14T12:07:15.993Z"
+    },
+    {
+      "id": "cml-1786709236059",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "failed",
+      "error_message": "Failed send_email after 3 attempts: Resend credentials missing in production environment",
+      "idempotency_key": "founder_call_brief_exp.lead.1786708319782@houseofworkflow.com_1786709236043",
+      "created_at": "2026-08-14T12:07:16.043Z",
+      "updated_at": "2026-08-14T12:09:46.086Z",
+      "failed_at": "2026-08-14T12:09:46.086Z"
+    },
+    {
+      "id": "cml-1786709978744",
+      "lead_id": "lead-1786709978596",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786709978794",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_whatsapp:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:38.737Z",
+      "updated_at": "2026-08-14T12:19:38.794Z",
+      "sent_at": "2026-08-14T12:19:38.794Z"
+    },
+    {
+      "id": "cml-1786709978760",
+      "lead_id": "lead-1786709978596",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786709978794",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_email:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:38.751Z",
+      "updated_at": "2026-08-14T12:19:38.808Z",
+      "sent_at": "2026-08-14T12:19:38.808Z"
+    },
+    {
+      "id": "cml-1786709978773",
+      "lead_id": "lead-1786709978596",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_booking_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786709978794",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_booking_alert:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:38.767Z",
+      "updated_at": "2026-08-14T12:19:38.823Z",
+      "sent_at": "2026-08-14T12:19:38.823Z"
+    },
+    {
+      "id": "cml-1786709978787",
+      "lead_id": "lead-1786709978596",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786709978794",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_booking_email:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:38.780Z",
+      "updated_at": "2026-08-14T12:19:38.837Z",
+      "sent_at": "2026-08-14T12:19:38.837Z"
+    },
+    {
+      "id": "cml-1786709979004",
+      "lead_id": "lead-1786709978596",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_reschedule",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786709979057",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_reschedule_whatsapp:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:38.997Z",
+      "updated_at": "2026-08-14T12:19:39.057Z",
+      "sent_at": "2026-08-14T12:19:39.057Z"
+    },
+    {
+      "id": "cml-1786709979018",
+      "lead_id": "lead-1786709978596",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786709979057",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_reschedule_email:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.011Z",
+      "updated_at": "2026-08-14T12:19:39.071Z",
+      "sent_at": "2026-08-14T12:19:39.071Z"
+    },
+    {
+      "id": "cml-1786709979032",
+      "lead_id": "lead-1786709978596",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_reschedule_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786709979057",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_reschedule_alert:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.025Z",
+      "updated_at": "2026-08-14T12:19:39.084Z",
+      "sent_at": "2026-08-14T12:19:39.084Z"
+    },
+    {
+      "id": "cml-1786709979048",
+      "lead_id": "lead-1786709978596",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786709979057",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_reschedule_email:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.038Z",
+      "updated_at": "2026-08-14T12:19:39.098Z",
+      "sent_at": "2026-08-14T12:19:39.098Z"
+    },
+    {
+      "id": "cml-1786709979218",
+      "lead_id": "lead-1786709978596",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_cancel",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786709979265",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_cancel_whatsapp:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.210Z",
+      "updated_at": "2026-08-14T12:19:39.265Z",
+      "sent_at": "2026-08-14T12:19:39.265Z"
+    },
+    {
+      "id": "cml-1786709979232",
+      "lead_id": "lead-1786709978596",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786709979265",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_cancel_email:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.226Z",
+      "updated_at": "2026-08-14T12:19:39.283Z",
+      "sent_at": "2026-08-14T12:19:39.283Z"
+    },
+    {
+      "id": "cml-1786709979246",
+      "lead_id": "lead-1786709978596",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_cancel_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786709979265",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_cancel_alert:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.239Z",
+      "updated_at": "2026-08-14T12:19:39.299Z",
+      "sent_at": "2026-08-14T12:19:39.299Z"
+    },
+    {
+      "id": "cml-1786709979258",
+      "lead_id": "lead-1786709978596",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786709979265",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_cancel_email:bk-flowa-1786709978457",
+      "created_at": "2026-08-14T12:19:39.252Z",
+      "updated_at": "2026-08-14T12:19:39.313Z",
+      "sent_at": "2026-08-14T12:19:39.313Z"
     }
   ]
 }
