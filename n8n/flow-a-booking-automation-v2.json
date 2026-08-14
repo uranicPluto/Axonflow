@@ -1,0 +1,495 @@
+{
+  "name": "Flow A: Autonomous Production Book-a-Call & Qualification Engine (v2)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "calcom-booking-v2",
+        "responseMode": "onReceived",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "node-1-trigger",
+      "name": "Cal.com Booking Created Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and normalize booking parameters from Cal.com webhook\nconst payload = $input.first().json.body || $input.first().json;\nconst booking = payload.payload || payload.data || payload;\nconst attendee = booking.attendees?.[0] || {};\n\nconst rawPhone = attendee.phoneNumber || attendee.phone || booking.responses?.phone?.value || booking.responses?.phone || '';\nlet phone = rawPhone.replace(/[^\\d+]/g, '');\nif (phone.length === 10 && !phone.startsWith('+')) {\n  phone = `+91${phone}`;\n}\n\nconst email = (attendee.email || booking.responses?.email?.value || booking.responses?.email || '').toLowerCase().trim();\nconst name = attendee.name || booking.responses?.name?.value || booking.responses?.name || 'Valued Client';\nconst startTime = booking.startTime || booking.start_time || new Date().toISOString();\nconst timezone = attendee.timeZone || booking.timezone || 'Asia/Kolkata';\nconst meetingLink = booking.videoCallData?.url || booking.location || booking.meetingUrl || '';\nconst bookingUid = String(booking.uid || booking.bookingId || booking.id || `bk-${Date.now()}`);\nconst notes = booking.responses?.problem?.value || booking.responses?.problem || booking.description || 'Discovery Call';\n\nconst formattedDate = new Date(startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });\nconst formattedTime = new Date(startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });\n\nreturn [{\n  json: {\n    bookingUid,\n    name,\n    email,\n    phone,\n    startTime,\n    timezone,\n    meetingLink,\n    formattedDate,\n    formattedTime,\n    meetingDateTimeStr: `${formattedDate} at ${formattedTime} (${timezone})`,\n    notes\n  }\n}];"
+      },
+      "id": "node-2-normalize",
+      "name": "Extract & Normalize Booking Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/leads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation, resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.name }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone\": \"{{ $json.phone }}\",\n  \"source\": \"book_a_call\",\n  \"status\": \"meeting_booked\",\n  \"meeting_confirmed\": true,\n  \"meeting_datetime\": \"{{ $json.startTime }}\",\n  \"meeting_link\": \"{{ $json.meetingLink }}\",\n  \"cal_event_id\": \"{{ $json.bookingUid }}\"\n}",
+        "options": {}
+      },
+      "id": "node-3-upsert-lead",
+      "name": "Upsert Lead in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/meetings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['Upsert Lead in Supabase'].json[0].id }}\",\n  \"cal_uid\": \"{{ $node['Extract & Normalize Booking Data'].json.bookingUid }}\",\n  \"cal_booking_uid\": \"{{ $node['Extract & Normalize Booking Data'].json.bookingUid }}\",\n  \"scheduled_at\": \"{{ $node['Extract & Normalize Booking Data'].json.startTime }}\",\n  \"meeting_link\": \"{{ $node['Extract & Normalize Booking Data'].json.meetingLink }}\",\n  \"status\": \"scheduled\",\n  \"reminder_sent\": false\n}",
+        "options": {}
+      },
+      "id": "node-4-create-meeting",
+      "name": "Create Meeting Record in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bolna.ai/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.BOLNA_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"{{ $env.BOLNA_AGENT_ID || 'houseofworkflow-sdr-v1' }}\",\n  \"recipient_phone_number\": \"{{ $node['Extract & Normalize Booking Data'].json.phone }}\",\n  \"user_data\": {\n    \"lead_id\": \"{{ $node['Upsert Lead in Supabase'].json[0].id }}\",\n    \"name\": \"{{ $node['Extract & Normalize Booking Data'].json.name }}\",\n    \"email\": \"{{ $node['Extract & Normalize Booking Data'].json.email }}\",\n    \"meeting_time\": \"{{ $node['Extract & Normalize Booking Data'].json.meetingDateTimeStr }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "node-5-bolna-call",
+      "name": "Trigger Bolna AI Qualification Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bolna-call-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "node-6-bolna-webhook",
+      "name": "Wait for Bolna Call Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.OPENAI_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an elite B2A/SaaS Deal Qualification AI for House Of Workflow. Analyze the call transcript and evaluate into a JSON object matching keys: fitScore (0-100), intentScore (0-100), budgetScore (0-100), urgencyScore (0-100), overallScore (0-100), category ('Hot'|'Warm'|'Cold'|'Disqualified'), summary, painPoints (array of strings), recommendedService, talkingPoints (array of strings). Return JSON ONLY.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Transcript: {{ $node['Wait for Bolna Call Webhook'].json.body.transcript || $node['Wait for Bolna Call Webhook'].json.transcript }}\"\n    }\n  ],\n  \"response_format\": { \"type\": \"json_object\" }\n}",
+        "options": {}
+      },
+      "id": "node-7-gpt4-scoring",
+      "name": "Send Transcript to GPT-4o",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1520, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst parsed = JSON.parse(response.choices[0].message.content);\nreturn [{ json: parsed }];"
+      },
+      "id": "node-8-parse-gpt",
+      "name": "Parse GPT-4o Scoring Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1740, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/leads?id=eq.{{ $node['Upsert Lead in Supabase'].json[0].id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_score\": {{ $node['Parse GPT-4o Scoring Output'].json.overallScore }},\n  \"lead_score_reason\": \"GPT-4o Score: {{ $node['Parse GPT-4o Scoring Output'].json.overallScore }}/100 ({{ $node['Parse GPT-4o Scoring Output'].json.category }}). {{ $node['Parse GPT-4o Scoring Output'].json.summary }}\"\n}",
+        "options": {}
+      },
+      "id": "node-9-update-lead",
+      "name": "Update Lead with AI Scores in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1960, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.aisensy.com/campaign/t1/api/v2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"{{ $env.AISENSY_API_KEY }}\",\n  \"campaignName\": \"how_booking_confirm\",\n  \"destination\": \"{{ $node['Extract & Normalize Booking Data'].json.phone }}\",\n  \"userName\": \"{{ $node['Extract & Normalize Booking Data'].json.name }}\",\n  \"templateParams\": [\n    \"{{ $node['Extract & Normalize Booking Data'].json.name }}\",\n    \"{{ $node['Extract & Normalize Booking Data'].json.formattedDate }}\",\n    \"{{ $node['Extract & Normalize Booking Data'].json.formattedTime }}\",\n    \"{{ $node['Extract & Normalize Booking Data'].json.meetingLink }}\",\n    \"House Of Workflow\"\n  ]\n}",
+        "options": {}
+      },
+      "id": "node-10-client-wa",
+      "name": "Send WhatsApp Confirmation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2180, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RESEND_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"House Of Workflow <bookings@houseofworkflow.com>\",\n  \"to\": \"{{ $node['Extract & Normalize Booking Data'].json.email }}\",\n  \"subject\": \"Your discovery call is confirmed — House Of Workflow\",\n  \"html\": \"<div style='font-family:sans-serif;padding:20px;border:1px solid #e5e4e0;border-radius:8px;'><h2>Discovery Call Confirmed!</h2><p>Hi {{ $node['Extract & Normalize Booking Data'].json.name }},</p><p>Your call is scheduled for <strong>{{ $node['Extract & Normalize Booking Data'].json.meetingDateTimeStr }}</strong>.</p><p><a href='{{ $node['Extract & Normalize Booking Data'].json.meetingLink }}'>Join Meeting Link</a></p></div>\"\n}",
+        "options": {}
+      },
+      "id": "node-11-client-email",
+      "name": "Send Resend Email Confirmation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2180, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.aisensy.com/campaign/t1/api/v2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"{{ $env.AISENSY_API_KEY }}\",\n  \"campaignName\": \"jay_booking_alert\",\n  \"destination\": \"{{ $env.JAY_WHATSAPP_NUMBER || '+919876543210' }}\",\n  \"userName\": \"Jay Mahajan\",\n  \"templateParams\": [\n    \"{{ $node['Extract & Normalize Booking Data'].json.name }}\",\n    \"{{ $node['Extract & Normalize Booking Data'].json.email }}\",\n    \"{{ $node['Extract & Normalize Booking Data'].json.phone }}\",\n    \"{{ $node['Extract & Normalize Booking Data'].json.meetingDateTimeStr }}\",\n    \"Lead ID: {{ $node['Upsert Lead in Supabase'].json[0].id }}\"\n  ]\n}",
+        "options": {}
+      },
+      "id": "node-12-founder-wa",
+      "name": "Send Founder WhatsApp Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2400, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RESEND_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"House Of Workflow Intelligence <briefings@houseofworkflow.com>\",\n  \"to\": \"{{ $env.JAY_EMAIL || 'jay@houseofworkflow.com' }}\",\n  \"subject\": \"New Discovery Call & AI Brief: {{ $node['Extract & Normalize Booking Data'].json.name }} ({{ $node['Parse GPT-4o Scoring Output'].json.overallScore }}/100 {{ $node['Parse GPT-4o Scoring Output'].json.category }})\",\n  \"html\": \"<div style='font-family:monospace;padding:20px;background:#faf9f6;border-radius:8px;'><h3>[NEW DISCOVERY CALL BOOKED]</h3><p><strong>Lead:</strong> {{ $node['Extract & Normalize Booking Data'].json.name }}</p><p><strong>Email:</strong> {{ $node['Extract & Normalize Booking Data'].json.email }}</p><p><strong>Phone:</strong> {{ $node['Extract & Normalize Booking Data'].json.phone }}</p><p><strong>Score:</strong> {{ $node['Parse GPT-4o Scoring Output'].json.overallScore }}/100 ({{ $node['Parse GPT-4o Scoring Output'].json.category }})</p><p><strong>Summary:</strong> {{ $node['Parse GPT-4o Scoring Output'].json.summary }}</p></div>\"\n}",
+        "options": {}
+      },
+      "id": "node-13-founder-email",
+      "name": "Send Founder Email Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2400, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.VITE_SUPABASE_URL || 'https://xnqtfbhuotrnsrramzxu.supabase.co' }}/rest/v1/webhook_events",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.VITE_SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"provider\": \"calcom\",\n  \"provider_event_id\": \"{{ $node['Extract & Normalize Booking Data'].json.bookingUid }}\",\n  \"event_type\": \"BOOKING_CREATED\",\n  \"processed\": true,\n  \"processed_at\": \"{{ new Date().toISOString() }}\",\n  \"lead_id\": \"{{ $node['Upsert Lead in Supabase'].json[0].id }}\"\n}",
+        "options": {}
+      },
+      "id": "node-14-complete",
+      "name": "Mark Workflow Complete in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2620, 300]
+    }
+  ],
+  "connections": {
+    "Cal.com Booking Created Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract & Normalize Booking Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Normalize Booking Data": {
+      "main": [
+        [
+          {
+            "node": "Upsert Lead in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Lead in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Create Meeting Record in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Meeting Record in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Trigger Bolna AI Qualification Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Bolna AI Qualification Call": {
+      "main": [
+        [
+          {
+            "node": "Wait for Bolna Call Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Bolna Call Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send Transcript to GPT-4o",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Transcript to GPT-4o": {
+      "main": [
+        [
+          {
+            "node": "Parse GPT-4o Scoring Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse GPT-4o Scoring Output": {
+      "main": [
+        [
+          {
+            "node": "Update Lead with AI Scores in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Lead with AI Scores in Supabase": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Confirmation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Resend Email Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Send Founder WhatsApp Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Resend Email Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Send Founder Email Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Founder WhatsApp Notification": {
+      "main": [
+        [
+          {
+            "node": "Mark Workflow Complete in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "_meta": {
+    "axonflow": {
+      "version": "2.2.0",
+      "lastModified": "2026-08-14",
+      "architecture": "Pure native n8n autonomous workflow — zero backend code dependency"
+    }
+  }
+}
