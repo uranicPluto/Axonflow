@@ -53,7 +53,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"name\": \"{{ $json.name }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone\": \"{{ $json.phone }}\",\n  \"source\": \"book_a_call\",\n  \"status\": \"meeting_booked\",\n  \"meeting_confirmed\": true,\n  \"meeting_datetime\": \"{{ $json.meeting_time }}\",\n  \"meeting_link\": \"{{ $json.meeting_link }}\",\n  \"cal_event_id\": \"{{ $json.booking_uid }}\"\n}",
+        "jsonBody": "={\n  \"name\": \"{{ $json.name }}\",\n  \"email\": \"{{ $json.email }}\",\n  \"phone\": \"{{ $json.phone }}\",\n  \"source\": \"book_a_call\",\n  \"status\": \"meeting_booked\",\n  \"meeting_confirmed\": true,\n  \"meeting_datetime\": \"{{ $json.meeting_time }}\",\n  \"meeting_link\": \"{{ $json.meeting_link }}\"\n}",
         "options": {}
       },
       "id": "node-3-upsert-lead",
