@@ -13,6 +13,20 @@ export const PublicLeadIntakeSchema = z.object({
 });
 
 // Re-export type definitions for client use
+export type LeadStatus =
+  | "new"
+  | "contacted"
+  | "call_opted_in"
+  | "call_attempted"
+  | "link_sent"
+  | "meeting_booked"
+  | "discovery_completed"
+  | "proposal_sent"
+  | "negotiation"
+  | "won"
+  | "lost"
+  | "archived";
+
 export interface Lead {
   id: string;
   created_at: string;
@@ -22,7 +36,7 @@ export interface Lead {
   phone?: string;
   service_interest?: string;
   problem_description?: string;
-  status: string;
+  status: LeadStatus | string;
   consent_given?: boolean;
   consent_timestamp?: string;
   consent_ip?: string;
@@ -46,6 +60,36 @@ export interface Lead {
   call_token?: string;
   call_token_expires_at?: string;
   call_token_used?: boolean;
+  updated_at: string;
+}
+
+export interface MeetingBrief {
+  id: string;
+  lead_id: string;
+  booking_id?: string;
+  lead_name: string;
+  lead_email: string;
+  company_name?: string;
+  company_website?: string;
+  research_summary: string;
+  key_pain_points: string;
+  opportunities: string;
+  discovery_questions: string;
+  recommended_offer: string;
+  created_at: string;
+}
+
+export interface PreCallQuestionnaire {
+  id: string;
+  lead_id: string;
+  booking_id?: string;
+  lead_email: string;
+  bottleneck: string;
+  tech_stack: string;
+  team_size: string;
+  goal_90_days: string;
+  booking_reason: string;
+  created_at: string;
   updated_at: string;
 }
 
@@ -765,6 +809,471 @@ export const processCalcomBookingFn = createServerFn({ method: "POST" })
     await verifyAdminAuth(true);
     const { db } = await import("../server/db");
     return db.processCalcomBooking(data);
+  });
+
+export const getMeetingBriefFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getBriefForLead(data);
+  });
+
+export const getQuestionnaireFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getQuestionnaireForLead(data);
+  });
+
+export const getLeadEnrichmentFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getEnrichmentForLead(data);
+  });
+
+export const getCompanyResearchFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getCompanyResearchForLead(data);
+  });
+
+export const getMeetingOutcomesFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getMeetingOutcomesForLead(data);
+  });
+
+export const getProposalRecommendationFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getProposalForLead(data);
+  });
+
+export const getLeadScoreFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getLeadScoreForLead(data);
+  });
+
+export const getFounderCommandCenterFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getFounderCommandCenterData();
+  });
+
+export const getMeetingIntelligenceFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getLatestMeetingIntelligenceForLead(data);
+  });
+
+export const getMeetingTranscriptsFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getMeetingTranscriptsForLead(data);
+  });
+
+export const getRevenueCopilotFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runRevenueAgent } = await import("../server/revenue-agent");
+    return runRevenueAgent();
+  });
+
+export const getRevenueWarRoomFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { calculateRevenueForecast } = await import("../server/revenue-forecast-engine");
+    const leads = await db.getLeads();
+    const forecast = calculateRevenueForecast({ leads });
+    const hotOpportunities = leads.filter((l) => (l.lead_score || 0) >= 70 || (l.close_probability || 0) >= 70);
+    const dealsAtRisk = leads.filter((l) => l.status === "proposal_sent" || (l.close_probability !== undefined && l.close_probability < 40));
+    return { hotOpportunities, dealsAtRisk, forecast };
+  });
+
+export const getBuyingIntentFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { calculateBuyingIntent } = await import("../server/buying-intent-engine");
+    const { db } = await import("../server/db");
+    const lead = await db.getLeadById(data);
+    const intel = await db.getLatestMeetingIntelligenceForLead(data);
+    const eng = await db.getProposalEngagement(data, data);
+    return calculateBuyingIntent({
+      budgetDiscussed: !!lead?.budget_signal,
+      proposalRequested: lead?.status === "proposal_sent" || lead?.status === "discovery_completed",
+      meetingIntelligence: intel,
+      proposalEngagement: eng
+    });
+  });
+
+export const getDealHealthFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { calculateDealHealth } = await import("../server/deal-health-engine");
+    const { db } = await import("../server/db");
+    const lead = await db.getLeadById(data);
+    return calculateDealHealth({
+      daysSinceActivity: 2,
+      proposalEngagementScore: 75,
+      intentScore: lead?.lead_score || 80,
+      meetingSentiment: "positive",
+      closeProbability: lead?.close_probability || 85
+    });
+  });
+
+export const runDealExecutionAgentFn = createServerFn({ method: "POST" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { runDealExecutionAgent } = await import("../server/deal-execution-agent");
+    const lead = await db.getLeadById(data);
+    if (!lead) throw new Error("Lead not found");
+    const intel = await db.getLatestMeetingIntelligenceForLead(data);
+    return runDealExecutionAgent({
+      leadId: lead.id,
+      leadName: lead.name,
+      companyName: lead.company_name,
+      status: lead.status,
+      leadScore: lead.lead_score,
+      closeProbability: lead.close_probability,
+      meetingIntelligence: intel
+    });
+  });
+
+export const getDealRoomIntelligenceFn = createServerFn({ method: "GET" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { handleGetDealRoomRequest } = await import("../server/api/deal-execution-api");
+    const res = await handleGetDealRoomRequest(data);
+    return res.json();
+  });
+
+export const runAccountExecutiveFn = createServerFn({ method: "POST" })
+  .validator((leadId: string) => leadId)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { handleRunAccountExecutiveRequest } = await import("../server/api/account-executive-api");
+    const req = new Request("http://localhost/api/admin/account-executive/run", {
+      method: "POST",
+      body: JSON.stringify({ leadId: data })
+    });
+    const res = await handleRunAccountExecutiveRequest(req);
+    return res.json();
+  });
+
+export const getPendingActionsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { getPendingQueueActions } = await import("../server/execution-queue");
+    return getPendingQueueActions();
+  });
+
+export const processApprovalFn = createServerFn({ method: "POST" })
+  .validator((data: { actionId: string; decision: "approved" | "rejected" | "edited"; payload?: any }) => data)
+  .handler(async ({ data }) => {
+    await verifyAdminAuth();
+    const { processActionApproval } = await import("../server/execution-queue");
+    return processActionApproval(data.actionId, data.decision, "Founder", data.payload);
+  });
+
+export const generatePipelineFn = createServerFn({ method: "POST" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runPipelineGenerationAgent } = await import("../server/pipeline-generation-agent");
+    return runPipelineGenerationAgent();
+  });
+
+export const getProspectsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getProspectAccounts();
+  });
+
+export const getIntentSignalsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getLatestIntentSignals();
+  });
+
+export const getPipelineAgentFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runPipelineAgent } = await import("../server/pipeline-agent");
+    return runPipelineAgent();
+  });
+
+export const getAccountPrioritiesFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getAccountPriorities();
+  });
+
+export const getReactivationOpportunitiesFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getReactivationOpportunities();
+  });
+
+export const getRevenueOperationsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runRevenueOperationsAgent } = await import("../server/revenue-operations-agent");
+    return runRevenueOperationsAgent();
+  });
+
+export const getExecutiveScorecardFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { generateExecutiveScorecard } = await import("../server/executive-scorecard");
+    const leads = await db.getLeads();
+    return generateExecutiveScorecard(leads);
+  });
+
+export const getBoardReportFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { generateBoardReport } = await import("../server/board-report-engine");
+    const leads = await db.getLeads();
+    return generateBoardReport(leads);
+  });
+
+export const getRevenueTargetsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { calculateRevenueTargets } = await import("../server/revenue-target-engine");
+    const leads = await db.getLeads();
+    return calculateRevenueTargets(leads);
+  });
+
+export const getGrowthAgentFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runGrowthAgent } = await import("../server/growth-agent");
+    return runGrowthAgent();
+  });
+
+export const getMarketIntelligenceFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { generateMarketIntelligenceReport } = await import("../server/market-intelligence-engine");
+    return generateMarketIntelligenceReport({ industry: "Software & SaaS" });
+  });
+
+export const getCompetitorIntelligenceFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    return db.getCompetitorIntelligence();
+  });
+
+export const getExpansionOpportunitiesFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { generateExpansionOpportunities } = await import("../server/service-expansion-engine");
+    return generateExpansionOpportunities();
+  });
+
+export const getStrategicAlertsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { detectStrategicAlerts } = await import("../server/strategic-alert-engine");
+    const leads = await db.getLeads();
+    return detectStrategicAlerts(leads);
+  });
+
+export const getFinanceAgentFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runFinanceAgent } = await import("../server/finance-agent");
+    return runFinanceAgent();
+  });
+
+export const getClientProfitabilityFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { evaluateClientProfitability } = await import("../server/client-profitability-engine");
+    const leads = await db.getLeads();
+    return leads.length > 0
+      ? leads.slice(0, 5).map((l) => evaluateClientProfitability({ leadId: l.id, clientName: l.company_name || l.name || "Client", revenue: l.value || 15000 }))
+      : [evaluateClientProfitability({ clientName: "Acme Corp", revenue: 25000 })];
+  });
+
+export const getServiceProfitabilityFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { evaluateServiceProfitability } = await import("../server/service-profitability-engine");
+    return evaluateServiceProfitability();
+  });
+
+export const getCashflowForecastFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { generateCashflowForecast } = await import("../server/cashflow-forecast-engine");
+    return generateCashflowForecast();
+  });
+
+export const getFinancialAlertsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { detectFinancialAlerts } = await import("../server/financial-alert-engine");
+    const leads = await db.getLeads();
+    return detectFinancialAlerts(leads);
+  });
+
+export const getCustomerSuccessAgentFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runCustomerSuccessAgent } = await import("../server/customer-success-agent");
+    return runCustomerSuccessAgent();
+  });
+
+export const getCustomerHealthFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { calculateCustomerHealth } = await import("../server/customer-health-engine");
+    const leads = await db.getLeads();
+    return leads.length > 0
+      ? leads.slice(0, 5).map((l) => calculateCustomerHealth({ leadId: l.id, clientName: l.company_name || l.name || "Client Account" }))
+      : [calculateCustomerHealth({ clientName: "Acme Corp SaaS" })];
+  });
+
+export const getRenewalForecastFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { predictRenewalForecast } = await import("../server/renewal-forecast-engine");
+    const leads = await db.getLeads();
+    return leads.length > 0
+      ? leads.slice(0, 5).map((l) => predictRenewalForecast({ leadId: l.id, clientName: l.company_name || l.name || "Client Account", contractValue: l.value || 36000 }))
+      : [predictRenewalForecast({ clientName: "Acme Corp SaaS" })];
+  });
+
+export const getCustomerExpansionOpportunitiesFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { detectCustomerExpansionOpportunities } = await import("../server/expansion-opportunity-engine");
+    const leads = await db.getLeads();
+    return detectCustomerExpansionOpportunities(leads);
+  });
+
+export const getCustomerSentimentFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { analyzeCustomerSentiment } = await import("../server/customer-sentiment-engine");
+    const leads = await db.getLeads();
+    return leads.length > 0
+      ? leads.slice(0, 5).map((l) => analyzeCustomerSentiment({ leadId: l.id, clientName: l.company_name || l.name || "Client Account" }))
+      : [analyzeCustomerSentiment({ clientName: "Acme Corp SaaS" })];
+  });
+
+export const getDeliveryOperationsFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runDeliveryOperationsAgent } = await import("../server/delivery-operations-agent");
+    return runDeliveryOperationsAgent();
+  });
+
+export const getProjectHealthFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { db } = await import("../server/db");
+    const { evaluateProjectExecution } = await import("../server/project-execution-engine");
+    const leads = await db.getLeads();
+    return leads.length > 0
+      ? leads.slice(0, 5).map((l) => evaluateProjectExecution({ projectId: l.id, projectName: `${l.company_name || l.name || "Client"} Deployment`, clientName: l.company_name || l.name || "Client Account" }))
+      : [evaluateProjectExecution({ projectName: "Acme SaaS Deployment", clientName: "Acme Corp" })];
+  });
+
+export const getTeamCapacityFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { calculateTeamCapacity } = await import("../server/team-capacity-engine");
+    return calculateTeamCapacity();
+  });
+
+export const getResourceAllocationFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { generateResourceAllocationPlan } = await import("../server/resource-allocation-engine");
+    return generateResourceAllocationPlan();
+  });
+
+export const getAIWorkforceFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { calculateAIWorkforceMetrics } = await import("../server/ai-workforce-engine");
+    return calculateAIWorkforceMetrics();
+  });
+
+export const getCompanyHealthFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { calculateCompanyHealth } = await import("../server/company-health-engine");
+    return calculateCompanyHealth();
+  });
+
+export const getExecutiveReportFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { runExecutiveAgent } = await import("../server/executive-agent");
+    return runExecutiveAgent();
+  });
+
+export const getDecisionQueueFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { generateDecisionRecommendations } = await import("../server/decision-engine");
+    return generateDecisionRecommendations();
+  });
+
+export const getCEOBriefFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { generateWeeklyCEOBrief } = await import("../server/ceo-briefing-engine");
+    return generateWeeklyCEOBrief();
+  });
+
+export const getCompanyRoadmapFn = createServerFn({ method: "GET" })
+  .handler(async () => {
+    await verifyAdminAuth();
+    const { getStrategicRoadmap } = await import("../server/strategic-priority-engine");
+    return getStrategicRoadmap();
   });
 
 

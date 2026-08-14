@@ -158,11 +158,20 @@ function LeadsInbox() {
       case "new":
         return <span className="bg-[#E05555]/10 text-[#E05555] text-[9px] font-bold px-2 py-0.5 rounded uppercase">🔴 New</span>;
       case "in_progress":
+      case "contacted":
         return <span className="bg-[#F0A500]/10 text-[#F0A500] text-[9px] font-bold px-2 py-0.5 rounded uppercase">🟡 In Progress</span>;
       case "meeting_booked":
         return <span className="bg-[#3B5BDB]/10 text-[#3B5BDB] text-[9px] font-bold px-2 py-0.5 rounded uppercase">📅 Meeting Booked</span>;
+      case "discovery_completed":
+        return <span className="bg-[#7950F2]/10 text-[#7950F2] text-[9px] font-bold px-2 py-0.5 rounded uppercase">🔍 Discovery Done</span>;
+      case "proposal_sent":
+        return <span className="bg-[#15AABF]/10 text-[#15AABF] text-[9px] font-bold px-2 py-0.5 rounded uppercase">📄 Proposal Sent</span>;
+      case "negotiation":
+        return <span className="bg-[#FD7E14]/10 text-[#FD7E14] text-[9px] font-bold px-2 py-0.5 rounded uppercase">🤝 Negotiation</span>;
       case "won":
         return <span className="bg-[#2EA86B]/10 text-[#2EA86B] text-[9px] font-bold px-2 py-0.5 rounded uppercase">✅ Won</span>;
+      case "lost":
+        return <span className="bg-[#FA5252]/10 text-[#FA5252] text-[9px] font-bold px-2 py-0.5 rounded uppercase">❌ Lost</span>;
       case "archived":
       default:
         return <span className="bg-[#9B9B9B]/10 text-[#9B9B9B] text-[9px] font-bold px-2 py-0.5 rounded uppercase">⬛ Archived</span>;
@@ -178,11 +187,12 @@ function LeadsInbox() {
   }
 
   const columns = [
-    { label: "NEW", status: "new" },
-    { label: "IN PROGRESS", status: "in_progress" },
     { label: "MEETING BOOKED", status: "meeting_booked" },
+    { label: "DISCOVERY COMPLETED", status: "discovery_completed" },
+    { label: "PROPOSAL SENT", status: "proposal_sent" },
+    { label: "NEGOTIATION", status: "negotiation" },
     { label: "WON", status: "won" },
-    { label: "ARCHIVED", status: "archived" },
+    { label: "LOST", status: "lost" },
   ];
 
   return (
@@ -192,10 +202,12 @@ function LeadsInbox() {
         <div className="flex flex-wrap gap-1 bg-white p-1 border border-[#E5E4E0] rounded-xl shadow-inner">
           {[
             { label: "All", value: "all" },
-            { label: "New", value: "new" },
-            { label: "In Progress", value: "in_progress" },
             { label: "Meeting Booked", value: "meeting_booked" },
+            { label: "Discovery Done", value: "discovery_completed" },
+            { label: "Proposal Sent", value: "proposal_sent" },
+            { label: "Negotiation", value: "negotiation" },
             { label: "Won", value: "won" },
+            { label: "Lost", value: "lost" },
             { label: "Archived", value: "archived" },
           ].map((opt) => (
             <button

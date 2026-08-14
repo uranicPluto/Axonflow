@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { checkAdminAuthFn, cookieHelper, getAdminSessionCookieFn, getLeadsFn, getPostsFn } from "@/lib/db";
-import { Cpu, LayoutDashboard, Users, Activity, Sliders, LogOut, ChevronRight, Menu, X, Globe, BarChart3 } from "lucide-react";
+import { Cpu, LayoutDashboard, Users, Activity, Sliders, LogOut, ChevronRight, Menu, X, Globe, BarChart3, Trophy, ShieldAlert, Target, Sparkles, Layers, Rocket, DollarSign, Heart, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async ({ location, cause }) => {
@@ -90,7 +90,22 @@ function AdminLayout() {
   const navItems = [
     { section: "OVERVIEW", items: [
       { label: "Dashboard", to: "/admin/dashboard", icon: LayoutDashboard },
+      { label: "Command Center", to: "/admin/command-center", icon: Cpu },
+      { label: "Company OS", to: "/admin/company-os", icon: Cpu },
+      { label: "Action Center", to: "/admin/action-center", icon: ShieldCheck },
+      { label: "Growth War Room", to: "/admin/growth-war-room", icon: Rocket },
+      { label: "Profitability War Room", to: "/admin/profitability-war-room", icon: DollarSign },
+      { label: "Customer Success", to: "/admin/customer-success-war-room", icon: Heart },
+      { label: "Delivery War Room", to: "/admin/delivery-war-room", icon: Layers },
+      { label: "Executive Intelligence", to: "/admin/executive-intelligence", icon: Trophy },
+      { label: "Revenue War Room", to: "/admin/revenue-war-room", icon: Trophy },
       { label: "Analytics", to: "/admin/analytics", icon: BarChart3 },
+    ] },
+    { section: "AE COMMAND", items: [
+      { label: "Pipeline Control", to: "/admin/pipeline-control-center", icon: Layers },
+      { label: "Pipeline Generator", to: "/admin/pipeline", icon: Sparkles },
+      { label: "Sales Workspace", to: "/admin/sales-workspace", icon: Target },
+      { label: "Approval Center", to: "/admin/approvals", icon: ShieldAlert },
     ] },
     {
       section: "LEADS",

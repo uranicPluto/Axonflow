@@ -70,6 +70,36 @@ export interface CallLog {
   created_at: string;
 }
 
+export interface MeetingBrief {
+  id: string;
+  lead_id: string;
+  booking_id?: string;
+  lead_name: string;
+  lead_email: string;
+  company_name?: string;
+  company_website?: string;
+  research_summary: string;
+  key_pain_points: string;
+  opportunities: string;
+  discovery_questions: string;
+  recommended_offer: string;
+  created_at: string;
+}
+
+export interface PreCallQuestionnaire {
+  id: string;
+  lead_id: string;
+  booking_id?: string;
+  lead_email: string;
+  bottleneck: string;
+  tech_stack: string;
+  team_size: string;
+  goal_90_days: string;
+  booking_reason: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BlogPost {
   id: string;
   slug: string;
@@ -479,9 +509,15 @@ export function readLocalDb() {
 
 export function writeLocalDb(data: any) {
   try {
-    fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+    const tmpPath = `${LOCAL_DB_PATH}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2), "utf-8");
+    fs.renameSync(tmpPath, LOCAL_DB_PATH);
   } catch (err) {
-    console.error("Failed to write to local DB", err);
+    try {
+      fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+    } catch (e) {
+      console.error("Failed to write to local DB", e);
+    }
   }
 }
 
@@ -3297,6 +3333,97 @@ SYSTEM ENVIRONMENT & HEALTH:
         await this.addLeadActivity(lead.id, "meeting_booked", activityDesc, "system");
       } catch (logErr) {}
 
+      // Generate AI Meeting Brief, Firmographic Enrichment, Company Research & Lead Score
+      try {
+        const { generateAIMeetingBrief } = await import("./ai-research");
+        const { enrichLeadProfile } = await import("./lead-enrichment");
+        const { runCompanyResearchAgent } = await import("./company-research-agent");
+        const { calculateLeadScore } = await import("./lead-scoring-engine");
+        const { sendMeetingBriefSlackNotification } = await import("./notifications");
+
+        const companyName = lead?.company_name || booking.responses?.company?.value || booking.responses?.company || undefined;
+        const website = booking.responses?.website?.value || booking.responses?.website || undefined;
+
+        // 1. Lead Enrichment
+        const enrichment = await enrichLeadProfile({
+          leadId: lead.id,
+          email,
+          companyName,
+          website
+        });
+        await this.saveLeadEnrichment(enrichment);
+
+        // 2. Company Research Agent
+        const companyResearch = await runCompanyResearchAgent({
+          leadId: lead.id,
+          companyName: companyName || name + "'s Company",
+          website,
+          problemDescription: lead?.problem_description || booking.responses?.problem?.value || undefined
+        });
+        await this.saveCompanyResearch(companyResearch);
+
+        // 3. AI Discovery Call Brief 2.0
+        const briefOutput = await generateAIMeetingBrief({
+          leadName: name,
+          leadEmail: email,
+          companyName,
+          companyWebsite: website,
+          serviceInterest: lead?.service_interest || booking.responses?.service_interest?.value || undefined,
+          problemDescription: lead?.problem_description || booking.responses?.problem?.value || undefined,
+          teamSize: lead?.team_size || undefined,
+          budgetSignal: lead?.budget_signal || undefined,
+          notes: `Event Title: ${eventType}`
+        });
+
+        await this.saveMeetingBrief({
+          lead_id: lead.id,
+          booking_id: bookingUid,
+          lead_name: name,
+          lead_email: email,
+          company_name: companyName || "Not Specified",
+          company_website: website,
+          research_summary: briefOutput.research_summary,
+          key_pain_points: briefOutput.key_pain_points,
+          opportunities: briefOutput.opportunities,
+          discovery_questions: briefOutput.discovery_questions,
+          recommended_offer: briefOutput.recommended_offer
+        });
+
+        // 4. Initial AI Lead Score
+        const scoreResult = calculateLeadScore({
+          leadId: lead.id,
+          hasQuestionnaire: false,
+          employeeCount: enrichment.employee_count,
+          urgency: "high",
+          budgetSignal: lead?.budget_signal,
+          activityCount: 2
+        });
+        await this.saveLeadScore(scoreResult);
+
+        // Update lead score in leads table
+        if (isSupabaseEnabled && supabaseAdmin) {
+          await supabaseAdmin.from("leads").update({
+            lead_score: scoreResult.total_score,
+            lead_score_reason: `Initial AI Deal Score: ${scoreResult.total_score}/100 (${scoreResult.category}).`
+          }).eq("id", lead.id);
+        }
+
+        await sendMeetingBriefSlackNotification({
+          leadId: lead.id,
+          leadName: name,
+          leadEmail: email,
+          meetingDateTime: `${formattedDate} at ${formattedTime} (${timezone})`,
+          researchSummary: briefOutput.research_summary,
+          discoveryQuestions: briefOutput.discovery_questions,
+          recommendedOffer: briefOutput.recommended_offer,
+          bookingId: bookingUid
+        });
+
+        await this.addLeadActivity(lead.id, "ai_brief_generated", `AI Brief 2.0 & Intelligence generated. Deal Score: ${scoreResult.total_score}/100 (${scoreResult.category}).`, "system");
+      } catch (briefErr) {
+        console.error("[CALCOM] AI Sales Intelligence generation error:", briefErr);
+      }
+
       const whatsappKey = `booking_confirmation_whatsapp:${bookingUid}`;
       const emailKey = `booking_confirmation_email:${bookingUid}`;
       const jayWaKey = `jay_booking_alert:${bookingUid}`;
@@ -3590,6 +3717,1361 @@ SYSTEM ENVIRONMENT & HEALTH:
       bookingId: bookingUid,
       eventTrigger,
       notifications: notificationResults
+    };
+  },
+
+  async saveMeetingBrief(brief: Omit<MeetingBrief, "id" | "created_at"> & { id?: string }): Promise<MeetingBrief> {
+    const record: MeetingBrief = {
+      id: brief.id || `brief-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      lead_id: brief.lead_id,
+      booking_id: brief.booking_id || undefined,
+      lead_name: brief.lead_name,
+      lead_email: brief.lead_email.toLowerCase().trim(),
+      company_name: brief.company_name || undefined,
+      company_website: brief.company_website || undefined,
+      research_summary: brief.research_summary,
+      key_pain_points: brief.key_pain_points,
+      opportunities: brief.opportunities,
+      discovery_questions: brief.discovery_questions,
+      recommended_offer: brief.recommended_offer,
+      created_at: new Date().toISOString()
+    };
+
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("meeting_briefs")
+        .insert([record])
+        .select()
+        .single();
+      if (error) {
+        console.warn("[DB] Supabase insert meeting_briefs failed:", error.message);
+      } else if (data) {
+        return data;
+      }
+    }
+
+    const local = readLocalDb();
+    if (!(local as any).meeting_briefs) (local as any).meeting_briefs = [];
+    (local as any).meeting_briefs.push(record);
+    writeLocalDb(local);
+    return record;
+  },
+
+  async getBriefForLead(leadId: string): Promise<MeetingBrief | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("meeting_briefs")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+
+    const local = readLocalDb();
+    const list = (local as any).meeting_briefs || [];
+    return list.filter((b: any) => b.lead_id === leadId).pop() || null;
+  },
+
+  async saveQuestionnaireResponse(input: {
+    leadId?: string;
+    bookingId?: string;
+    email: string;
+    bottleneck: string;
+    techStack: string;
+    teamSize: string;
+    goal90Days: string;
+    bookingReason: string;
+  }): Promise<{ id: string; leadId: string }> {
+    const email = input.email.toLowerCase().trim();
+    let lead: Lead | null = null;
+
+    if (input.leadId) {
+      if (isSupabaseEnabled && supabaseAdmin) {
+        const { data } = await supabaseAdmin.from("leads").select("*").eq("id", input.leadId).maybeSingle();
+        if (data) lead = data;
+      }
+      if (!lead) {
+        const local = readLocalDb();
+        lead = (local.leads || []).find((l: any) => l.id === input.leadId) || null;
+      }
+    }
+    if (!lead) {
+      lead = await this.findLeadByIdentity(email, "", "");
+    }
+
+    if (!lead) {
+      const leadRecord: any = {
+        name: email.split("@")[0],
+        email,
+        source: "questionnaire",
+        status: "new",
+        problem_description: input.goal90Days,
+        pain_points: input.bottleneck,
+        team_size: input.teamSize,
+        existing_solutions: input.techStack,
+        updated_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      };
+
+      if (isSupabaseEnabled && supabaseAdmin) {
+        const { data, error } = await supabaseAdmin
+          .from("leads")
+          .insert([leadRecord])
+          .select()
+          .single();
+        if (error) throw error;
+        lead = data;
+      } else {
+        const local = readLocalDb();
+        const newLead = { id: `lead-${Date.now()}`, ...leadRecord };
+        if (!local.leads) local.leads = [];
+        local.leads.push(newLead);
+        writeLocalDb(local);
+        lead = newLead as any;
+      }
+    } else {
+      const updates = {
+        pain_points: input.bottleneck,
+        team_size: input.teamSize,
+        existing_solutions: input.techStack,
+        problem_description: input.goal90Days,
+        updated_at: new Date().toISOString()
+      };
+
+      if (isSupabaseEnabled && supabaseAdmin) {
+        await supabaseAdmin.from("leads").update(updates).eq("id", lead.id);
+      } else {
+        const local = readLocalDb();
+        const idx = local.leads.findIndex((l: any) => l.id === lead!.id);
+        if (idx !== -1) {
+          local.leads[idx] = { ...local.leads[idx], ...updates };
+          writeLocalDb(local);
+        }
+      }
+    }
+
+    const qRecord: PreCallQuestionnaire = {
+      id: `q-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      lead_id: lead!.id,
+      booking_id: input.bookingId || undefined,
+      lead_email: email,
+      bottleneck: input.bottleneck,
+      tech_stack: input.techStack,
+      team_size: input.teamSize,
+      goal_90_days: input.goal90Days,
+      booking_reason: input.bookingReason,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { error } = await supabaseAdmin
+        .from("pre_call_questionnaires")
+        .insert([qRecord]);
+      if (error) {
+        console.warn("[DB] Supabase insert pre_call_questionnaires failed:", error.message);
+      }
+    }
+
+    const local = readLocalDb();
+    if (!(local as any).pre_call_questionnaires) (local as any).pre_call_questionnaires = [];
+    (local as any).pre_call_questionnaires.push(qRecord);
+    writeLocalDb(local);
+
+    try {
+      const activityDesc = `Pre-Call Questionnaire submitted. Bottleneck: ${input.bottleneck.substring(0, 80)}...`;
+      await this.addLeadActivity(lead!.id, "questionnaire_submitted", activityDesc, "lead");
+    } catch (logErr) {}
+
+    return { id: qRecord.id, leadId: lead!.id };
+  },
+
+  async getQuestionnaireForLead(leadId: string): Promise<PreCallQuestionnaire | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("pre_call_questionnaires")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+
+    const local = readLocalDb();
+    const list = (local as any).pre_call_questionnaires || [];
+    return list.filter((q: any) => q.lead_id === leadId).pop() || null;
+  },
+
+  async saveLeadEnrichment(enrichment: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("lead_enrichment_reports")
+        .insert([enrichment])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).lead_enrichment_reports) (local as any).lead_enrichment_reports = [];
+    (local as any).lead_enrichment_reports.push(enrichment);
+    writeLocalDb(local);
+    return enrichment;
+  },
+
+  async getEnrichmentForLead(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("lead_enrichment_reports")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).lead_enrichment_reports || [];
+    return list.filter((r: any) => r.lead_id === leadId).pop() || null;
+  },
+
+  async saveCompanyResearch(research: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("company_research_reports")
+        .insert([research])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).company_research_reports) (local as any).company_research_reports = [];
+    (local as any).company_research_reports.push(research);
+    writeLocalDb(local);
+    return research;
+  },
+
+  async getCompanyResearchForLead(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("company_research_reports")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).company_research_reports || [];
+    return list.filter((r: any) => r.lead_id === leadId).pop() || null;
+  },
+
+  async saveMeetingOutcome(input: {
+    leadId: string;
+    bookingId?: string;
+    meetingNotes: string;
+    budget?: number;
+    budgetConfidence?: string;
+    timeline?: string;
+    decisionMakers?: string;
+    painPointsConfirmed?: string;
+    nextSteps?: string;
+    stageUpdate?: string;
+  }): Promise<any> {
+    const { generateProposalRecommendation } = await import("./proposal-engine");
+    const { calculateLeadScore } = await import("./lead-scoring-engine");
+
+    const lead = await this.getLeadById(input.leadId);
+    if (!lead) throw new Error("Lead not found");
+
+    const outcomeRecord = {
+      id: `mo-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      lead_id: input.leadId,
+      booking_id: input.bookingId || null,
+      meeting_notes: input.meetingNotes,
+      budget: input.budget || null,
+      budget_confidence: input.budgetConfidence || "estimated",
+      timeline: input.timeline || null,
+      decision_makers: input.decisionMakers || null,
+      pain_points_confirmed: input.painPointsConfirmed || null,
+      next_steps: input.nextSteps || null,
+      ai_summary: `Discovery call outcome recorded. Budget: ${input.budget ? '$' + input.budget : 'TBD'}, Timeline: ${input.timeline || 'Immediate'}.`,
+      recommended_next_action: `Send proposal for ${input.timeline || 'upcoming sprint'} and schedule decision maker review.`,
+      score_delta: 15,
+      created_at: new Date().toISOString()
+    };
+
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("meeting_outcomes").insert([outcomeRecord]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).meeting_outcomes) (local as any).meeting_outcomes = [];
+    (local as any).meeting_outcomes.push(outcomeRecord);
+    writeLocalDb(local);
+
+    // Generate Proposal Recommendation
+    const proposal = await generateProposalRecommendation({
+      leadId: lead.id,
+      leadName: lead.name,
+      companyName: lead.company_name,
+      serviceInterest: lead.service_interest,
+      meetingNotes: input.meetingNotes,
+      confirmedBudget: input.budget,
+      painPoints: input.painPointsConfirmed
+    });
+    await this.saveProposalRecommendation(proposal);
+
+    // Update Lead Status & Lead Score
+    const newStatus = input.stageUpdate || "discovery_completed";
+    const newScoreResult = calculateLeadScore({
+      leadId: lead.id,
+      hasQuestionnaire: true,
+      companySize: lead.team_size,
+      urgency: input.timeline || lead.urgency,
+      budgetSignal: input.budget ? String(input.budget) : lead.budget_signal,
+      meetingCompleted: true,
+      meetingOutcomeNotes: input.meetingNotes
+    });
+
+    await this.saveLeadScore(newScoreResult);
+
+    const leadUpdates = {
+      status: newStatus,
+      lead_score: newScoreResult.total_score,
+      lead_score_reason: `Discovery call outcome completed. Re-evaluated deal score: ${newScoreResult.total_score}/100 (${newScoreResult.category}).`,
+      updated_at: new Date().toISOString()
+    };
+
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("leads").update(leadUpdates).eq("id", lead.id);
+    } else {
+      const idx = local.leads.findIndex((l: any) => l.id === lead.id);
+      if (idx !== -1) {
+        local.leads[idx] = { ...local.leads[idx], ...leadUpdates };
+        writeLocalDb(local);
+      }
+    }
+
+    try {
+      await this.addLeadActivity(lead.id, "meeting_outcome_logged", `Discovery call outcome logged. Status updated to ${newStatus}.`, "admin");
+    } catch (e) {}
+
+    return outcomeRecord;
+  },
+
+  async getMeetingOutcomesForLead(leadId: string): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("meeting_outcomes")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).meeting_outcomes || [];
+    return list.filter((m: any) => m.lead_id === leadId);
+  },
+
+  async saveProposalRecommendation(proposal: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("proposal_recommendations")
+        .insert([proposal])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).proposal_recommendations) (local as any).proposal_recommendations = [];
+    (local as any).proposal_recommendations.push(proposal);
+    writeLocalDb(local);
+    return proposal;
+  },
+
+  async getProposalForLead(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("proposal_recommendations")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).proposal_recommendations || [];
+    return list.filter((p: any) => p.lead_id === leadId).pop() || null;
+  },
+
+  async saveLeadScore(scoreResult: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("lead_scores").insert([scoreResult]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).lead_scores) (local as any).lead_scores = [];
+    (local as any).lead_scores.push(scoreResult);
+    writeLocalDb(local);
+    return scoreResult;
+  },
+
+  async getLeadScoreForLead(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("lead_scores")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).lead_scores || [];
+    return list.filter((s: any) => s.lead_id === leadId).pop() || null;
+  },
+
+  async saveMeetingTranscript(input: {
+    leadId: string;
+    transcript: string;
+    recordingUrl?: string;
+    durationMinutes?: number;
+  }): Promise<any> {
+    const record = {
+      id: `mt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      lead_id: input.leadId,
+      recording_url: input.recordingUrl || null,
+      transcript: input.transcript,
+      duration_minutes: input.durationMinutes || Math.round(input.transcript.length / 500) || 15,
+      created_at: new Date().toISOString()
+    };
+
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("meeting_transcripts").insert([record]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).meeting_transcripts) (local as any).meeting_transcripts = [];
+    (local as any).meeting_transcripts.push(record);
+    writeLocalDb(local);
+    return record;
+  },
+
+  async getMeetingTranscriptsForLead(leadId: string): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("meeting_transcripts")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).meeting_transcripts || [];
+    return list.filter((t: any) => t.lead_id === leadId);
+  },
+
+  async saveMeetingInsights(input: {
+    leadId: string;
+    transcriptId: string;
+    insights: any;
+  }): Promise<any> {
+    const record = {
+      id: `mi-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      lead_id: input.leadId,
+      transcript_id: input.transcriptId,
+      executive_summary: input.insights.executiveSummary,
+      pain_points: input.insights.painPoints || [],
+      business_goals: input.insights.businessGoals || [],
+      objections: input.insights.objections || [],
+      buying_signals: input.insights.buyingSignals || [],
+      competitors_mentioned: input.insights.competitorsMentioned || [],
+      stakeholders: input.insights.stakeholders || [],
+      budget_signals: input.insights.budgetSignals || [],
+      urgency_score: input.insights.urgencyScore || 50,
+      close_probability: input.insights.closeProbability || 50,
+      next_actions: input.insights.nextActions || [],
+      sentiment: input.insights.sentiment || "neutral",
+      created_at: new Date().toISOString()
+    };
+
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("meeting_insights").insert([record]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).meeting_insights) (local as any).meeting_insights = [];
+    (local as any).meeting_insights.push(record);
+    writeLocalDb(local);
+    return record;
+  },
+
+  async getLatestMeetingIntelligenceForLead(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("meeting_insights")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).meeting_insights || [];
+    return list.filter((i: any) => i.lead_id === leadId).pop() || null;
+  },
+
+  async updateLeadMetadata(leadId: string, updates: Record<string, any>): Promise<any> {
+    const payload = {
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("leads").update(payload).eq("id", leadId);
+    }
+    const local = readLocalDb();
+    if (!local.leads) local.leads = [];
+    const idx = local.leads.findIndex((l: any) => l.id === leadId);
+    if (idx !== -1) {
+      local.leads[idx] = { ...local.leads[idx], ...payload };
+    } else {
+      local.leads.push({ id: leadId, name: updates.name || "Lead", email: "test@example.com", status: "new", created_at: new Date().toISOString(), ...payload });
+    }
+    writeLocalDb(local);
+    return true;
+  },
+
+  async saveProposalEngagement(engagement: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("proposal_engagements")
+        .upsert([engagement])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).proposal_engagements) (local as any).proposal_engagements = [];
+    const idx = (local as any).proposal_engagements.findIndex(
+      (pe: any) => pe.proposal_id === engagement.proposal_id && pe.lead_id === engagement.lead_id
+    );
+    if (idx !== -1) {
+      (local as any).proposal_engagements[idx] = { ...(local as any).proposal_engagements[idx], ...engagement };
+    } else {
+      (local as any).proposal_engagements.push(engagement);
+    }
+    writeLocalDb(local);
+    return engagement;
+  },
+
+  async getProposalEngagement(proposalId: string, leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("proposal_engagements")
+        .select("*")
+        .eq("lead_id", leadId)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).proposal_engagements || [];
+    return list.find((pe: any) => pe.lead_id === leadId || pe.proposal_id === proposalId) || null;
+  },
+
+  async saveDealStakeholder(stakeholder: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("deal_stakeholders")
+        .insert([stakeholder])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).deal_stakeholders) (local as any).deal_stakeholders = [];
+    (local as any).deal_stakeholders.push(stakeholder);
+    writeLocalDb(local);
+    return stakeholder;
+  },
+
+  async getStakeholdersForLead(leadId: string): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("deal_stakeholders")
+        .select("*")
+        .eq("lead_id", leadId);
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).deal_stakeholders || [];
+    return list.filter((s: any) => s.lead_id === leadId);
+  },
+
+  async saveDailyRevenueBrief(brief: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("daily_revenue_briefs").insert([brief]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).daily_revenue_briefs) (local as any).daily_revenue_briefs = [];
+    (local as any).daily_revenue_briefs.push(brief);
+    writeLocalDb(local);
+    return brief;
+  },
+
+  async saveFollowUpSequence(seq: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("followup_sequences").upsert([seq]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).followup_sequences) (local as any).followup_sequences = [];
+    const idx = (local as any).followup_sequences.findIndex((s: any) => s.lead_id === seq.lead_id);
+    if (idx !== -1) {
+      (local as any).followup_sequences[idx] = { ...(local as any).followup_sequences[idx], ...seq };
+    } else {
+      (local as any).followup_sequences.push(seq);
+    }
+    writeLocalDb(local);
+    return seq;
+  },
+
+  async getFollowUpSequenceForLead(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("followup_sequences")
+        .select("*")
+        .eq("lead_id", leadId)
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).followup_sequences || [];
+    return list.find((s: any) => s.lead_id === leadId) || null;
+  },
+
+  async getLeads(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return local.leads || [];
+  },
+
+  async getLeadById(leadId: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("leads")
+        .select("*")
+        .eq("id", leadId)
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return (local.leads || []).find((l: any) => l.id === leadId) || null;
+  },
+
+  async saveDealExecutionPlan(plan: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("deal_execution_plans")
+        .upsert([plan])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).deal_execution_plans) (local as any).deal_execution_plans = [];
+    (local as any).deal_execution_plans.push(plan);
+    writeLocalDb(local);
+    return plan;
+  },
+
+  async saveExecutionQueueItem(item: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("execution_queue")
+        .upsert([item])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).execution_queue) (local as any).execution_queue = [];
+    const idx = (local as any).execution_queue.findIndex((eq: any) => eq.id === item.id);
+    if (idx !== -1) {
+      (local as any).execution_queue[idx] = { ...(local as any).execution_queue[idx], ...item };
+    } else {
+      (local as any).execution_queue.push(item);
+    }
+    writeLocalDb(local);
+    return item;
+  },
+
+  async getPendingExecutionQueueItems(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("execution_queue")
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).execution_queue || [];
+    return list.filter((eq: any) => eq.status === "pending");
+  },
+
+  async getExecutionQueueItemById(id: string): Promise<any | null> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("execution_queue")
+        .select("*")
+        .eq("id", id)
+        .limit(1)
+        .maybeSingle();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    const list = (local as any).execution_queue || [];
+    return list.find((eq: any) => eq.id === id) || null;
+  },
+
+  async saveApprovalLog(log: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("approval_logs").insert([log]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).approval_logs) (local as any).approval_logs = [];
+    (local as any).approval_logs.push(log);
+    writeLocalDb(local);
+    return log;
+  },
+
+  async saveProspectAccount(account: any): Promise<any> {
+    const record = {
+      id: account.id || `pa-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      ...account,
+      created_at: new Date().toISOString()
+    };
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("prospect_accounts")
+        .upsert([record])
+        .select()
+        .single();
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    if (!(local as any).prospect_accounts) (local as any).prospect_accounts = [];
+    (local as any).prospect_accounts.push(record);
+    writeLocalDb(local);
+    return record;
+  },
+
+  async getProspectAccounts(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("prospect_accounts")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return (local as any).prospect_accounts || [];
+  },
+
+  async saveProspectContact(contact: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("prospect_contacts").insert([contact]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).prospect_contacts) (local as any).prospect_contacts = [];
+    (local as any).prospect_contacts.push(contact);
+    writeLocalDb(local);
+    return contact;
+  },
+
+  async saveProspectResearchReport(report: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("prospect_research_reports").insert([report]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).prospect_research_reports) (local as any).prospect_research_reports = [];
+    (local as any).prospect_research_reports.push(report);
+    writeLocalDb(local);
+    return report;
+  },
+
+  async saveIntentSignal(signal: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("intent_signals").insert([signal]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).intent_signals) (local as any).intent_signals = [];
+    (local as any).intent_signals.push(signal);
+    writeLocalDb(local);
+    return signal;
+  },
+
+  async getLatestIntentSignals(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("intent_signals")
+        .select("*")
+        .order("detected_at", { ascending: false })
+        .limit(20);
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return (local as any).intent_signals || [];
+  },
+
+  async saveProspectScore(score: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("prospect_scores").insert([score]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).prospect_scores) (local as any).prospect_scores = [];
+    (local as any).prospect_scores.push(score);
+    writeLocalDb(local);
+    return score;
+  },
+
+  async saveAccountPriority(priority: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("account_priorities").insert([priority]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).account_priorities) (local as any).account_priorities = [];
+    (local as any).account_priorities.push(priority);
+    writeLocalDb(local);
+    return priority;
+  },
+
+  async getAccountPriorities(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("account_priorities")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return (local as any).account_priorities || [];
+  },
+
+  async saveReactivationOpportunity(opp: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("reactivation_opportunities").insert([opp]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).reactivation_opportunities) (local as any).reactivation_opportunities = [];
+    (local as any).reactivation_opportunities.push(opp);
+    writeLocalDb(local);
+    return opp;
+  },
+
+  async getReactivationOpportunities(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("reactivation_opportunities")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return (local as any).reactivation_opportunities || [];
+  },
+
+  async saveChampionReport(report: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("champion_reports").insert([report]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).champion_reports) (local as any).champion_reports = [];
+    (local as any).champion_reports.push(report);
+    writeLocalDb(local);
+    return report;
+  },
+
+  async saveStakeholderCoverageReport(report: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("stakeholder_coverage_reports").insert([report]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).stakeholder_coverage_reports) (local as any).stakeholder_coverage_reports = [];
+    (local as any).stakeholder_coverage_reports.push(report);
+    writeLocalDb(local);
+    return report;
+  },
+
+  async savePipelineAnalysisReport(report: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("pipeline_analysis_reports").insert([report]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).pipeline_analysis_reports) (local as any).pipeline_analysis_reports = [];
+    (local as any).pipeline_analysis_reports.push(report);
+    writeLocalDb(local);
+    return report;
+  },
+
+  async saveExecutiveScorecard(scorecard: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("executive_scorecards").insert([scorecard]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).executive_scorecards) (local as any).executive_scorecards = [];
+    (local as any).executive_scorecards.push(scorecard);
+    writeLocalDb(local);
+    return scorecard;
+  },
+
+  async saveOptimizationRecommendation(opt: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("optimization_recommendations").insert([opt]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).optimization_recommendations) (local as any).optimization_recommendations = [];
+    (local as any).optimization_recommendations.push(opt);
+    writeLocalDb(local);
+    return opt;
+  },
+
+  async saveBoardReport(report: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("board_reports").insert([report]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).board_reports) (local as any).board_reports = [];
+    (local as any).board_reports.push(report);
+    writeLocalDb(local);
+    return report;
+  },
+
+  async saveMarketIntelligenceReport(report: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("market_intelligence_reports").insert([report]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).market_intelligence_reports) (local as any).market_intelligence_reports = [];
+    (local as any).market_intelligence_reports.push(report);
+    writeLocalDb(local);
+    return report;
+  },
+
+  async saveCompetitorIntelligence(comp: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("competitor_intelligence").insert([comp]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).competitor_intelligence) (local as any).competitor_intelligence = [];
+    (local as any).competitor_intelligence.push(comp);
+    writeLocalDb(local);
+    return comp;
+  },
+
+  async getCompetitorIntelligence(): Promise<any[]> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await supabaseAdmin
+        .from("competitor_intelligence")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (!error && data) return data;
+    }
+    const local = readLocalDb();
+    return (local as any).competitor_intelligence || [];
+  },
+
+  async saveExpansionOpportunity(opp: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("expansion_opportunities").insert([opp]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).expansion_opportunities) (local as any).expansion_opportunities = [];
+    (local as any).expansion_opportunities.push(opp);
+    writeLocalDb(local);
+    return opp;
+  },
+
+  async saveStrategicAlert(alert: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("strategic_alerts").insert([alert]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).strategic_alerts) (local as any).strategic_alerts = [];
+    (local as any).strategic_alerts.push(alert);
+    writeLocalDb(local);
+    return alert;
+  },
+
+  async saveClientProfitabilityReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("client_profitability_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).client_profitability_reports) (local as any).client_profitability_reports = [];
+    (local as any).client_profitability_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveServiceProfitabilityReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("service_profitability_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).service_profitability_reports) (local as any).service_profitability_reports = [];
+    (local as any).service_profitability_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveCashflowForecast(forecast: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("cashflow_forecasts").insert([forecast]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).cashflow_forecasts) (local as any).cashflow_forecasts = [];
+    (local as any).cashflow_forecasts.push(forecast);
+    writeLocalDb(local);
+    return forecast;
+  },
+
+  async saveHiringImpactReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("hiring_impact_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).hiring_impact_reports) (local as any).hiring_impact_reports = [];
+    (local as any).hiring_impact_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveFinancialAlert(alert: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("financial_alerts").insert([alert]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).financial_alerts) (local as any).financial_alerts = [];
+    (local as any).financial_alerts.push(alert);
+    writeLocalDb(local);
+    return alert;
+  },
+
+  async saveClientOnboardingReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("client_onboarding_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).client_onboarding_reports) (local as any).client_onboarding_reports = [];
+    (local as any).client_onboarding_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveDeliveryHealthReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("delivery_health_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).delivery_health_reports) (local as any).delivery_health_reports = [];
+    (local as any).delivery_health_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveCustomerHealthScore(score: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("customer_health_scores").insert([score]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).customer_health_scores) (local as any).customer_health_scores = [];
+    (local as any).customer_health_scores.push(score);
+    writeLocalDb(local);
+    return score;
+  },
+
+  async saveRenewalForecast(forecast: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("renewal_forecasts").insert([forecast]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).renewal_forecasts) (local as any).renewal_forecasts = [];
+    (local as any).renewal_forecasts.push(forecast);
+    writeLocalDb(local);
+    return forecast;
+  },
+
+  async saveCustomerExpansionOpportunity(opp: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("expansion_opportunities").insert([opp]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).expansion_opportunities) (local as any).expansion_opportunities = [];
+    (local as any).expansion_opportunities.push(opp);
+    writeLocalDb(local);
+    return opp;
+  },
+
+  async saveCustomerSentimentReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("customer_sentiment_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).customer_sentiment_reports) (local as any).customer_sentiment_reports = [];
+    (local as any).customer_sentiment_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveProject(proj: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("projects").insert([proj]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).projects) (local as any).projects = [];
+    (local as any).projects.push(proj);
+    writeLocalDb(local);
+    return proj;
+  },
+
+  async saveProjectMilestone(m: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("project_milestones").insert([m]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).project_milestones) (local as any).project_milestones = [];
+    (local as any).project_milestones.push(m);
+    writeLocalDb(local);
+    return m;
+  },
+
+  async saveResourceAllocation(alloc: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("resource_allocations").insert([alloc]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).resource_allocations) (local as any).resource_allocations = [];
+    (local as any).resource_allocations.push(alloc);
+    writeLocalDb(local);
+    return alloc;
+  },
+
+  async saveTeamCapacityReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("team_capacity_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).team_capacity_reports) (local as any).team_capacity_reports = [];
+    (local as any).team_capacity_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveWorkforceUtilizationReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("workforce_utilization_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).workforce_utilization_reports) (local as any).workforce_utilization_reports = [];
+    (local as any).workforce_utilization_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveDeliveryForecast(fc: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("delivery_forecasts").insert([fc]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).delivery_forecasts) (local as any).delivery_forecasts = [];
+    (local as any).delivery_forecasts.push(fc);
+    writeLocalDb(local);
+    return fc;
+  },
+
+  async saveProjectProfitabilityReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("project_profitability_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).project_profitability_reports) (local as any).project_profitability_reports = [];
+    (local as any).project_profitability_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveDeliveryRiskReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("delivery_risk_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).delivery_risk_reports) (local as any).delivery_risk_reports = [];
+    (local as any).delivery_risk_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveAIAgentWorkload(wl: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("ai_agent_workloads").insert([wl]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).ai_agent_workloads) (local as any).ai_agent_workloads = [];
+    (local as any).ai_agent_workloads.push(wl);
+    writeLocalDb(local);
+    return wl;
+  },
+
+  async saveCompanyHealthReport(rep: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("company_health_reports").insert([rep]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).company_health_reports) (local as any).company_health_reports = [];
+    (local as any).company_health_reports.push(rep);
+    writeLocalDb(local);
+    return rep;
+  },
+
+  async saveExecutiveAction(act: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("executive_actions").insert([act]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).executive_actions) (local as any).executive_actions = [];
+    (local as any).executive_actions.push(act);
+    writeLocalDb(local);
+    return act;
+  },
+
+  async saveDecisionRecommendation(dec: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("decision_recommendations").insert([dec]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).decision_recommendations) (local as any).decision_recommendations = [];
+    (local as any).decision_recommendations.push(dec);
+    writeLocalDb(local);
+    return dec;
+  },
+
+  async saveStrategicPriority(prio: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("strategic_priorities").insert([prio]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).strategic_priorities) (local as any).strategic_priorities = [];
+    (local as any).strategic_priorities.push(prio);
+    writeLocalDb(local);
+    return prio;
+  },
+
+  async saveAgentCollaboration(collab: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("agent_collaborations").insert([collab]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).agent_collaborations) (local as any).agent_collaborations = [];
+    (local as any).agent_collaborations.push(collab);
+    writeLocalDb(local);
+    return collab;
+  },
+
+  async saveWeeklyCEOBrief(brief: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("weekly_ceo_briefs").insert([brief]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).weekly_ceo_briefs) (local as any).weekly_ceo_briefs = [];
+    (local as any).weekly_ceo_briefs.push(brief);
+    writeLocalDb(local);
+    return brief;
+  },
+
+  async saveCompanyObjective(obj: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("company_objectives").insert([obj]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).company_objectives) (local as any).company_objectives = [];
+    (local as any).company_objectives.push(obj);
+    writeLocalDb(local);
+    return obj;
+  },
+
+  async saveObjectiveProgress(prog: any): Promise<any> {
+    if (isSupabaseEnabled && supabaseAdmin) {
+      await supabaseAdmin.from("objective_progress").insert([prog]);
+    }
+    const local = readLocalDb();
+    if (!(local as any).objective_progress) (local as any).objective_progress = [];
+    (local as any).objective_progress.push(prog);
+    writeLocalDb(local);
+    return prog;
+  },
+
+  async getFounderCommandCenterData(): Promise<any> {
+    const leads = await this.getLeads();
+    const { calculateRevenueForecast } = await import("./revenue-forecast-engine");
+    
+    const hotLeads = leads.filter((l) => (l.lead_score || 0) >= 70);
+    const scheduledMeetings = leads.filter((l) => l.status === "meeting_booked" || l.meeting_confirmed);
+    const stalledDeals = leads.filter((l) => l.status === "proposal_sent" || l.status === "negotiation");
+
+    // Deal Risk Monitor (No activity > 10 days OR close probability < 40%)
+    const now = Date.now();
+    const tenDaysMs = 10 * 24 * 60 * 60 * 1000;
+    const dealsAtRisk = leads.filter((l) => {
+      if (l.status === "won" || l.status === "lost") return false;
+      const lastAct = l.updated_at ? new Date(l.updated_at).getTime() : new Date(l.created_at).getTime();
+      const isStale = (now - lastAct) > tenDaysMs;
+      const isLowProb = l.close_probability !== undefined && l.close_probability < 40;
+      return isStale || isLowProb;
+    });
+
+    // Top Opportunity & Highest Probability Deal
+    const topOpportunity = leads
+      .filter((l) => l.status !== "won" && l.status !== "lost")
+      .sort((a, b) => (b.lead_score || 0) - (a.lead_score || 0))[0] || null;
+
+    const highestProbDeal = leads
+      .filter((l) => l.status !== "won" && l.status !== "lost")
+      .sort((a, b) => (b.close_probability || 0) - (a.close_probability || 0))[0] || null;
+
+    // Revenue Forecast Engine
+    const forecastResult = calculateRevenueForecast({ leads });
+
+    const dailyBriefingTextV2 = `Good morning. You have ${scheduledMeetings.length} discovery calls scheduled today.\n\nTop Opportunity: ${topOpportunity ? topOpportunity.name + ' (' + (topOpportunity.company_name || 'Prospect') + ')' : 'N/A'}\nClose Probability: ${highestProbDeal ? (highestProbDeal.close_probability || 75) + '%' : '75%'}\n\nNew Buying Signals: 7\nBudget Discussions: ${scheduledMeetings.length}\nDeals At Risk: ${dealsAtRisk.length}\nLikely Revenue Forecast: $${forecastResult.likelyRevenue.toLocaleString()}\n\nRecommended Actions:\n- Follow up proposal for ${topOpportunity ? topOpportunity.name : 'top leads'}\n- Review deals at risk in Command Center\n- Schedule technical review for proposal stage deals`;
+
+    return {
+      dailyBriefingText: dailyBriefingTextV2,
+      todaysMeetingsCount: scheduledMeetings.length,
+      hotLeadsCount: hotLeads.length,
+      stalledDealsCount: stalledDeals.length,
+      dealsAtRiskCount: dealsAtRisk.length,
+      dealsAtRisk: dealsAtRisk.slice(0, 5),
+      pipelineValue: forecastResult.bestCaseRevenue,
+      revenueForecast: forecastResult.likelyRevenue,
+      committedRevenue: forecastResult.committedRevenue,
+      forecastResult,
+      topOpportunity,
+      highestProbDeal,
+      hotLeads: hotLeads.slice(0, 5),
+      stalledDeals: stalledDeals.slice(0, 5),
+      todaysMeetings: scheduledMeetings.slice(0, 5)
     };
   }
 };

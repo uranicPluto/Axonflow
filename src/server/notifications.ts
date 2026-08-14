@@ -414,3 +414,107 @@ export async function dispatchVoiceCall(params: {
     return false;
   }
 }
+
+export interface SlackBriefNotificationParams {
+  leadId: string;
+  leadName: string;
+  leadEmail: string;
+  meetingDateTime: string;
+  researchSummary: string;
+  discoveryQuestions: string;
+  recommendedOffer?: string;
+  bookingId?: string;
+}
+
+/**
+ * Send formatted AI Meeting Brief Slack notification payload
+ */
+export async function sendMeetingBriefSlackNotification(
+  params: SlackBriefNotificationParams
+): Promise<boolean> {
+  const webhookUrl = process.env.SLACK_BRIEFS_WEBHOOK_URL || process.env.SLACK_WEBHOOK_URL;
+  const baseUrl = process.env.PUBLIC_APP_URL || process.env.VITE_APP_URL || "https://houseofworkflow.com";
+  const leadLink = `${baseUrl}/admin/leads/${params.leadId}`;
+
+  const payload = {
+    text: `*🤖 New AI Meeting Brief Generated for ${params.leadName}*`,
+    blocks: [
+      {
+        type: "header",
+        text: {
+          type: "plain_text",
+          text: "🚀 AI Meeting Brief Ready",
+          emoji: true
+        }
+      },
+      {
+        type: "section",
+        fields: [
+          {
+            type: "mrkdwn",
+            text: `*Lead Name:*\n${params.leadName}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Email:*\n${params.leadEmail}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Meeting Date/Time:*\n${params.meetingDateTime}`
+          },
+          {
+            type: "mrkdwn",
+            text: `*Recommended Offer:*\n${params.recommendedOffer || "Custom Automation Blueprint"}`
+          }
+        ]
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Research Summary:*\n${params.researchSummary}`
+        }
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*Key Discovery Questions:*\n${params.discoveryQuestions}`
+        }
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "View Lead in Admin",
+              emoji: true
+            },
+            url: leadLink,
+            style: "primary"
+          }
+        ]
+      }
+    ]
+  };
+
+  if (!webhookUrl) {
+    console.log("[SLACK-BRIEF] Webhook URL not configured — logging payload to console:", JSON.stringify(payload, null, 2));
+    return true;
+  }
+
+  try {
+    const res = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return res.ok;
+  } catch (err) {
+    console.error("[SLACK-BRIEF] Failed to send Slack notification:", err);
+    return false;
+  }
+}
+

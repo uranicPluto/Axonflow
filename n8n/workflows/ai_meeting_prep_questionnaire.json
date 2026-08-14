@@ -1,0 +1,96 @@
+{
+  "name": "Flow B: AI Meeting Prep & Questionnaire Dispatch",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "calcom-ai-prep-webhook",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "node-trigger-1",
+      "name": "Cal.com Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 350]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://houseofworkflow.com/api/webhook/calcom",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-cal-signature-256",
+              "value": "={{ $input.first().headers['x-cal-signature-256'] || $input.first().headers['X-Cal-Signature-256'] }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $input.first().rawBody }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json",
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "node-forward-2",
+      "name": "Forward Webhook to AxonFlow Engine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [550, 350],
+      "notes": "Triggers Cal.com booking processing, AI brief generation, and Slack notifications inside AxonFlow."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate personalized pre-call questionnaire link for the attendee\nconst body = $input.first().json.body || {};\nconst leadId = body.leadId || '';\nconst bookingId = body.bookingId || '';\nconst email = body.email || '';\n\nconst questionnaireUrl = `https://houseofworkflow.com/questionnaire?email=${encodeURIComponent(email)}&lead_id=${encodeURIComponent(leadId)}&booking_id=${encodeURIComponent(bookingId)}`;\n\nreturn [{\n  json: {\n    processed: true,\n    leadId,\n    bookingId,\n    questionnaireUrl\n  }\n}];"
+      },
+      "id": "node-[#1]-gen-link",
+      "name": "Generate Questionnaire Link",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 350]
+    }
+  ],
+  "connections": {
+    "Cal.com Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Forward Webhook to AxonFlow Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forward Webhook to AxonFlow Engine": {
+      "main": [
+        [
+          {
+            "node": "Generate Questionnaire Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "_meta": {
+    "axonflow": {
+      "version": "2.2.0",
+      "system": "Automated AI Meeting Preparation & Pre-Call Questionnaire System"
+    }
+  }
+}
