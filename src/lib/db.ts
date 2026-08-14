@@ -403,6 +403,21 @@ export const createLeadFn = createServerFn({ method: "POST" })
       details: { name: lead.name, email: lead.email, service_interest: lead.service_interest },
     });
 
+    // 4. Auto-trigger Workflow B Experience Service Flow
+    try {
+      const { processExperienceFormSubmission } = await import("../server/experience-flow-engine");
+      processExperienceFormSubmission({
+        id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        service_interest: lead.service_interest,
+        problem_description: lead.problem_description,
+      }).catch((expErr) => console.error("[WORKFLOW B] Background experience flow error:", expErr));
+    } catch (expErr) {
+      console.error("[WORKFLOW B] Failed to initialize experience flow:", expErr);
+    }
+
     return {
       id: lead.id,
       name: lead.name,

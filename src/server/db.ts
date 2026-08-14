@@ -3402,6 +3402,22 @@ SYSTEM ENVIRONMENT & HEALTH:
           bookingId: bookingUid
         });
 
+        // 5. Trigger AI Qualification Call (Bolna + Sarvam)
+        try {
+          const { triggerBolnaQualificationCall } = await import("./bolna-voice-engine");
+          await triggerBolnaQualificationCall({
+            leadId: lead.id,
+            phone,
+            leadName: name,
+            leadEmail: email,
+            companyName,
+            flowType: "book_a_call",
+            meetingDateTime: `${formattedDate} at ${formattedTime} (${timezone})`,
+          });
+        } catch (voiceErr) {
+          console.error("[CALCOM] AI Voice qualification call trigger error:", voiceErr);
+        }
+
         await this.addLeadActivity(lead.id, "ai_brief_generated", `AI Brief 2.0 & Intelligence generated. Deal Score: ${scoreResult.total_score}/100 (${scoreResult.category}).`, "system");
       } catch (briefErr) {
         console.error("[CALCOM] AI Sales Intelligence generation error:", briefErr);

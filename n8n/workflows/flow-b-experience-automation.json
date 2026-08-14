@@ -1,0 +1,64 @@
+{
+  "name": "Flow B: Production Experience Service Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "experience-form-webhook",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "exp-trigger-1",
+      "name": "Experience Form Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 350]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://houseofworkflow.com/api/webhook/voice",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event\": \"experience_form_submitted\",\n  \"leadId\": $json.body.leadId,\n  \"name\": $json.body.name,\n  \"email\": $json.body.email,\n  \"phone\": $json.body.phone,\n  \"serviceInterest\": $json.body.service_interest,\n  \"problemDescription\": $json.body.problem_description\n}",
+        "options": {}
+      },
+      "id": "exp-call-2",
+      "name": "Dispatch AI Voice Qualification & Booking Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [550, 350],
+      "notes": "Triggers Bolna + Sarvam voice AI call, retrieves Cal.com availability, books slot directly via Cal.com API, and dispatches confirmations."
+    }
+  ],
+  "connections": {
+    "Experience Form Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Dispatch AI Voice Qualification & Booking Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "_meta": {
+    "axonflow": {
+      "version": "2.3.0",
+      "system": "Workflow B: Production Experience Service Automation"
+    }
+  }
+}

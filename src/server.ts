@@ -65,6 +65,8 @@ async function handleApiRoute(request: Request): Promise<Response | null> {
   if (
     url.pathname !== "/api/health" &&
     url.pathname !== "/api/webhook/calcom" &&
+    url.pathname !== "/api/webhook/bolna" &&
+    url.pathname !== "/api/webhook/voice" &&
     url.pathname !== "/api/internal/n8n-alert" &&
     url.pathname !== "/api/questionnaire" &&
     url.pathname !== "/api/admin/meeting-outcome" &&
@@ -130,6 +132,16 @@ async function handleApiRoute(request: Request): Promise<Response | null> {
     if (url.pathname === "/api/webhook/calcom") {
       const { handleCalcomWebhookRequest } = await import("./server/api/calcom-webhook");
       return await handleCalcomWebhookRequest(request);
+    }
+
+    if (url.pathname === "/api/webhook/bolna" || url.pathname === "/api/webhook/voice") {
+      const payload = await request.json().catch(() => ({}));
+      const { handleBolnaCallWebhook } = await import("./server/bolna-voice-engine");
+      const res = await handleBolnaCallWebhook(payload);
+      return new Response(JSON.stringify(res), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (url.pathname === "/api/internal/n8n-alert") {

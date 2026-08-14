@@ -15,17 +15,82 @@
   },
   "leads": [
     {
+      "id": "lead-1786708356109",
+      "created_at": "2026-08-14T11:52:36.109Z",
+      "source": "experience_form",
+      "name": "Priya Sharma",
+      "email": "exp.lead.1786708355175@houseofworkflow.com",
+      "phone": "+919876543210",
+      "service_interest": "ai_sdr",
+      "problem_description": "Automate outbound prospecting and lead qualification",
+      "status": "meeting_booked",
+      "internal_notes": "",
+      "lead_score": 30,
+      "lead_score_reason": "",
+      "pain_points": "",
+      "budget_signal": "",
+      "business_type": "",
+      "call_transcript": "",
+      "call_attempts": 0,
+      "call_outcome": "",
+      "meeting_link": "",
+      "meeting_confirmed": false,
+      "calendly_event_id": "",
+      "call_token": "d849e543-5349-4dba-b505-bce71975b819",
+      "call_token_expires_at": "2026-08-14T12:07:36.102Z",
+      "call_token_used": false,
+      "updated_at": "2026-08-14T11:52:36.129Z",
+      "lead_score_manual_override": false,
+      "lead_score_override_reason": null
+    },
+    {
+      "id": "lead-1786708330401",
+      "created_at": "2026-08-14T11:52:10.401Z",
+      "source": "book_a_call",
+      "name": "Rohan Varma",
+      "email": "test.lead.1786708355175@houseofworkflow.com",
+      "phone": "+919876543210",
+      "service_interest": "ai_sdr",
+      "problem_description": "Automate outbound prospecting and lead qualification",
+      "status": "qualified",
+      "internal_notes": "",
+      "lead_score": 45,
+      "lead_score_reason": "",
+      "pain_points": "",
+      "budget_signal": "",
+      "business_type": "",
+      "call_transcript": "",
+      "call_attempts": 0,
+      "call_outcome": "",
+      "meeting_link": "https://cal.com/meeting/test",
+      "meeting_confirmed": false,
+      "calendly_event_id": "",
+      "call_token": "a3503a40-08d8-4259-aa08-39b53a131a0f",
+      "call_token_expires_at": "2026-08-14T12:07:10.394Z",
+      "call_token_used": false,
+      "updated_at": "2026-08-14T11:52:36.034Z",
+      "lead_score_manual_override": false,
+      "lead_score_override_reason": null,
+      "first_name": "Rohan",
+      "cal_booking_uid": "bk-test-1786708355175",
+      "meeting_datetime": "2026-08-16T11:52:35.552Z",
+      "meeting_timezone": "Asia/Kolkata",
+      "meeting_status": "cancelled",
+      "reminder_sent": false,
+      "cal_event_id": "bk-test-1786708355175"
+    },
+    {
       "id": "lead-1",
       "created_at": "2026-08-14T05:59:59.053Z",
-      "source": "experience_form",
-      "name": "Akshay Deshmukh",
-      "email": "akshay@techvibe.io",
-      "phone": "+91 98765 43210",
+      "source": "book_a_call",
+      "name": "Rohan Varma",
+      "email": "test.lead.1786708329538@houseofworkflow.com",
+      "phone": "+919876543210",
       "service_interest": "ai_automation",
       "problem_description": "We need an automated workflow that fetches our sales prospects from LinkedIn, enrichment, and syncs them to HubSpot.",
-      "status": "new",
+      "status": "qualified",
       "internal_notes": "Very interested in Clay integration.",
-      "lead_score": 82,
+      "lead_score": 55,
       "lead_score_reason": "High urgency, budget alignment fits, clear automation pain points.",
       "pain_points": "Manual prospecting on LinkedIn, manual HubSpot entry",
       "budget_signal": "₹30,000–80,000",
@@ -35,10 +100,18 @@
       "call_transcript": "AI: Hi Akshay, this is Aria from House of Workflow. I saw you requested an automation flow. Akshay: Yes, we are drowning in manual LinkedIn copy-pasting. AI: Got it, we can fully automate that. Let's schedule a call.",
       "call_attempts": 1,
       "call_outcome": "booked",
-      "meeting_datetime": "2026-08-16T08:59:59.053Z",
-      "meeting_link": "meet.google.com/abc-defg-hij",
-      "meeting_confirmed": true,
-      "updated_at": "2026-08-14T08:59:59.053Z"
+      "meeting_datetime": "2026-08-16T11:52:09.872Z",
+      "meeting_link": "https://cal.com/meeting/test",
+      "meeting_confirmed": false,
+      "updated_at": "2026-08-14T11:52:10.318Z",
+      "first_name": "Rohan",
+      "cal_booking_uid": "bk-test-1786708329538",
+      "meeting_timezone": "Asia/Kolkata",
+      "meeting_status": "cancelled",
+      "reminder_sent": false,
+      "cal_event_id": "bk-test-1786708329538",
+      "lead_score_manual_override": false,
+      "lead_score_override_reason": null
     },
     {
       "id": "lead-2",
@@ -918,6 +991,71 @@
     }
   ],
   "activity_log": [
+    {
+      "id": "act-1786708356129",
+      "message": "Lead status changed: Priya Sharma (new -> meeting_booked)",
+      "timestamp": "2026-08-14T11:52:36.129Z"
+    },
+    {
+      "id": "act-1786708356109",
+      "message": "New lead captured: Priya Sharma (exp.lead.1786708355175@houseofworkflow.com)",
+      "timestamp": "2026-08-14T11:52:36.109Z"
+    },
+    {
+      "id": "act-1786708356034",
+      "message": "Lead status changed: Rohan Varma (meeting_booked -> qualified)",
+      "timestamp": "2026-08-14T11:52:36.034Z"
+    },
+    {
+      "id": "act-1786708355834",
+      "message": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708355175)",
+      "timestamp": "2026-08-14T11:52:35.834Z"
+    },
+    {
+      "id": "act-1786708355608",
+      "message": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708355175, New Time: 2026-08-16T11:52:35.552Z)",
+      "timestamp": "2026-08-14T11:52:35.608Z"
+    },
+    {
+      "id": "act-1786708355255",
+      "message": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-test-1786708355175, Link: https://cal.com/meeting/test)",
+      "timestamp": "2026-08-14T11:52:35.255Z"
+    },
+    {
+      "id": "act-1786708330418",
+      "message": "Lead status changed: Priya Sharma (new -> meeting_booked)",
+      "timestamp": "2026-08-14T11:52:10.418Z"
+    },
+    {
+      "id": "act-1786708330401",
+      "message": "New lead captured: Priya Sharma (exp.lead.1786708329538@houseofworkflow.com)",
+      "timestamp": "2026-08-14T11:52:10.401Z"
+    },
+    {
+      "id": "act-1786708330318",
+      "message": "Lead status changed: Rohan Varma (meeting_booked -> qualified)",
+      "timestamp": "2026-08-14T11:52:10.318Z"
+    },
+    {
+      "id": "act-1786708330138",
+      "message": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708329538)",
+      "timestamp": "2026-08-14T11:52:10.138Z"
+    },
+    {
+      "id": "act-1786708329927",
+      "message": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708329538, New Time: 2026-08-16T11:52:09.872Z)",
+      "timestamp": "2026-08-14T11:52:09.927Z"
+    },
+    {
+      "id": "act-1786708329618",
+      "message": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-test-1786708329538, Link: https://cal.com/meeting/test)",
+      "timestamp": "2026-08-14T11:52:09.618Z"
+    },
+    {
+      "id": "act-1786708319940",
+      "message": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-test-1786708319782, Link: https://cal.com/meeting/test)",
+      "timestamp": "2026-08-14T11:51:59.940Z"
+    },
     {
       "id": "act-1",
       "message": "Admin signed in",
@@ -25062,6 +25200,1208 @@
       "impact": "Medium",
       "confidence": 90,
       "status": "pending"
+    }
+  ],
+  "webhook_events": [
+    {
+      "id": "wh-1786708319795",
+      "provider": "calcom",
+      "event_type": "BOOKING_CREATED",
+      "provider_event_id": "BOOKING_CREATED:bk-test-1786708319782",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:51:59.785Z",
+      "processed": false,
+      "processed_at": null,
+      "lead_id": null,
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708329548",
+      "provider": "calcom",
+      "event_type": "BOOKING_CREATED",
+      "provider_event_id": "BOOKING_CREATED:bk-test-1786708329538",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:52:09.540Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:52:09.853Z",
+      "lead_id": "lead-1",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708329878",
+      "provider": "calcom",
+      "event_type": "BOOKING_RESCHEDULED",
+      "provider_event_id": "BOOKING_RESCHEDULED:bk-test-1786708329538",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:52:09.872Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:52:10.061Z",
+      "lead_id": "lead-1",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708330088",
+      "provider": "calcom",
+      "event_type": "BOOKING_CANCELLED",
+      "provider_event_id": "BOOKING_CANCELLED:bk-test-1786708329538",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:52:10.082Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:52:10.276Z",
+      "lead_id": "lead-1",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708355184",
+      "provider": "calcom",
+      "event_type": "BOOKING_CREATED",
+      "provider_event_id": "BOOKING_CREATED:bk-test-1786708355175",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:52:35.177Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:52:35.528Z",
+      "lead_id": "lead-1786708330401",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708355560",
+      "provider": "calcom",
+      "event_type": "BOOKING_RESCHEDULED",
+      "provider_event_id": "BOOKING_RESCHEDULED:bk-test-1786708355175",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:52:35.552Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:52:35.751Z",
+      "lead_id": "lead-1786708330401",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    },
+    {
+      "id": "wh-1786708355781",
+      "provider": "calcom",
+      "event_type": "BOOKING_CANCELLED",
+      "provider_event_id": "BOOKING_CANCELLED:bk-test-1786708355175",
+      "payload_hash": null,
+      "received_at": "2026-08-14T11:52:35.774Z",
+      "processed": true,
+      "processed_at": "2026-08-14T11:52:35.995Z",
+      "lead_id": "lead-1786708330401",
+      "workflow_triggered": "flow_a",
+      "error_message": null
+    }
+  ],
+  "lead_scores": [
+    {
+      "id": "scr-1786708330318-9dmhk",
+      "lead_id": "lead-1",
+      "score": 55,
+      "classification": "Warm",
+      "breakdown": {
+        "service_score": 15,
+        "size_score": 5,
+        "budget_score": 5,
+        "engagement_score": 10,
+        "call_score": 0,
+        "source_score": 10,
+        "base_score": 10
+      },
+      "calculated_at": "2026-08-14T11:52:10.318Z"
+    },
+    {
+      "lead_id": "lead-1",
+      "total_score": 46,
+      "category": "Warm",
+      "questionnaire_score": 0,
+      "company_fit_score": 16,
+      "urgency_score": 15,
+      "budget_score": 10,
+      "engagement_score": 5,
+      "discovery_outcome_score": 0,
+      "meeting_intelligence_boost": 0,
+      "score_breakdown_json": {
+        "questionnaire_score": 0,
+        "company_fit_score": 16,
+        "urgency_score": 15,
+        "budget_score": 10,
+        "engagement_score": 5,
+        "discovery_outcome_score": 0,
+        "meeting_intelligence_boost": 0
+      }
+    },
+    {
+      "lead_id": "lead-1",
+      "total_score": 46,
+      "category": "Warm",
+      "questionnaire_score": 0,
+      "company_fit_score": 16,
+      "urgency_score": 15,
+      "budget_score": 10,
+      "engagement_score": 5,
+      "discovery_outcome_score": 0,
+      "meeting_intelligence_boost": 0,
+      "score_breakdown_json": {
+        "questionnaire_score": 0,
+        "company_fit_score": 16,
+        "urgency_score": 15,
+        "budget_score": 10,
+        "engagement_score": 5,
+        "discovery_outcome_score": 0,
+        "meeting_intelligence_boost": 0
+      }
+    },
+    {
+      "id": "scr-1786708356034-hugw1",
+      "lead_id": "lead-1786708330401",
+      "score": 45,
+      "classification": "Warm",
+      "breakdown": {
+        "service_score": 5,
+        "size_score": 5,
+        "budget_score": 5,
+        "engagement_score": 10,
+        "call_score": 0,
+        "source_score": 10,
+        "base_score": 10
+      },
+      "calculated_at": "2026-08-14T11:52:36.034Z"
+    },
+    {
+      "lead_id": "lead-1786708330401",
+      "total_score": 46,
+      "category": "Warm",
+      "questionnaire_score": 0,
+      "company_fit_score": 16,
+      "urgency_score": 15,
+      "budget_score": 10,
+      "engagement_score": 5,
+      "discovery_outcome_score": 0,
+      "meeting_intelligence_boost": 0,
+      "score_breakdown_json": {
+        "questionnaire_score": 0,
+        "company_fit_score": 16,
+        "urgency_score": 15,
+        "budget_score": 10,
+        "engagement_score": 5,
+        "discovery_outcome_score": 0,
+        "meeting_intelligence_boost": 0
+      }
+    },
+    {
+      "id": "scr-1786708356129-bg3f7",
+      "lead_id": "lead-1786708356109",
+      "score": 30,
+      "classification": "Cold",
+      "breakdown": {
+        "service_score": 5,
+        "size_score": 5,
+        "budget_score": 5,
+        "engagement_score": 0,
+        "call_score": 0,
+        "source_score": 5,
+        "base_score": 10
+      },
+      "calculated_at": "2026-08-14T11:52:36.129Z"
+    }
+  ],
+  "analytics_events": [
+    {
+      "id": "evt-1786708319907-lbcsp",
+      "event_type": "new_lead",
+      "lead_id": "lead-1",
+      "source": "book_a_call",
+      "metadata": {},
+      "created_at": "2026-08-14T11:51:59.907Z"
+    },
+    {
+      "id": "evt-1786708330318-ag4bx",
+      "event_type": "qualified",
+      "lead_id": "lead-1",
+      "source": "book_a_call",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:10.318Z"
+    },
+    {
+      "id": "evt-1786708330401-bg25w",
+      "event_type": "new_lead",
+      "lead_id": "lead-1786708330401",
+      "source": "experience_form",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:10.401Z"
+    },
+    {
+      "id": "evt-1786708356034-nuqn3",
+      "event_type": "qualified",
+      "lead_id": "lead-1786708330401",
+      "source": "book_a_call",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:36.034Z"
+    },
+    {
+      "id": "evt-1786708356109-g2w9z",
+      "event_type": "new_lead",
+      "lead_id": "lead-1786708356109",
+      "source": "experience_form",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:36.109Z"
+    }
+  ],
+  "meetings": [
+    {
+      "id": "mtg-1786708319914-4vozp",
+      "lead_id": "lead-1",
+      "cal_event_id": "bk-test-1786708319782",
+      "cal_uid": "bk-test-1786708319782",
+      "scheduled_at": "2026-08-15T11:51:59.782Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "https://cal.com/meeting/test",
+      "status": "scheduled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T11:51:59.915Z",
+      "updated_at": "2026-08-14T11:51:59.915Z"
+    },
+    {
+      "id": "mtg-1786708329599-agltr",
+      "lead_id": "lead-1",
+      "cal_event_id": "bk-test-1786708329538",
+      "cal_uid": "bk-test-1786708329538",
+      "scheduled_at": "2026-08-14T11:52:10.082Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "",
+      "status": "cancelled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T11:52:09.599Z",
+      "updated_at": "2026-08-14T11:52:10.125Z"
+    },
+    {
+      "id": "mtg-1786708330425-on14h",
+      "lead_id": "lead-1786708330401",
+      "cal_event_id": "bk-1786708330411",
+      "cal_uid": "bk-1786708330411",
+      "scheduled_at": "2026-08-15T11:52:10.409Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "https://cal.com/meeting/bk-1786708330411",
+      "status": "scheduled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T11:52:10.425Z",
+      "updated_at": "2026-08-14T11:52:10.425Z"
+    },
+    {
+      "id": "mtg-1786708355234-kjbug",
+      "lead_id": "lead-1786708330401",
+      "cal_event_id": "bk-test-1786708355175",
+      "cal_uid": "bk-test-1786708355175",
+      "scheduled_at": "2026-08-14T11:52:35.774Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "",
+      "status": "cancelled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T11:52:35.234Z",
+      "updated_at": "2026-08-14T11:52:35.819Z"
+    },
+    {
+      "id": "mtg-1786708356137-7qxme",
+      "lead_id": "lead-1786708356109",
+      "cal_event_id": "bk-1786708356123",
+      "cal_uid": "bk-1786708356123",
+      "scheduled_at": "2026-08-15T11:52:36.120Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "https://cal.com/meeting/bk-1786708356123",
+      "status": "scheduled",
+      "reminder_sent": false,
+      "created_at": "2026-08-14T11:52:36.137Z",
+      "updated_at": "2026-08-14T11:52:36.137Z"
+    }
+  ],
+  "lead_activities": [
+    {
+      "id": "act-1786708356057-d6lnj",
+      "lead_id": "lead-1786708330401",
+      "activity_type": "ai_qualification_call_completed",
+      "description": "AI Voice Call Completed. Score: 85/100 (Hot). Service: AI Autonomous Revenue & SDR System",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:36.057Z"
+    },
+    {
+      "id": "act-1786708355842-php0v",
+      "lead_id": "lead-1786708330401",
+      "activity_type": "meeting_cancelled",
+      "description": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708355175)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:35.842Z"
+    },
+    {
+      "id": "act-1786708355618-6hk09",
+      "lead_id": "lead-1786708330401",
+      "activity_type": "meeting_rescheduled",
+      "description": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708355175, New Time: 2026-08-16T11:52:35.552Z)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:35.618Z"
+    },
+    {
+      "id": "act-1786708355362-hz552",
+      "lead_id": "lead-1786708330401",
+      "activity_type": "ai_brief_generated",
+      "description": "AI Brief 2.0 & Intelligence generated. Deal Score: 46/100 (Warm).",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:35.362Z"
+    },
+    {
+      "id": "act-1786708355264-kta7c",
+      "lead_id": "lead-1786708330401",
+      "activity_type": "meeting_booked",
+      "description": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-test-1786708355175, Link: https://cal.com/meeting/test)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:35.264Z"
+    },
+    {
+      "id": "act-1786708330348-7wg8j",
+      "lead_id": "lead-1",
+      "activity_type": "ai_qualification_call_completed",
+      "description": "AI Voice Call Completed. Score: 85/100 (Hot). Service: AI Autonomous Revenue & SDR System",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:10.348Z"
+    },
+    {
+      "id": "act-1786708330145-skqth",
+      "lead_id": "lead-1",
+      "activity_type": "meeting_cancelled",
+      "description": "Discovery call cancelled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708329538)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:10.145Z"
+    },
+    {
+      "id": "act-1786708329933-dfzm7",
+      "lead_id": "lead-1",
+      "activity_type": "meeting_rescheduled",
+      "description": "Discovery call rescheduled: House Of Workflow Discovery Call (Booking ID: bk-test-1786708329538, New Time: 2026-08-16T11:52:09.872Z)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:09.933Z"
+    },
+    {
+      "id": "act-1786708329721-2wod0",
+      "lead_id": "lead-1",
+      "activity_type": "ai_brief_generated",
+      "description": "AI Brief 2.0 & Intelligence generated. Deal Score: 46/100 (Warm).",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:09.721Z"
+    },
+    {
+      "id": "act-1786708329628-22w10",
+      "lead_id": "lead-1",
+      "activity_type": "meeting_booked",
+      "description": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-test-1786708329538, Link: https://cal.com/meeting/test)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:09.628Z"
+    },
+    {
+      "id": "act-1786708320061-7bpo8",
+      "lead_id": "lead-1",
+      "activity_type": "ai_brief_generated",
+      "description": "AI Brief 2.0 & Intelligence generated. Deal Score: 46/100 (Warm).",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:52:00.061Z"
+    },
+    {
+      "id": "act-1786708319949-rbk56",
+      "lead_id": "lead-1",
+      "activity_type": "meeting_booked",
+      "description": "Discovery call booked: House Of Workflow Discovery Call (Booking ID: bk-test-1786708319782, Link: https://cal.com/meeting/test)",
+      "actor": "system",
+      "metadata": {},
+      "created_at": "2026-08-14T11:51:59.949Z"
+    }
+  ],
+  "lead_enrichment_reports": [
+    {
+      "lead_id": "lead-1",
+      "industry": "B2B Technology & Professional Services",
+      "company_size": "10-50 employees",
+      "annual_revenue_estimate": "$1M - $5M",
+      "employee_count": 25,
+      "location": "Global / Remote",
+      "linkedin_url": "https://linkedin.com/company/varmalogistics",
+      "website": "https://varmalogistics.io",
+      "tech_stack": [
+        "REST APIs",
+        "Modern Web Frontend",
+        "Cloud Databases",
+        "Automation Engine"
+      ],
+      "funding_stage": "Bootstrapped / Growth Stage",
+      "raw_enrichment_data": {
+        "source": "fallback_enrichment_engine"
+      }
+    },
+    {
+      "lead_id": "lead-1",
+      "industry": "B2B Technology & Professional Services",
+      "company_size": "10-50 employees",
+      "annual_revenue_estimate": "$1M - $5M",
+      "employee_count": 25,
+      "location": "Global / Remote",
+      "linkedin_url": "https://linkedin.com/company/varmalogistics",
+      "website": "https://varmalogistics.io",
+      "tech_stack": [
+        "REST APIs",
+        "Modern Web Frontend",
+        "Cloud Databases",
+        "Automation Engine"
+      ],
+      "funding_stage": "Bootstrapped / Growth Stage",
+      "raw_enrichment_data": {
+        "source": "fallback_enrichment_engine"
+      }
+    },
+    {
+      "lead_id": "lead-1786708330401",
+      "industry": "B2B Technology & Professional Services",
+      "company_size": "10-50 employees",
+      "annual_revenue_estimate": "$1M - $5M",
+      "employee_count": 25,
+      "location": "Global / Remote",
+      "linkedin_url": "https://linkedin.com/company/varmalogistics",
+      "website": "https://varmalogistics.io",
+      "tech_stack": [
+        "REST APIs",
+        "Modern Web Frontend",
+        "Cloud Databases",
+        "Automation Engine"
+      ],
+      "funding_stage": "Bootstrapped / Growth Stage",
+      "raw_enrichment_data": {
+        "source": "fallback_enrichment_engine"
+      }
+    }
+  ],
+  "company_research_reports": [
+    {
+      "lead_id": "lead-1",
+      "company_name": "Varma Logistics",
+      "website": "https://varmalogistics.io",
+      "company_summary": "Varma Logistics operates in the B2B tech and services market, currently experiencing growth that requires operational automation.",
+      "competitive_landscape": "Competitors are adopting modern AI workflows and automated CRM routing to decrease response latency.",
+      "growth_signals": "High lead velocity and need for scaling delivery without proportional headcount expansion.",
+      "risk_factors": "Manual task friction delaying deal execution and client onboarding.",
+      "buying_signals": "Proactive booking of discovery session to evaluate workflow optimization.",
+      "recommended_pitch": "Focus the discovery call on demonstrating how House Of Workflow automates Varma Logistics's end-to-end pipeline with zero manual intervention."
+    },
+    {
+      "lead_id": "lead-1",
+      "company_name": "Varma Logistics",
+      "website": "https://varmalogistics.io",
+      "company_summary": "Varma Logistics operates in the B2B tech and services market, currently experiencing growth that requires operational automation.",
+      "competitive_landscape": "Competitors are adopting modern AI workflows and automated CRM routing to decrease response latency.",
+      "growth_signals": "High lead velocity and need for scaling delivery without proportional headcount expansion.",
+      "risk_factors": "Manual task friction delaying deal execution and client onboarding.",
+      "buying_signals": "Proactive booking of discovery session to evaluate workflow optimization.",
+      "recommended_pitch": "Focus the discovery call on demonstrating how House Of Workflow automates Varma Logistics's end-to-end pipeline with zero manual intervention."
+    },
+    {
+      "lead_id": "lead-1786708330401",
+      "company_name": "Varma Logistics",
+      "website": "https://varmalogistics.io",
+      "company_summary": "Varma Logistics operates in the B2B tech and services market, currently experiencing growth that requires operational automation.",
+      "competitive_landscape": "Competitors are adopting modern AI workflows and automated CRM routing to decrease response latency.",
+      "growth_signals": "High lead velocity and need for scaling delivery without proportional headcount expansion.",
+      "risk_factors": "Manual task friction delaying deal execution and client onboarding.",
+      "buying_signals": "Proactive booking of discovery session to evaluate workflow optimization.",
+      "recommended_pitch": "Focus the discovery call on demonstrating how House Of Workflow automates Varma Logistics's end-to-end pipeline with zero manual intervention."
+    }
+  ],
+  "meeting_briefs": [
+    {
+      "id": "brief-1786708320022-1raiw",
+      "lead_id": "lead-1",
+      "booking_id": "bk-test-1786708319782",
+      "lead_name": "Rohan Varma",
+      "lead_email": "test.lead.1786708319782@houseofworkflow.com",
+      "company_name": "Varma Logistics",
+      "company_website": "https://varmalogistics.io",
+      "research_summary": "Prospect Rohan Varma (Varma Logistics) booked a discovery call to explore automation. Initial details indicate strong alignment for process optimization.",
+      "key_pain_points": "- High manual effort required for customer intake & lead follow-up.\n- Disconnected internal data systems creating operational silos.\n- Need for automated qualification before team intervention.",
+      "opportunities": "- Implement n8n/AxonFlow automated workflow pipelines for instant lead routing.\n- Deploy AI assistant for 24/7 client intake & preliminary diagnostic capture.\n- Integrate unified Supabase storage with Slack/CRM real-time notifications.",
+      "discovery_questions": "1. What is the current manual hours spent weekly on this process?\n2. What software platforms currently form your core stack (CRMs, databases)?\n3. What is your timeline for implementing an automated solution?\n4. What budget allocation is targeted for this optimization phase?\n5. Who else on your team will be involved in evaluating this implementation?",
+      "recommended_offer": "House Of Workflow AI Agent Sprint ($5,000)",
+      "created_at": "2026-08-14T11:52:00.022Z"
+    },
+    {
+      "id": "brief-1786708329689-qc207",
+      "lead_id": "lead-1",
+      "booking_id": "bk-test-1786708329538",
+      "lead_name": "Rohan Varma",
+      "lead_email": "test.lead.1786708329538@houseofworkflow.com",
+      "company_name": "Varma Logistics",
+      "company_website": "https://varmalogistics.io",
+      "research_summary": "Prospect Rohan Varma (Varma Logistics) booked a discovery call to explore automation. Initial details indicate strong alignment for process optimization.",
+      "key_pain_points": "- High manual effort required for customer intake & lead follow-up.\n- Disconnected internal data systems creating operational silos.\n- Need for automated qualification before team intervention.",
+      "opportunities": "- Implement n8n/AxonFlow automated workflow pipelines for instant lead routing.\n- Deploy AI assistant for 24/7 client intake & preliminary diagnostic capture.\n- Integrate unified Supabase storage with Slack/CRM real-time notifications.",
+      "discovery_questions": "1. What is the current manual hours spent weekly on this process?\n2. What software platforms currently form your core stack (CRMs, databases)?\n3. What is your timeline for implementing an automated solution?\n4. What budget allocation is targeted for this optimization phase?\n5. Who else on your team will be involved in evaluating this implementation?",
+      "recommended_offer": "House Of Workflow AI Agent Sprint ($5,000)",
+      "created_at": "2026-08-14T11:52:09.689Z"
+    },
+    {
+      "id": "brief-1786708330331-r4yrt",
+      "lead_id": "lead-1",
+      "lead_name": "Rohan Varma",
+      "lead_email": "test.lead.1786708329538@houseofworkflow.com",
+      "company_name": "Rohan Varma's Company",
+      "research_summary": "AI Call completed with Rohan Varma. Intent & Fit evaluated as Hot (85/100). Lead expressed strong interest in AI workflow automation.",
+      "key_pain_points": [
+        "Manual data entry & context switching across CRM/Slack",
+        "Slow lead follow-up response times (> 2 hours)",
+        "Lack of automated AI qualification & booking"
+      ],
+      "opportunities": [
+        "Automated AI SDR Deployment",
+        "Cal.com & WhatsApp Workflow Automation"
+      ],
+      "discovery_questions": [
+        "Highlight House Of Workflow's AI SDR & Autonomous Operating System tailored for Rohan Varma",
+        "Demonstrate zero-latency Cal.com + WhatsApp qualification automation",
+        "Present ROI calculation: 4.8x FTE output increase within 30 days"
+      ],
+      "recommended_offer": "AI Autonomous Revenue & SDR System",
+      "created_at": "2026-08-14T11:52:10.331Z"
+    },
+    {
+      "id": "brief-1786708330502-1y8up",
+      "lead_id": "lead-1786708330401",
+      "booking_id": "bk-1786708330411",
+      "lead_name": "Priya Sharma",
+      "lead_email": "exp.lead.1786708329538@houseofworkflow.com",
+      "company_name": "Priya Sharma's Business",
+      "research_summary": "AI Call completed with Priya Sharma. Intent & Fit evaluated as Warm (72/100). Lead expressed strong interest in AI workflow automation.",
+      "key_pain_points": [
+        "Manual data entry & context switching across CRM/Slack",
+        "Slow lead follow-up response times (> 2 hours)",
+        "Lack of automated AI qualification & booking"
+      ],
+      "opportunities": [
+        "Automated Experience Form Onboarding",
+        "Real-Time AI Booking"
+      ],
+      "discovery_questions": [
+        "Highlight House Of Workflow's AI SDR & Autonomous Operating System tailored for Priya Sharma",
+        "Demonstrate zero-latency Cal.com + WhatsApp qualification automation",
+        "Present ROI calculation: 4.8x FTE output increase within 30 days"
+      ],
+      "recommended_offer": "AI Autonomous Revenue & SDR System",
+      "created_at": "2026-08-14T11:52:10.502Z"
+    },
+    {
+      "id": "brief-1786708355328-hcnz6",
+      "lead_id": "lead-1786708330401",
+      "booking_id": "bk-test-1786708355175",
+      "lead_name": "Rohan Varma",
+      "lead_email": "test.lead.1786708355175@houseofworkflow.com",
+      "company_name": "Varma Logistics",
+      "company_website": "https://varmalogistics.io",
+      "research_summary": "Prospect Rohan Varma (Varma Logistics) booked a discovery call to explore automation. Initial details indicate strong alignment for process optimization.",
+      "key_pain_points": "- High manual effort required for customer intake & lead follow-up.\n- Disconnected internal data systems creating operational silos.\n- Need for automated qualification before team intervention.",
+      "opportunities": "- Implement n8n/AxonFlow automated workflow pipelines for instant lead routing.\n- Deploy AI assistant for 24/7 client intake & preliminary diagnostic capture.\n- Integrate unified Supabase storage with Slack/CRM real-time notifications.",
+      "discovery_questions": "1. What is the current manual hours spent weekly on this process?\n2. What software platforms currently form your core stack (CRMs, databases)?\n3. What is your timeline for implementing an automated solution?\n4. What budget allocation is targeted for this optimization phase?\n5. Who else on your team will be involved in evaluating this implementation?",
+      "recommended_offer": "House Of Workflow AI Agent Sprint ($5,000)",
+      "created_at": "2026-08-14T11:52:35.328Z"
+    },
+    {
+      "id": "brief-1786708356042-1mk5r",
+      "lead_id": "lead-1786708330401",
+      "lead_name": "Rohan Varma",
+      "lead_email": "test.lead.1786708355175@houseofworkflow.com",
+      "company_name": "Rohan Varma's Company",
+      "research_summary": "AI Call completed with Rohan Varma. Intent & Fit evaluated as Hot (85/100). Lead expressed strong interest in AI workflow automation.",
+      "key_pain_points": [
+        "Manual data entry & context switching across CRM/Slack",
+        "Slow lead follow-up response times (> 2 hours)",
+        "Lack of automated AI qualification & booking"
+      ],
+      "opportunities": [
+        "Automated AI SDR Deployment",
+        "Cal.com & WhatsApp Workflow Automation"
+      ],
+      "discovery_questions": [
+        "Highlight House Of Workflow's AI SDR & Autonomous Operating System tailored for Rohan Varma",
+        "Demonstrate zero-latency Cal.com + WhatsApp qualification automation",
+        "Present ROI calculation: 4.8x FTE output increase within 30 days"
+      ],
+      "recommended_offer": "AI Autonomous Revenue & SDR System",
+      "created_at": "2026-08-14T11:52:36.042Z"
+    },
+    {
+      "id": "brief-1786708356209-xe2js",
+      "lead_id": "lead-1786708356109",
+      "booking_id": "bk-1786708356123",
+      "lead_name": "Priya Sharma",
+      "lead_email": "exp.lead.1786708355175@houseofworkflow.com",
+      "company_name": "Priya Sharma's Business",
+      "research_summary": "AI Call completed with Priya Sharma. Intent & Fit evaluated as Warm (72/100). Lead expressed strong interest in AI workflow automation.",
+      "key_pain_points": [
+        "Manual data entry & context switching across CRM/Slack",
+        "Slow lead follow-up response times (> 2 hours)",
+        "Lack of automated AI qualification & booking"
+      ],
+      "opportunities": [
+        "Automated Experience Form Onboarding",
+        "Real-Time AI Booking"
+      ],
+      "discovery_questions": [
+        "Highlight House Of Workflow's AI SDR & Autonomous Operating System tailored for Priya Sharma",
+        "Demonstrate zero-latency Cal.com + WhatsApp qualification automation",
+        "Present ROI calculation: 4.8x FTE output increase within 30 days"
+      ],
+      "recommended_offer": "AI Autonomous Revenue & SDR System",
+      "created_at": "2026-08-14T11:52:36.209Z"
+    }
+  ],
+  "communication_logs": [
+    {
+      "id": "cml-1786708320082",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "sending",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_whatsapp:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:52:00.075Z"
+    },
+    {
+      "id": "cml-1786708320096",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "sending",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_email:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:52:00.090Z"
+    },
+    {
+      "id": "cml-1786708320113",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_booking_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": null,
+      "status": "sending",
+      "error_message": null,
+      "idempotency_key": "jay_booking_alert:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:52:00.105Z"
+    },
+    {
+      "id": "cml-1786708320127",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": null,
+      "status": "sending",
+      "error_message": null,
+      "idempotency_key": "jay_booking_email:bk-test-1786708319782",
+      "created_at": "2026-08-14T11:52:00.120Z"
+    },
+    {
+      "id": "cml-1786708329741",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708329794",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_whatsapp:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.735Z",
+      "updated_at": "2026-08-14T11:52:09.795Z",
+      "sent_at": "2026-08-14T11:52:09.795Z"
+    },
+    {
+      "id": "cml-1786708329757",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708329794",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_email:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.750Z",
+      "updated_at": "2026-08-14T11:52:09.809Z",
+      "sent_at": "2026-08-14T11:52:09.809Z"
+    },
+    {
+      "id": "cml-1786708329774",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_booking_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708329795",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_booking_alert:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.765Z",
+      "updated_at": "2026-08-14T11:52:09.822Z",
+      "sent_at": "2026-08-14T11:52:09.822Z"
+    },
+    {
+      "id": "cml-1786708329787",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708329795",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_booking_email:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.781Z",
+      "updated_at": "2026-08-14T11:52:09.840Z",
+      "sent_at": "2026-08-14T11:52:09.840Z"
+    },
+    {
+      "id": "cml-1786708329956",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_reschedule",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708330005",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_reschedule_whatsapp:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.947Z",
+      "updated_at": "2026-08-14T11:52:10.005Z",
+      "sent_at": "2026-08-14T11:52:10.005Z"
+    },
+    {
+      "id": "cml-1786708329970",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330005",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_reschedule_email:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.963Z",
+      "updated_at": "2026-08-14T11:52:10.021Z",
+      "sent_at": "2026-08-14T11:52:10.021Z"
+    },
+    {
+      "id": "cml-1786708329983",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_reschedule_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708330005",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_reschedule_alert:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.978Z",
+      "updated_at": "2026-08-14T11:52:10.034Z",
+      "sent_at": "2026-08-14T11:52:10.034Z"
+    },
+    {
+      "id": "cml-1786708329998",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330005",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_reschedule_email:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:09.991Z",
+      "updated_at": "2026-08-14T11:52:10.048Z",
+      "sent_at": "2026-08-14T11:52:10.048Z"
+    },
+    {
+      "id": "cml-1786708330166",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_cancel",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708330219",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_cancel_whatsapp:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:10.159Z",
+      "updated_at": "2026-08-14T11:52:10.219Z",
+      "sent_at": "2026-08-14T11:52:10.219Z"
+    },
+    {
+      "id": "cml-1786708330183",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330219",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_cancel_email:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:10.173Z",
+      "updated_at": "2026-08-14T11:52:10.232Z",
+      "sent_at": "2026-08-14T11:52:10.232Z"
+    },
+    {
+      "id": "cml-1786708330197",
+      "lead_id": "lead-1",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_cancel_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708330219",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_cancel_alert:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:10.191Z",
+      "updated_at": "2026-08-14T11:52:10.249Z",
+      "sent_at": "2026-08-14T11:52:10.249Z"
+    },
+    {
+      "id": "cml-1786708330211",
+      "lead_id": "lead-1",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330219",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_cancel_email:bk-test-1786708329538",
+      "created_at": "2026-08-14T11:52:10.204Z",
+      "updated_at": "2026-08-14T11:52:10.263Z",
+      "sent_at": "2026-08-14T11:52:10.263Z"
+    },
+    {
+      "id": "cml-1786708330369",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330377",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "founder_call_brief_test.lead.1786708329538@houseofworkflow.com_1786708330362",
+      "created_at": "2026-08-14T11:52:10.362Z",
+      "updated_at": "2026-08-14T11:52:10.377Z",
+      "sent_at": "2026-08-14T11:52:10.377Z"
+    },
+    {
+      "id": "cml-1786708330446",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708330453",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "experience_booking_wa:bk-1786708330411",
+      "created_at": "2026-08-14T11:52:10.440Z",
+      "updated_at": "2026-08-14T11:52:10.453Z",
+      "sent_at": "2026-08-14T11:52:10.453Z"
+    },
+    {
+      "id": "cml-1786708330476",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330484",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "experience_booking_email:bk-1786708330411",
+      "created_at": "2026-08-14T11:52:10.470Z",
+      "updated_at": "2026-08-14T11:52:10.484Z",
+      "sent_at": "2026-08-14T11:52:10.484Z"
+    },
+    {
+      "id": "cml-1786708330522",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708330529",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "founder_call_brief_exp.lead.1786708329538@houseofworkflow.com_1786708330516",
+      "created_at": "2026-08-14T11:52:10.516Z",
+      "updated_at": "2026-08-14T11:52:10.529Z",
+      "sent_at": "2026-08-14T11:52:10.529Z"
+    },
+    {
+      "id": "cml-1786708355388",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708355456",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_whatsapp:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.380Z",
+      "updated_at": "2026-08-14T11:52:35.457Z",
+      "sent_at": "2026-08-14T11:52:35.457Z"
+    },
+    {
+      "id": "cml-1786708355406",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708355457",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_confirmation_email:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.397Z",
+      "updated_at": "2026-08-14T11:52:35.473Z",
+      "sent_at": "2026-08-14T11:52:35.473Z"
+    },
+    {
+      "id": "cml-1786708355425",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_booking_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708355457",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_booking_alert:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.417Z",
+      "updated_at": "2026-08-14T11:52:35.493Z",
+      "sent_at": "2026-08-14T11:52:35.493Z"
+    },
+    {
+      "id": "cml-1786708355445",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708355457",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_booking_email:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.435Z",
+      "updated_at": "2026-08-14T11:52:35.512Z",
+      "sent_at": "2026-08-14T11:52:35.512Z"
+    },
+    {
+      "id": "cml-1786708355639",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_reschedule",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708355690",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_reschedule_whatsapp:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.632Z",
+      "updated_at": "2026-08-14T11:52:35.690Z",
+      "sent_at": "2026-08-14T11:52:35.690Z"
+    },
+    {
+      "id": "cml-1786708355653",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708355690",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_reschedule_email:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.646Z",
+      "updated_at": "2026-08-14T11:52:35.704Z",
+      "sent_at": "2026-08-14T11:52:35.704Z"
+    },
+    {
+      "id": "cml-1786708355667",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_reschedule_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708355690",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_reschedule_alert:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.660Z",
+      "updated_at": "2026-08-14T11:52:35.718Z",
+      "sent_at": "2026-08-14T11:52:35.718Z"
+    },
+    {
+      "id": "cml-1786708355683",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708355690",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_reschedule_email:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.677Z",
+      "updated_at": "2026-08-14T11:52:35.736Z",
+      "sent_at": "2026-08-14T11:52:35.736Z"
+    },
+    {
+      "id": "cml-1786708355866",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_cancel",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708355932",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_cancel_whatsapp:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.859Z",
+      "updated_at": "2026-08-14T11:52:35.932Z",
+      "sent_at": "2026-08-14T11:52:35.932Z"
+    },
+    {
+      "id": "cml-1786708355880",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708355932",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "booking_cancel_email:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.873Z",
+      "updated_at": "2026-08-14T11:52:35.946Z",
+      "sent_at": "2026-08-14T11:52:35.946Z"
+    },
+    {
+      "id": "cml-1786708355897",
+      "lead_id": "lead-1786708330401",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "jay_cancel_alert",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708355932",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_cancel_alert:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.888Z",
+      "updated_at": "2026-08-14T11:52:35.963Z",
+      "sent_at": "2026-08-14T11:52:35.963Z"
+    },
+    {
+      "id": "cml-1786708355917",
+      "lead_id": "lead-1786708330401",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708355932",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "jay_cancel_email:bk-test-1786708355175",
+      "created_at": "2026-08-14T11:52:35.906Z",
+      "updated_at": "2026-08-14T11:52:35.977Z",
+      "sent_at": "2026-08-14T11:52:35.977Z"
+    },
+    {
+      "id": "cml-1786708356079",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708356087",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "founder_call_brief_test.lead.1786708355175@houseofworkflow.com_1786708356072",
+      "created_at": "2026-08-14T11:52:36.072Z",
+      "updated_at": "2026-08-14T11:52:36.087Z",
+      "sent_at": "2026-08-14T11:52:36.087Z"
+    },
+    {
+      "id": "cml-1786708356156",
+      "lead_id": "lead-1786708356109",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786708356164",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "experience_booking_wa:bk-1786708356123",
+      "created_at": "2026-08-14T11:52:36.150Z",
+      "updated_at": "2026-08-14T11:52:36.164Z",
+      "sent_at": "2026-08-14T11:52:36.164Z"
+    },
+    {
+      "id": "cml-1786708356188",
+      "lead_id": "lead-1786708356109",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708356195",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "experience_booking_email:bk-1786708356123",
+      "created_at": "2026-08-14T11:52:36.181Z",
+      "updated_at": "2026-08-14T11:52:36.195Z",
+      "sent_at": "2026-08-14T11:52:36.195Z"
+    },
+    {
+      "id": "cml-1786708356230",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786708356238",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "founder_call_brief_exp.lead.1786708355175@houseofworkflow.com_1786708356224",
+      "created_at": "2026-08-14T11:52:36.224Z",
+      "updated_at": "2026-08-14T11:52:36.238Z",
+      "sent_at": "2026-08-14T11:52:36.238Z"
     }
   ]
 }
