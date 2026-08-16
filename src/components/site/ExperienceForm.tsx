@@ -72,6 +72,7 @@ export function ExperienceForm({ onPickTime, title, subtitle }: ExperienceFormPr
           phone: data.phone,
           service_interest: data.service_interest,
           problem_description: data.problem_description,
+          consent: data.consent ?? true,
           status: "contacted",
           // Consent parameters
           internal_notes: JSON.stringify({

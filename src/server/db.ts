@@ -1073,8 +1073,16 @@ export const db = {
   async updateLeadQualification(
     leadId: string,
     qualificationData: {
+      full_name?: string;
       status?: string;
+      qualification_status?: string;
+      call_summary?: string;
+      call_transcript?: string;
       lead_score?: number;
+      lead_score_reason?: string;
+      meeting_booked?: boolean;
+      meeting_time?: string;
+      meeting_link?: string;
       budget_signal?: string;
       internal_notes?: string;
       lead_score_manual_override?: boolean;

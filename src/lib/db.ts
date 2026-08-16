@@ -5,11 +5,10 @@ export const PublicLeadIntakeSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().optional().default(""),
-  service_interest: z.enum(["web_dev", "ai_automation", "both", "not_sure"]).optional().default("not_sure"),
+  service_interest: z.string().optional().default("not_sure"),
   problem_description: z.string().optional().default(""),
-  consent: z.literal(true, {
-    errorMap: () => ({ message: "Consent is required" }),
-  }),
+  consent: z.any().optional().default(true),
+  turnstile_token: z.string().optional(),
 });
 
 // Re-export type definitions for client use
@@ -380,6 +379,7 @@ export const createLeadFn = createServerFn({ method: "POST" })
     const { db } = await import("../server/db");
     const lead = await db.createLead({
       name: data.name,
+      full_name: data.name,
       email: data.email,
       phone: data.phone,
       service_interest: data.service_interest,
@@ -388,9 +388,11 @@ export const createLeadFn = createServerFn({ method: "POST" })
       consent_timestamp: new Date().toISOString(),
       consent_ip: clientIp,
       consent_user_agent: userAgent,
-      // Server forces source and status
-      source: "experience_form",
-      status: "new",
+      // Server forces source, status, qualification_status, meeting_booked for Workflow B
+      source: "experience_service",
+      status: "new_lead",
+      qualification_status: "pending",
+      meeting_booked: false,
     });
 
     // 3. Log Activity

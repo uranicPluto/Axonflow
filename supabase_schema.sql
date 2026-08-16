@@ -21,18 +21,22 @@ CREATE TABLE IF NOT EXISTS leads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now(),
-    source TEXT DEFAULT 'experience_form', -- 'book_a_call' | 'experience_form'
-
+    
     -- Intake Fields
     name TEXT NOT NULL,
+    full_name TEXT,
+    lead_uid TEXT UNIQUE,
     company TEXT,
+    company_name TEXT,
     email TEXT NOT NULL,
     phone TEXT,
     service_interest TEXT, -- 'web_dev' | 'ai_automation' | 'both' | 'not_sure'
     problem_description TEXT,
 
     -- Lifecycle & Ownership
-    status TEXT DEFAULT 'new', -- 'new' | 'contacted' | 'call_opted_in' | 'call_attempted' | 'link_sent' | 'meeting_booked' | 'won' | 'archived'
+    source TEXT DEFAULT 'experience_service', -- 'experience_service' | 'book_a_call'
+    status TEXT DEFAULT 'new_lead', -- 'new_lead' | 'called' | 'qualified' | 'meeting_booked' | 'meeting_completed' | 'proposal_sent' | 'won' | 'lost' | 'not_interested'
+    qualification_status TEXT DEFAULT 'pending', -- 'pending' | 'qualified' | 'needs_follow_up' | 'not_interested' | 'no_answer' | 'voicemail'
     owner_id UUID,
     assigned_at TIMESTAMPTZ,
     outcome TEXT, -- 'won' | 'lost' | 'unqualified' | 'no_response'
@@ -62,7 +66,9 @@ CREATE TABLE IF NOT EXISTS leads (
     call_attempts INTEGER DEFAULT 0,
     call_in_progress BOOLEAN DEFAULT false,
     call_outcome TEXT,
+    call_summary TEXT,
     call_transcript TEXT,
+    call_recording_url TEXT,
     call_duration_sec INTEGER,
 
     -- Single-Use Single-Action Call Token
@@ -76,6 +82,8 @@ CREATE TABLE IF NOT EXISTS leads (
     urgency_score INTEGER,
     budget_score INTEGER,
     lead_score INTEGER,
+    lead_score_reason TEXT,
+    lead_temperature TEXT DEFAULT 'warm', -- 'hot' | 'warm' | 'cold'
 
     budget_level TEXT,
     urgency TEXT,
@@ -93,6 +101,8 @@ CREATE TABLE IF NOT EXISTS leads (
     last_interaction_at TIMESTAMPTZ DEFAULT now(),
 
     -- Meeting Sync
+    meeting_booked BOOLEAN DEFAULT false,
+    meeting_time TIMESTAMPTZ,
     meeting_datetime TIMESTAMPTZ,
     attendee_timezone TEXT,
     meeting_link TEXT,

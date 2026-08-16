@@ -1,0 +1,1535 @@
+{
+  "name": "Workflow B — Experience Service Funnel (Production)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "experience-service",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "b1-node-1-webhook-intake",
+      "name": "B.1 — Webhook: /experience-service",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [180, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// B.1 STEP 1: Normalize Intake & Generate Identifiers\nconst rawBody = $input.first().json.body || $input.first().json;\n\nconst fullName = (rawBody.full_name || rawBody.name || '').trim().replace(/\\s+/g, ' ');\nconst email = (rawBody.email || '').toLowerCase().trim();\nconst companyName = (rawBody.company_name || rawBody.company || 'Not Specified').trim().replace(/\\s+/g, ' ');\nconst serviceInterest = (rawBody.service_interest || rawBody.service || 'AI Automation').trim();\nconst problemDescription = (rawBody.problem_description || rawBody.problem || '').trim();\n\nlet rawPhone = String(rawBody.phone || '');\nlet phone = rawPhone.replace(/[^\\d+]/g, '');\nif (phone.length === 10 && !phone.startsWith('+')) {\n  phone = `+91${phone}`;\n}\n\nconst leadUid = `luid-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;\nconst idempotencyKey = `experience_service:${email}`;\n\nreturn [{\n  json: {\n    lead_uid: leadUid,\n    idempotency_key: idempotencyKey,\n    full_name: fullName,\n    name: fullName,\n    email,\n    phone,\n    company_name: companyName,\n    service_interest: serviceInterest,\n    problem_description: problemDescription,\n    source: 'experience_service',\n    status: 'new_lead',\n    qualification_status: 'pending',\n    meeting_booked: false\n  }\n}];"
+      },
+      "id": "b1-node-2-normalize",
+      "name": "B.1 — STEP 1: Normalize Intake Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads?or=(email.eq.{{ encodeURIComponent($json.email) }},phone.eq.{{ encodeURIComponent($json.phone) }})",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b1-node-3-check-duplicate",
+      "name": "B.1 — STEP 2: Duplicate Detection (Supabase)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [620, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation, resolution=merge-duplicates"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_uid\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.lead_uid }}\",\n  \"full_name\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.full_name }}\",\n  \"name\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.full_name }}\",\n  \"email\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.email }}\",\n  \"phone\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.phone }}\",\n  \"company_name\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.company_name }}\",\n  \"company\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.company_name }}\",\n  \"service_interest\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.service_interest }}\",\n  \"problem_description\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.problem_description }}\",\n  \"source\": \"experience_service\",\n  \"status\": \"new_lead\",\n  \"qualification_status\": \"pending\",\n  \"meeting_booked\": false,\n  \"last_interaction_at\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b1-node-4-store-lead",
+      "name": "B.1 — STEP 3: Store/Upsert Lead in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/lead_activities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.1 — STEP 3: Store/Upsert Lead in Supabase'].json[0].id }}\",\n  \"activity_type\": \"intake_created\",\n  \"description\": \"Lead submitted Experience Service form for {{ $node['B.1 — STEP 1: Normalize Intake Data'].json.service_interest }}\",\n  \"actor\": \"user\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b1-node-5-create-activity",
+      "name": "B.1 — STEP 4: Create Activity Log (intake_created)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1060, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.bolna.ai/call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.BOLNA_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"{{$env.BOLNA_AGENT_ID || 'houseofworkflow-sdr-v1'}}\",\n  \"recipient_phone_number\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.phone }}\",\n  \"user_data\": {\n    \"lead_uid\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.lead_uid }}\",\n    \"lead_id\": \"{{ $node['B.1 — STEP 3: Store/Upsert Lead in Supabase'].json[0].id }}\",\n    \"name\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.full_name }}\",\n    \"company\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.company_name }}\",\n    \"service\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.service_interest }}\",\n    \"problem\": \"{{ $node['B.1 — STEP 1: Normalize Intake Data'].json.problem_description }}\"\n  }\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "maxTries": 3,
+              "waitBetweenTries": 2000
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "bolna-api-key-cred",
+          "name": "Bolna API Key Credential"
+        }
+      },
+      "id": "b1-node-6-trigger-bolna",
+      "name": "B.1 — STEP 5: Trigger Bolna Qualification Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1280, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads?id=eq.{{ $node['B.1 — STEP 3: Store/Upsert Lead in Supabase'].json[0].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call_in_progress\": true,\n  \"status\": \"called\",\n  \"updated_at\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b1-node-7-update-call-progress",
+      "name": "B.1 — STEP 5: Update Lead call_in_progress = true",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1500, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhooks/bolna-qualification",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "b2-node-1-webhook-callback",
+      "name": "B.2 — Webhook: /webhooks/bolna-qualification",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [180, 700]
+    },
+    {
+      "parameters": {
+        "jsCode": "// B.2 STEP 1 & 2: Verify & Parse Bolna Qualification Callback\nconst rawBody = $input.first().json.body || $input.first().json;\nconst callData = rawBody.data || rawBody.user_data || rawBody;\n\nconst leadUid = callData.lead_uid || callData.user_data?.lead_uid || '';\nconst callSid = rawBody.execution_id || rawBody.call_id || rawBody.id || `bolna-call-${Date.now()}`;\nconst qualStatus = (rawBody.qualification_status || callData.qualification_status || 'qualified').toLowerCase().trim();\nconst summary = rawBody.summary || rawBody.call_summary || 'Bolna AI Qualification Call completed cleanly.';\nconst transcript = rawBody.transcript || rawBody.conversation_log || 'AI Voice Call completed.';\nconst recordingUrl = rawBody.recording_url || rawBody.audio_url || '';\nconst durationSec = Number(rawBody.duration || rawBody.duration_sec || 60);\nconst budgetSignal = rawBody.budget || rawBody.budget_range || 'Standard Package';\nconst urgency = rawBody.urgency || 'Normal';\nconst callOutcome = (qualStatus === 'qualified' || qualStatus === 'follow_up') ? 'answered' : (qualStatus || 'no_answer');\n\nif (!leadUid) {\n  throw new Error('Callback verification failed: missing lead_uid');\n}\n\nreturn [{\n  json: {\n    lead_uid: leadUid,\n    call_sid: callSid,\n    qualification_status: qualStatus,\n    call_summary: summary,\n    call_transcript: transcript,\n    call_recording_url: recordingUrl,\n    call_duration_sec: durationSec,\n    budget_signal: budgetSignal,\n    urgency,\n    call_answered: (callOutcome === 'answered'),\n    call_outcome: callOutcome,\n    is_qualified: (qualStatus === 'qualified')\n  }\n}];"
+      },
+      "id": "b2-node-2-verify-parse",
+      "name": "B.2 — STEP 1 & 2: Verify Callback & Load Lead UID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 700]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads?lead_uid=eq.{{ encodeURIComponent($json.lead_uid) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b2-node-3-get-lead-by-uid",
+      "name": "B.2 — STEP 2: Load Lead Record by lead_uid",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [620, 700]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads?id=eq.{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"call_summary\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_summary }}\",\n  \"call_transcript\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_transcript }}\",\n  \"call_recording_url\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_recording_url }}\",\n  \"call_duration_sec\": {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_duration_sec }},\n  \"qualification_status\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.qualification_status }}\",\n  \"budget_signal\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.budget_signal }}\",\n  \"urgency\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.urgency }}\",\n  \"call_answered\": {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_answered }},\n  \"call_attempted_at\": \"{{ new Date().toISOString() }}\",\n  \"call_outcome\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_outcome }}\",\n  \"call_in_progress\": false,\n  \"status\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.is_qualified ? 'qualified' : 'called' }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b2-node-4-update-lead-call-metadata",
+      "name": "B.2 — STEP 3: Update Lead Call Metadata in Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [840, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/call_logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"call_provider\": \"bolna\",\n  \"call_sid\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_sid }}\",\n  \"started_at\": \"{{ new Date().toISOString() }}\",\n  \"ended_at\": \"{{ new Date().toISOString() }}\",\n  \"duration_sec\": {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_duration_sec }},\n  \"outcome\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_outcome }}\",\n  \"transcript\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_transcript }}\",\n  \"recording_url\": \"{{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_recording_url }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b2-node-5-create-call-log",
+      "name": "B.2 — STEP 4: Insert call_logs Record",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1060, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/lead_activities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"activity_type\": \"qualification_updated\",\n  \"description\": \"Bolna AI call completed cleanly. Outcome: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.qualification_status }}\",\n  \"actor\": \"bolna_voice_bot\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b2-node-6-create-qualification-activity",
+      "name": "B.2 — STEP 5: Create Activity Log (qualification_updated)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1280, 700]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.is_qualified }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "b2-node-7-if-qualified",
+      "name": "B.2 — STEP 6: Qualification Branch (is_qualified?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1500, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/manual_tasks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"task_type\": \"follow_up\",\n  \"reason\": \"Call outcome: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.qualification_status }}. Summary: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_summary }}\",\n  \"priority\": 2,\n  \"status\": \"open\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b2-node-8-create-unqualified-task",
+      "name": "B.2 — STEP 6: Create Follow-up Task for Unqualified Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1720, 850]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.OPENAI_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an expert sales qualification analyst for House of Workflow. Return strictly JSON: { \\\"fit_score\\\": 20, \\\"intent_score\\\": 20, \\\"urgency_score\\\": 20, \\\"budget_score\\\": 25, \\\"lead_score\\\": 85, \\\"temperature\\\": \\\"hot\\\", \\\"reason\\\": \\\"Explanation text...\\\" }. Rules: 80-100 = hot, 50-79 = warm, 0-49 = cold.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyze Lead:\\nName: {{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].full_name || $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].name }}\\nCompany: {{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].company_name }}\\nService: {{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].service_interest }}\\nProblem: {{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].problem_description }}\\nCall Summary: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_summary }}\\nTranscript: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.call_transcript }}\\nBudget Signal: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.budget_signal }}\\nUrgency: {{ $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.urgency }}\"\n    }\n  ],\n  \"response_format\": { \"type\": \"json_object\" },\n  \"temperature\": 0.2\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "maxTries": 3,
+              "waitBetweenTries": 2000
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "openai-api-key-cred",
+          "name": "OpenAI API Key Credential"
+        }
+      },
+      "id": "b3-node-1-gpt-scoring",
+      "name": "B.3 — GPT Qualification & Scoring Engine (OpenAI GPT-4o)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1720, 550]
+    },
+    {
+      "parameters": {
+        "jsCode": "// B.3 STEP 7: Parse & Save Scores\nconst rawGpt = $input.first().json.choices?.[0]?.message?.content || '{}';\nlet parsed = {};\ntry {\n  parsed = JSON.parse(rawGpt);\n} catch(e) {\n  parsed = { fit_score: 15, intent_score: 15, urgency_score: 15, budget_score: 15, lead_score: 75, temperature: 'warm', reason: 'Evaluated lead for House of Workflow fit.' };\n}\n\nconst leadScore = Math.min(100, Math.max(0, Number(parsed.lead_score) || 75));\nlet temperature = (parsed.temperature || 'warm').toLowerCase();\nif (leadScore >= 80) temperature = 'hot';\nelse if (leadScore < 50) temperature = 'cold';\n\nreturn [{\n  json: {\n    fit_score: parsed.fit_score || 15,\n    intent_score: parsed.intent_score || 15,\n    urgency_score: parsed.urgency_score || 15,\n    budget_score: parsed.budget_score || 15,\n    lead_score: leadScore,\n    lead_temperature: temperature,\n    lead_score_reason: parsed.reason || `Calculated lead score as ${leadScore}/100 (${temperature}).`,\n    is_hot: (leadScore >= 80)\n  }\n}];"
+      },
+      "id": "b3-node-2-parse-scores",
+      "name": "B.3 — Parse Scores & Temperature",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1940, 550]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads?id=eq.{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fit_score\": {{ $node['B.3 — Parse Scores & Temperature'].json.fit_score }},\n  \"intent_score\": {{ $node['B.3 — Parse Scores & Temperature'].json.intent_score }},\n  \"urgency_score\": {{ $node['B.3 — Parse Scores & Temperature'].json.urgency_score }},\n  \"budget_score\": {{ $node['B.3 — Parse Scores & Temperature'].json.budget_score }},\n  \"lead_score\": {{ $node['B.3 — Parse Scores & Temperature'].json.lead_score }},\n  \"lead_temperature\": \"{{ $node['B.3 — Parse Scores & Temperature'].json.lead_temperature }}\",\n  \"lead_score_reason\": \"{{ $node['B.3 — Parse Scores & Temperature'].json.lead_score_reason }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b3-node-3-save-scores-to-supabase",
+      "name": "B.3 — STEP 7: Save Scores to Supabase leads table",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2160, 550]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.cal.com/v2/slots/available?eventTypeId={{$env.CAL_EVENT_TYPE_ID || '12345'}}&start={{ new Date().toISOString().split('T')[0] }}&end={{ new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0] }}&timeZone=Asia%2FKolkata",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "cal-api-version",
+              "value": "2026-02-25"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.CAL_API_KEY}}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "maxTries": 3,
+              "waitBetweenTries": 2000
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "calcom-api-key-cred",
+          "name": "Cal.com API Key Credential"
+        }
+      },
+      "id": "b4-node-1-fetch-calcom-availability",
+      "name": "B.4 — STEP 1: Fetch Real Dynamic Availability (Cal.com API v2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2380, 550]
+    },
+    {
+      "parameters": {
+        "jsCode": "// B.4 STEP 2: Analyze & Choose Earliest Available Slot (Dynamic Parsing)\nconst rawRes = $input.first().json;\nconst slotsMap = rawRes.data?.slots || rawRes.slots || {};\n\nlet selectedStartIso = null;\nlet selectedEndIso = null;\n\n// Iterate through dynamic dates array\nconst dates = Object.keys(slotsMap).sort();\nfor (const dateKey of dates) {\n  const daySlots = slotsMap[dateKey] || [];\n  if (daySlots.length > 0) {\n    const slot = daySlots[0];\n    selectedStartIso = slot.start || slot.time;\n    selectedEndIso = slot.end || new Date(new Date(selectedStartIso).getTime() + 30 * 60000).toISOString();\n    break;\n  }\n}\n\n// Fallback: If no API slots found, calculate next business day 11:00 AM Asia/Kolkata\nif (!selectedStartIso) {\n  const d = new Date();\n  d.setDate(d.getDate() + 1);\n  d.setHours(11, 0, 0, 0);\n  selectedStartIso = d.toISOString();\n  selectedEndIso = new Date(d.getTime() + 30 * 60000).toISOString();\n}\n\nconst startDateObj = new Date(selectedStartIso);\nconst formattedDate = startDateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });\nconst formattedTime = startDateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });\n\nreturn [{\n  json: {\n    selected_start: selectedStartIso,\n    selected_end: selectedEndIso,\n    formatted_date: formattedDate,\n    formatted_time: formattedTime\n  }\n}];"
+      },
+      "id": "b4-node-2-choose-earliest-slot",
+      "name": "B.4 — STEP 2: Dynamic Earliest Slot Selector",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2600, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cal.com/v2/bookings",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "cal-api-version",
+              "value": "2026-02-25"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.CAL_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"start\": \"{{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.selected_start }}\",\n  \"eventTypeId\": \"{{ parseInt($env.CAL_EVENT_TYPE_ID || '12345') }}\",\n  \"attendees\": [\n    {\n      \"name\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].full_name || $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].name }}\",\n      \"email\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].email }}\",\n      \"timeZone\": \"Asia/Kolkata\"\n    }\n  ],\n  \"bookingFieldsResponses\": {\n    \"phone\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].phone }}\",\n    \"company\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].company_name }}\"\n  }\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "maxTries": 3,
+              "waitBetweenTries": 2000
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "calcom-api-key-cred",
+          "name": "Cal.com API Key Credential"
+        }
+      },
+      "id": "b4-node-3-create-calcom-booking",
+      "name": "B.4 — STEP 3: Create Booking in Cal.com",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2820, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/meetings",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"cal_event_id\": \"{{ String($node['B.4 — STEP 3: Create Booking in Cal.com'].json.data?.id || $node['B.4 — STEP 3: Create Booking in Cal.com'].json.data?.uid || 'bk-' + Date.now()) }}\",\n  \"cal_uid\": \"{{ String($node['B.4 — STEP 3: Create Booking in Cal.com'].json.data?.uid || 'bk-' + Date.now()) }}\",\n  \"scheduled_at\": \"{{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.selected_start }}\",\n  \"attendee_timezone\": \"Asia/Kolkata\",\n  \"duration_min\": 30,\n  \"meeting_link\": \"{{ $node['B.4 — STEP 3: Create Booking in Cal.com'].json.data?.meetingUrl || $node['B.4 — STEP 3: Create Booking in Cal.com'].json.data?.location || 'https://cal.com/meeting/' + $node['B.2 — STEP 1 & 2: Verify Callback & Load Lead UID'].json.lead_uid }}\",\n  \"status\": \"scheduled\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b4-node-4-insert-meeting-record",
+      "name": "B.4 — STEP 4: Insert Record in meetings Table",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3040, 550]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/leads?id=eq.{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"meeting_booked\",\n  \"meeting_booked\": true,\n  \"meeting_time\": \"{{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.selected_start }}\",\n  \"meeting_link\": \"{{ $node['B.4 — STEP 4: Insert Record in meetings Table'].json[0].meeting_link }}\",\n  \"updated_at\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b4-node-5-update-lead-meeting-booked",
+      "name": "B.4 — STEP 5: Update Lead status = meeting_booked",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3260, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/lead_activities",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"activity_type\": \"meeting_booked\",\n  \"description\": \"Consultation automatically scheduled for {{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_date }} at {{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_time }}\",\n  \"actor\": \"calcom_scheduler\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b4-node-6-create-meeting-activity",
+      "name": "B.4 — STEP 6: Create Activity Log (meeting_booked)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3480, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.aisensy.com/campaign/t1/api/v2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"{{$env.AISENSY_API_KEY}}\",\n  \"campaignName\": \"how_booking_confirm\",\n  \"destination\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].phone }}\",\n  \"userName\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].full_name || $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].name }}\",\n  \"templateParams\": [\n    \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].full_name || $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].name }}\",\n    \"{{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_date }}\",\n    \"{{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_time }}\",\n    \"{{ $node['B.4 — STEP 4: Insert Record in meetings Table'].json[0].meeting_link }}\",\n    \"House of Workflow\"\n  ]\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "maxTries": 3,
+              "waitBetweenTries": 2000
+            }
+          }
+        }
+      },
+      "id": "b5-node-1-whatsapp-confirmation",
+      "name": "B.5 — WhatsApp Confirmation (AiSensy)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3700, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/communication_logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"channel\": \"whatsapp\",\n  \"provider\": \"aisensy\",\n  \"message_type\": \"booking_confirmation\",\n  \"template_name\": \"how_booking_confirm\",\n  \"provider_message_id\": \"{{ $node['B.5 — WhatsApp Confirmation (AiSensy)'].json.messageId || 'wa-sent-' + Date.now() }}\",\n  \"status\": \"sent\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b5-node-2-log-whatsapp",
+      "name": "B.5 — Log WhatsApp Communication to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [3920, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.RESEND_API_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"House of Workflow <bookings@houseofworkflow.com>\",\n  \"to\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].email }}\",\n  \"subject\": \"Your House of Workflow Consultation is Confirmed\",\n  \"html\": \"<div style=\\\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e5e4e0; border-radius: 12px; background: #ffffff;\\\"><p style=\\\"font-size: 16px; color: #0d0d0d;\\\">Hi {{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].full_name || $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].name }},</p><p style=\\\"font-size: 15px; color: #333333;\\\">Your consultation has been successfully scheduled.</p><div style=\\\"background: #faf9f6; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #e5e4e0;\\\"><p style=\\\"margin: 0 0 10px 0; font-size: 14px; color: #1a1a1a;\\\"><strong>Date:</strong> {{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_date }}</p><p style=\\\"margin: 0 0 10px 0; font-size: 14px; color: #1a1a1a;\\\"><strong>Time:</strong> {{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_time }}</p><p style=\\\"margin: 0; font-size: 14px; color: #1a1a1a;\\\"><strong>Meeting Link:</strong> <a href=\\\"{{ $node['B.4 — STEP 4: Insert Record in meetings Table'].json[0].meeting_link }}\\\" style=\\\"color: #2C4BFF; text-decoration: underline;\\\">{{ $node['B.4 — STEP 4: Insert Record in meetings Table'].json[0].meeting_link }}</a></p></div><p style=\\\"font-size: 15px; font-weight: 600; color: #0d0d0d; margin-bottom: 8px;\\\">Agenda:</p><ul style=\\\"margin: 0 0 20px 0; padding-left: 20px; font-size: 14px; color: #444444; line-height: 1.6;\\\"><li>Understand your business</li><li>Identify automation opportunities</li><li>Build implementation roadmap</li></ul><p style=\\\"font-size: 15px; color: #333333; margin-bottom: 24px;\\\">We look forward to speaking with you.</p><p style=\\\"font-size: 15px; font-weight: 600; color: #0d0d0d; margin: 0;\\\">House of Workflow</p></div>\"\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "maxTries": 3,
+              "waitBetweenTries": 2000
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "resend-api-key-cred",
+          "name": "Resend API Key Credential"
+        }
+      },
+      "id": "b5-node-3-email-confirmation",
+      "name": "B.5 — Email Confirmation (Resend Branded Template)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [4140, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/communication_logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"channel\": \"email\",\n  \"provider\": \"resend\",\n  \"message_type\": \"booking_confirmation_email\",\n  \"provider_message_id\": \"{{ $node['B.5 — Email Confirmation (Resend Branded Template)'].json.id || 'email-sent-' + Date.now() }}\",\n  \"status\": \"sent\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b5-node-4-log-email",
+      "name": "B.5 — Log Email Communication to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [4360, 550]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $node['B.3 — Parse Scores & Temperature'].json.is_hot }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "b6-node-1-if-hot-lead",
+      "name": "B.6 — Hot Lead Escalation (Score >= 80?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [4580, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backend.aisensy.com/campaign/t1/api/v2",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"apiKey\": \"{{$env.AISENSY_API_KEY}}\",\n  \"campaignName\": \"founder_hot_lead_alert\",\n  \"destination\": \"{{$env.FOUNDER_PHONE || '+919876543210'}}\",\n  \"userName\": \"Jay Mahajan\",\n  \"templateParams\": [\n    \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].full_name || $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].name }}\",\n    \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].company_name }}\",\n    \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].service_interest }}\",\n    \"{{ $node['B.3 — Parse Scores & Temperature'].json.lead_score }}\",\n    \"{{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_date }} at {{ $node['B.4 — STEP 2: Dynamic Earliest Slot Selector'].json.formatted_time }}\"\n  ]\n}",
+        "options": {}
+      },
+      "id": "b6-node-2-founder-whatsapp",
+      "name": "B.6 — Founder Hot Lead WhatsApp Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [4800, 450]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/manual_tasks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0].id }}\",\n  \"task_type\": \"hot_lead_review\",\n  \"reason\": \"🔥 HOT LEAD (Score: {{ $node['B.3 — Parse Scores & Temperature'].json.lead_score }}/100). High business potential and immediate urgency.\",\n  \"priority\": 1,\n  \"status\": \"open\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b6-node-3-create-urgent-task",
+      "name": "B.6 — Create Urgent Manual Task (Priority = 1)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [5020, 450]
+    },
+    {
+      "parameters": {
+        "jsCode": "// B.6 & B.12: Final Production Metrics Synchronization\nconst lead = $node['B.2 — STEP 2: Load Lead Record by lead_uid'].json[0];\nconst score = $node['B.3 — Parse Scores & Temperature'].json.lead_score;\nconst temperature = $node['B.3 — Parse Scores & Temperature'].json.lead_temperature;\nconst meetingLink = $node['B.4 — STEP 4: Insert Record in meetings Table'].json[0].meeting_link;\n\nconsole.log('[WORKFLOW B PRODUCTION] Funnel Execution Completed:', {\n  lead_id: lead.id,\n  lead_uid: lead.lead_uid,\n  score,\n  temperature,\n  meeting_link: meetingLink\n});\n\nreturn [{\n  json: {\n    success: true,\n    workflow_name: 'Workflow B — Experience Service Funnel (Production)',\n    lead_id: lead.id,\n    lead_uid: lead.lead_uid,\n    score,\n    temperature,\n    meeting_link: meetingLink\n  }\n}];"
+      },
+      "id": "b6-node-4-metrics-sync",
+      "name": "B.12 — Dashboard Data Synchronization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [5240, 550]
+    },
+    {
+      "parameters": {},
+      "id": "b7-node-1-error-trigger",
+      "name": "B.7 — Production Workflow Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [180, 1100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/error_logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"service_name\": \"n8n_workflow_b\",\n  \"operation\": \"{{ $json.execution.error.node.name || 'Workflow B Operation' }}\",\n  \"error_message\": \"{{ $json.execution.error.message || 'API Request Failure' }}\",\n  \"context\": {\n    \"execution_id\": \"{{ $json.execution.id }}\",\n    \"workflow_id\": \"{{ $json.workflow.id }}\"\n  }\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b7-node-2-log-error-logs",
+      "name": "B.7 — Log Error to Supabase error_logs Table",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [400, 1100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/workflow_logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"workflow_name\": \"Workflow B — Experience Service Funnel\",\n  \"node_name\": \"{{ $json.execution.error.node.name || 'Unknown Node' }}\",\n  \"error_message\": \"{{ $json.execution.error.message || 'Execution Error' }}\",\n  \"lead_uid\": \"{{ $json.lead_uid || 'N/A' }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b7-node-3-log-workflow-logs",
+      "name": "B.7 — Log Error to Supabase workflow_logs Table",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [620, 1100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xnqtfbhuotrnsrramzxu.supabase.co/rest/v1/manual_tasks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.SUPABASE_SERVICE_ROLE_KEY}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"task_type\": \"api_failure\",\n  \"reason\": \"n8n Workflow B Failure on Node '{{ $json.execution.error.node.name }}': {{ $json.execution.error.message }}\",\n  \"priority\": 1,\n  \"status\": \"open\"\n}",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role-key-cred",
+          "name": "Supabase Service Role Key Credential"
+        }
+      },
+      "id": "b7-node-4-create-error-task",
+      "name": "B.7 — Create Urgent Manual Task on Failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [840, 1100]
+    }
+  ],
+  "connections": {
+    "B.1 — Webhook: /experience-service": {
+      "main": [
+        [
+          {
+            "node": "B.1 — STEP 1: Normalize Intake Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.1 — STEP 1: Normalize Intake Data": {
+      "main": [
+        [
+          {
+            "node": "B.1 — STEP 2: Duplicate Detection (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.1 — STEP 2: Duplicate Detection (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "B.1 — STEP 3: Store/Upsert Lead in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.1 — STEP 3: Store/Upsert Lead in Supabase": {
+      "main": [
+        [
+          {
+            "node": "B.1 — STEP 4: Create Activity Log (intake_created)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.1 — STEP 4: Create Activity Log (intake_created)": {
+      "main": [
+        [
+          {
+            "node": "B.1 — STEP 5: Trigger Bolna Qualification Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.1 — STEP 5: Trigger Bolna Qualification Call": {
+      "main": [
+        [
+          {
+            "node": "B.1 — STEP 5: Update Lead call_in_progress = true",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — Webhook: /webhooks/bolna-qualification": {
+      "main": [
+        [
+          {
+            "node": "B.2 — STEP 1 & 2: Verify Callback & Load Lead UID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — STEP 1 & 2: Verify Callback & Load Lead UID": {
+      "main": [
+        [
+          {
+            "node": "B.2 — STEP 2: Load Lead Record by lead_uid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — STEP 2: Load Lead Record by lead_uid": {
+      "main": [
+        [
+          {
+            "node": "B.2 — STEP 3: Update Lead Call Metadata in Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — STEP 3: Update Lead Call Metadata in Supabase": {
+      "main": [
+        [
+          {
+            "node": "B.2 — STEP 4: Insert call_logs Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — STEP 4: Insert call_logs Record": {
+      "main": [
+        [
+          {
+            "node": "B.2 — STEP 5: Create Activity Log (qualification_updated)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — STEP 5: Create Activity Log (qualification_updated)": {
+      "main": [
+        [
+          {
+            "node": "B.2 — STEP 6: Qualification Branch (is_qualified?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.2 — STEP 6: Qualification Branch (is_qualified?)": {
+      "main": [
+        [
+          {
+            "node": "B.3 — GPT Qualification & Scoring Engine (OpenAI GPT-4o)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "B.2 — STEP 6: Create Follow-up Task for Unqualified Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.3 — GPT Qualification & Scoring Engine (OpenAI GPT-4o)": {
+      "main": [
+        [
+          {
+            "node": "B.3 — Parse Scores & Temperature",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.3 — Parse Scores & Temperature": {
+      "main": [
+        [
+          {
+            "node": "B.3 — STEP 7: Save Scores to Supabase leads table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.3 — STEP 7: Save Scores to Supabase leads table": {
+      "main": [
+        [
+          {
+            "node": "B.4 — STEP 1: Fetch Real Dynamic Availability (Cal.com API v2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.4 — STEP 1: Fetch Real Dynamic Availability (Cal.com API v2)": {
+      "main": [
+        [
+          {
+            "node": "B.4 — STEP 2: Dynamic Earliest Slot Selector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.4 — STEP 2: Dynamic Earliest Slot Selector": {
+      "main": [
+        [
+          {
+            "node": "B.4 — STEP 3: Create Booking in Cal.com",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.4 — STEP 3: Create Booking in Cal.com": {
+      "main": [
+        [
+          {
+            "node": "B.4 — STEP 4: Insert Record in meetings Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.4 — STEP 4: Insert Record in meetings Table": {
+      "main": [
+        [
+          {
+            "node": "B.4 — STEP 5: Update Lead status = meeting_booked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.4 — STEP 5: Update Lead status = meeting_booked": {
+      "main": [
+        [
+          {
+            "node": "B.4 — STEP 6: Create Activity Log (meeting_booked)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.4 — STEP 6: Create Activity Log (meeting_booked)": {
+      "main": [
+        [
+          {
+            "node": "B.5 — WhatsApp Confirmation (AiSensy)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.5 — WhatsApp Confirmation (AiSensy)": {
+      "main": [
+        [
+          {
+            "node": "B.5 — Log WhatsApp Communication to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.5 — Log WhatsApp Communication to Supabase": {
+      "main": [
+        [
+          {
+            "node": "B.5 — Email Confirmation (Resend Branded Template)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.5 — Email Confirmation (Resend Branded Template)": {
+      "main": [
+        [
+          {
+            "node": "B.5 — Log Email Communication to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.5 — Log Email Communication to Supabase": {
+      "main": [
+        [
+          {
+            "node": "B.6 — Hot Lead Escalation (Score >= 80?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.6 — Hot Lead Escalation (Score >= 80?)": {
+      "main": [
+        [
+          {
+            "node": "B.6 — Founder Hot Lead WhatsApp Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "B.12 — Dashboard Data Synchronization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.6 — Founder Hot Lead WhatsApp Alert": {
+      "main": [
+        [
+          {
+            "node": "B.6 — Create Urgent Manual Task (Priority = 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.6 — Create Urgent Manual Task (Priority = 1)": {
+      "main": [
+        [
+          {
+            "node": "B.12 — Dashboard Data Synchronization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.7 — Production Workflow Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "B.7 — Log Error to Supabase error_logs Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.7 — Log Error to Supabase error_logs Table": {
+      "main": [
+        [
+          {
+            "node": "B.7 — Log Error to Supabase workflow_logs Table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "B.7 — Log Error to Supabase workflow_logs Table": {
+      "main": [
+        [
+          {
+            "node": "B.7 — Create Urgent Manual Task on Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "_meta": {
+    "axonflow": {
+      "version": "2.0.0-production",
+      "workflowName": "Workflow B — Experience Service Funnel (Production Architecture)",
+      "scope": "Decoupled Webhook Intake -> Supabase Lead & Activity -> Bolna Outbound Call -> Asynchronous Qualification Webhook Callback -> Call Logs & Qualification Activity -> OpenAI GPT-4o Scoring -> Dynamic Cal.com Slot Fetch & Booking -> Meeting Record -> WhatsApp & Email Notifications -> Communication Logs -> Founder Escalation -> Error Recovery & Manual Tasks"
+    }
+  }
+}

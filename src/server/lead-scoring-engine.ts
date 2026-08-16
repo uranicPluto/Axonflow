@@ -1,152 +1,209 @@
 /**
- * Feature 7: AI Lead Scoring Engine (0-100)
- * Evaluates 6 core business signals to dynamically calculate lead fit score and category:
- * - Questionnaire quality (0-20 pts)
- * - Company fit / firmographics (0-20 pts)
- * - Urgency signal (0-15 pts)
- * - Budget signal (0-20 pts)
- * - Engagement & activity (0-10 pts)
- * - Discovery call outcomes (0-15 pts)
+ * Workflow B — GPT Lead Scoring Engine
+ * Analyzes service interest, problem description, call summary, and qualification status.
+ * Evaluates business potential, urgency, budget likelihood, decision maker access, and fit for House of Workflow.
  */
 
-export interface LeadScoreInput {
-  leadId: string;
-  hasQuestionnaire?: boolean;
-  questionnaireLength?: number;
-  companySize?: string;
-  employeeCount?: number;
-  urgency?: string;
-  budgetSignal?: string;
-  activityCount?: number;
-  meetingCompleted?: boolean;
-  meetingOutcomeNotes?: string;
-  manualOverrideScore?: number;
+import { db } from "./db";
+import { logActivity } from "./activity-logger";
 
-  // Phase 11 Meeting Intelligence Boost Signals
-  budgetDiscussed?: boolean;
-  proposalRequested?: boolean;
-  timelineMentioned?: boolean;
-  multipleStakeholders?: boolean;
-  hasStrongPainPoints?: boolean;
+export interface LeadScoringInput {
+  leadId?: string;
+  fullName?: string;
+  email?: string;
+  serviceInterest?: string;
+  problemDescription?: string;
+  callSummary?: string;
+  qualificationStatus?: string;
 }
 
-export interface LeadScoreResult {
-  lead_id: string;
-  total_score: number;
-  category: "Hot" | "Warm" | "Cold";
-  questionnaire_score: number;
-  company_fit_score: number;
-  urgency_score: number;
-  budget_score: number;
-  engagement_score: number;
-  discovery_outcome_score: number;
-  meeting_intelligence_boost: number;
-  score_breakdown_json: Record<string, any>;
+export interface LeadScoringResult {
+  score: number; // 0 to 100
+  status: "hot" | "warm" | "cold";
+  reason: string;
+  factors: {
+    businessPotential: number; // 0-20
+    urgency: number;           // 0-20
+    budgetLikelihood: number;  // 0-20
+    decisionMakerAccess: number;// 0-20
+    fitForHouseOfWorkflow: number; // 0-20
+  };
 }
 
-export function calculateLeadScore(input: LeadScoreInput): LeadScoreResult {
-  if (input.manualOverrideScore !== undefined && input.manualOverrideScore >= 0) {
-    const override = Math.min(100, Math.max(0, input.manualOverrideScore));
-    return {
-      lead_id: input.leadId,
-      total_score: override,
-      category: override >= 70 ? "Hot" : override >= 40 ? "Warm" : "Cold",
-      questionnaire_score: 20,
-      company_fit_score: 20,
-      urgency_score: 15,
-      budget_score: 20,
-      engagement_score: 10,
-      discovery_outcome_score: 15,
-      meeting_intelligence_boost: 0,
-      score_breakdown_json: { manualOverride: true, score: override }
-    };
+/**
+ * Score a lead using OpenAI GPT-4o API (or fallback engine)
+ */
+export async function calculateGptLeadScore(input: LeadScoringInput): Promise<LeadScoringResult> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const enableMocks = process.env.ENABLE_PROVIDER_MOCKS === "true";
+
+  const promptText = `
+You are an expert Lead Scoring AI for House of Workflow (AI Automation, Workflow Systems, AI Voice Agents, Web Dev, CRM Automation).
+Analyze the following lead data:
+
+Lead Name: ${input.fullName || "Unknown"}
+Service Interest: ${input.serviceInterest || "Not specified"}
+Problem Description: ${input.problemDescription || "Not provided"}
+Call Summary: ${input.callSummary || "Call completed cleanly"}
+Qualification Status: ${input.qualificationStatus || "pending"}
+
+Evaluate across 5 factors (0-20 points each):
+1. Business potential (Scope, size, long-term fit)
+2. Urgency (Timeline, immediate pain points)
+3. Budget likelihood (Enterprise/SaaS/Agency indicators, financial willingness)
+4. Decision maker access (Founder, CEO, VP level signals)
+5. Fit for House of Workflow (Alignment with core services: AI automation, CRM, voice agents, web dev)
+
+Return strictly valid JSON with this format:
+{
+  "score": <total_score_0_to_100>,
+  "status": "<hot|warm|cold>",
+  "reason": "<2-3 sentence explanation summarizing score reasoning>",
+  "factors": {
+    "businessPotential": <0_to_20>,
+    "urgency": <0_to_20>,
+    "budgetLikelihood": <0_to_20>,
+    "decisionMakerAccess": <0_to_20>,
+    "fitForHouseOfWorkflow": <0_to_20>
+  }
+}
+`;
+
+  if (apiKey && !enableMocks) {
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            { role: "system", content: "You are a precise JSON-only Lead Scoring AI." },
+            { role: "user", content: promptText },
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.2,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const content = data.choices?.[0]?.message?.content;
+        if (content) {
+          const parsed = JSON.parse(content) as LeadScoringResult;
+          const score = Math.min(100, Math.max(0, Math.round(parsed.score)));
+          let status: "hot" | "warm" | "cold" = "warm";
+          if (score >= 80) status = "hot";
+          else if (score >= 50) status = "warm";
+          else status = "cold";
+
+          return {
+            score,
+            status,
+            reason: parsed.reason || "Score calculated via GPT-4o analysis.",
+            factors: parsed.factors || {
+              businessPotential: Math.round(score * 0.2),
+              urgency: Math.round(score * 0.2),
+              budgetLikelihood: Math.round(score * 0.2),
+              decisionMakerAccess: Math.round(score * 0.2),
+              fitForHouseOfWorkflow: Math.round(score * 0.2),
+            },
+          };
+        }
+      }
+    } catch (err: any) {
+      console.warn("[GPT SCORING] OpenAI call failed, using deterministic fallback:", err?.message);
+    }
   }
 
-  // 1. Questionnaire Score (0-20)
-  let questionnaire_score = 0;
-  if (input.hasQuestionnaire) {
-    questionnaire_score = 15;
-    if ((input.questionnaireLength || 0) > 100) questionnaire_score += 5;
+  // --- Rule-Based Deterministic Scoring Fallback ---
+  const text = `${input.serviceInterest || ""} ${input.problemDescription || ""} ${input.callSummary || ""} ${input.qualificationStatus || ""}`.toLowerCase();
+
+  let businessPotential = 14;
+  let urgency = 14;
+  let budgetLikelihood = 14;
+  let decisionMakerAccess = 14;
+  let fitForHouseOfWorkflow = 15;
+
+  if (text.includes("saas") || text.includes("agency") || text.includes("enterprise") || text.includes("crm")) {
+    businessPotential += 4;
+  }
+  if (text.includes("asap") || text.includes("immediately") || text.includes("urgent") || text.includes("this month")) {
+    urgency += 4;
+  }
+  if (text.includes("budget") || text.includes("invest") || text.includes("pricing") || text.includes("paid")) {
+    budgetLikelihood += 4;
+  }
+  if (text.includes("founder") || text.includes("ceo") || text.includes("owner") || text.includes("decision maker") || text.includes("yes")) {
+    decisionMakerAccess += 4;
+  }
+  if (text.includes("ai") || text.includes("automation") || text.includes("voice") || text.includes("n8n") || text.includes("web")) {
+    fitForHouseOfWorkflow += 4;
   }
 
-  // 2. Company Fit Score (0-20)
-  let company_fit_score = 10;
-  const count = input.employeeCount || 0;
-  if (count >= 50) company_fit_score = 20;
-  else if (count >= 10) company_fit_score = 16;
-  else if (count >= 2) company_fit_score = 12;
-
-  // 3. Urgency Score (0-15)
-  let urgency_score = 8;
-  const urgency = (input.urgency || "").toLowerCase();
-  if (urgency.includes("high") || urgency.includes("immediate") || urgency.includes("90")) {
-    urgency_score = 15;
-  } else if (urgency.includes("medium")) {
-    urgency_score = 11;
+  if (input.qualificationStatus === "qualified") {
+    urgency = Math.min(20, urgency + 2);
+    fitForHouseOfWorkflow = Math.min(20, fitForHouseOfWorkflow + 2);
+  } else if (input.qualificationStatus === "not_interested") {
+    businessPotential = Math.max(2, businessPotential - 8);
+    urgency = Math.max(2, urgency - 8);
+    budgetLikelihood = Math.max(2, budgetLikelihood - 8);
   }
 
-  // 4. Budget Score (0-20)
-  let budget_score = 10;
-  const budget = (input.budgetSignal || "").toLowerCase();
-  if (budget.includes("high") || budget.includes("enterprise") || budget.includes("5k") || budget.includes("10k")) {
-    budget_score = 20;
-  } else if (budget.includes("medium") || budget.includes("standard")) {
-    budget_score = 15;
-  }
+  const score = Math.min(100, Math.max(0, businessPotential + urgency + budgetLikelihood + decisionMakerAccess + fitForHouseOfWorkflow));
+  let status: "hot" | "warm" | "cold" = "warm";
+  if (score >= 80) status = "hot";
+  else if (score >= 50) status = "warm";
+  else status = "cold";
 
-  // 5. Engagement Score (0-10)
-  const act = input.activityCount || 1;
-  const engagement_score = Math.min(10, act * 2.5);
-
-  // 6. Discovery Outcome Score (0-15)
-  let discovery_outcome_score = 0;
-  if (input.meetingCompleted) {
-    discovery_outcome_score = 10;
-    if ((input.meetingOutcomeNotes || "").length > 50) discovery_outcome_score += 5;
-  }
-
-  // 7. Phase 11 Meeting Intelligence Boost Signals
-  let meeting_intelligence_boost = 0;
-  if (input.budgetDiscussed) meeting_intelligence_boost += 15;
-  if (input.proposalRequested) meeting_intelligence_boost += 20;
-  if (input.timelineMentioned) meeting_intelligence_boost += 10;
-  if (input.multipleStakeholders) meeting_intelligence_boost += 10;
-  if (input.hasStrongPainPoints) meeting_intelligence_boost += 15;
-
-  const rawTotal = Math.round(
-    questionnaire_score +
-    company_fit_score +
-    urgency_score +
-    budget_score +
-    engagement_score +
-    discovery_outcome_score +
-    meeting_intelligence_boost
-  );
-
-  const total_score = Math.min(100, Math.max(0, rawTotal));
-
-  const category: "Hot" | "Warm" | "Cold" =
-    total_score >= 70 ? "Hot" : total_score >= 40 ? "Warm" : "Cold";
+  const reason = `Evaluated lead for House of Workflow fit. Score ${score}/100 (${status.toUpperCase()}). High potential in service alignment (${input.serviceInterest || "AI Automation"}) and workflow automation requirements.`;
 
   return {
-    lead_id: input.leadId,
-    total_score,
-    category,
-    questionnaire_score,
-    company_fit_score,
-    urgency_score,
-    budget_score,
-    engagement_score,
-    discovery_outcome_score,
-    meeting_intelligence_boost,
-    score_breakdown_json: {
-      questionnaire_score,
-      company_fit_score,
-      urgency_score,
-      budget_score,
-      engagement_score,
-      discovery_outcome_score,
-      meeting_intelligence_boost
-    }
+    score,
+    status,
+    reason,
+    factors: {
+      businessPotential,
+      urgency,
+      budgetLikelihood,
+      decisionMakerAccess,
+      fitForHouseOfWorkflow,
+    },
   };
+}
+
+/**
+ * Score lead and update Supabase database record
+ */
+export async function scoreAndUpdateLead(leadId: string): Promise<LeadScoringResult> {
+  const lead = await db.getLead(leadId);
+  if (!lead) {
+    throw new Error(`Lead ${leadId} not found`);
+  }
+
+  const scoring = await calculateGptLeadScore({
+    leadId: lead.id,
+    fullName: (lead as any).full_name || lead.name,
+    email: lead.email,
+    serviceInterest: lead.service_interest,
+    problemDescription: lead.problem_description,
+    callSummary: (lead as any).call_summary || (lead as any).gpt_summary,
+    qualificationStatus: (lead as any).qualification_status || "pending",
+  });
+
+  await db.updateLeadQualification(leadId, {
+    lead_score: scoring.score,
+    internal_notes: `[GPT SCORING] Status: ${scoring.status.toUpperCase()} (${scoring.score}/100). Reason: ${scoring.reason}`,
+  });
+
+  await logActivity({
+    leadId,
+    actorType: "system",
+    action: "gpt_lead_scoring_completed",
+    details: { score: scoring.score, status: scoring.status, reason: scoring.reason },
+  });
+
+  return scoring;
 }
