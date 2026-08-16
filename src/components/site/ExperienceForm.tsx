@@ -76,6 +76,12 @@ export function ExperienceForm({ onPickTime, title, subtitle }: ExperienceFormPr
           problem_description: data.problem_description,
           consent: data.consent ?? true,
           status: "contacted",
+          utm_source: utmParams.utm_source,
+          utm_medium: utmParams.utm_medium,
+          utm_campaign: utmParams.utm_campaign,
+          utm_content: utmParams.utm_content,
+          landing_page: utmParams.landing_page,
+          referrer: utmParams.referrer,
           // Consent parameters
           internal_notes: JSON.stringify({
             consent_given: true,

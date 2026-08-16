@@ -9,6 +9,12 @@ export const PublicLeadIntakeSchema = z.object({
   problem_description: z.string().optional().default(""),
   consent: z.any().optional().default(true),
   turnstile_token: z.string().optional(),
+  utm_source: z.string().optional(),
+  utm_medium: z.string().optional(),
+  utm_campaign: z.string().optional(),
+  utm_content: z.string().optional(),
+  landing_page: z.string().optional(),
+  referrer: z.string().optional(),
 });
 
 // Re-export type definitions for client use
@@ -327,6 +333,12 @@ export const createLeadFn = createServerFn({ method: "POST" })
       problem_description: parsed.data.problem_description,
       consent_given: parsed.data.consent,
       turnstile_token: parsed.data.turnstile_token,
+      utm_source: parsed.data.utm_source,
+      utm_medium: parsed.data.utm_medium,
+      utm_campaign: parsed.data.utm_campaign,
+      utm_content: parsed.data.utm_content,
+      landing_page: parsed.data.landing_page,
+      referrer: parsed.data.referrer,
     };
   })
   .handler(async ({ data }) => {
@@ -389,6 +401,12 @@ export const createLeadFn = createServerFn({ method: "POST" })
       consent_timestamp: new Date().toISOString(),
       consent_ip: clientIp,
       consent_user_agent: userAgent,
+      utm_source: data.utm_source,
+      utm_medium: data.utm_medium,
+      utm_campaign: data.utm_campaign,
+      utm_content: data.utm_content,
+      landing_page: data.landing_page,
+      referrer: data.referrer,
       // Server forces source, status, qualification_status, meeting_booked for Workflow B
       source: "experience_service",
       status: "new_lead",
