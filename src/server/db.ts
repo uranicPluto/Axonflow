@@ -696,9 +696,13 @@ function syncMockAnalyticsAndScoring(
 }
 
 async function safeSupabaseInsert(table: string, payload: Record<string, any>): Promise<{ data: any; error: any }> {
-  let currentPayload = { ...payload };
+  let currentPayload: Record<string, any> = {};
+  for (const [k, v] of Object.entries(payload)) {
+    if (v !== undefined) currentPayload[k] = v;
+  }
+
   let attempts = 0;
-  while (attempts < 10) {
+  while (attempts < 50) {
     attempts++;
     const { data, error } = await supabaseAdmin
       .from(table)
@@ -724,9 +728,13 @@ async function safeSupabaseInsert(table: string, payload: Record<string, any>): 
 }
 
 async function safeSupabaseUpdate(table: string, id: string, payload: Record<string, any>): Promise<{ data: any; error: any }> {
-  let currentPayload = { ...payload };
+  let currentPayload: Record<string, any> = {};
+  for (const [k, v] of Object.entries(payload)) {
+    if (v !== undefined) currentPayload[k] = v;
+  }
+
   let attempts = 0;
-  while (attempts < 10) {
+  while (attempts < 50) {
     attempts++;
     const { data, error } = await supabaseAdmin
       .from(table)
@@ -936,12 +944,7 @@ export const db = {
 
   async updateLeadStatus(id: string, status: string): Promise<Lead> {
     if (isSupabaseEnabled && supabaseAdmin) {
-      const { data, error } = await supabaseAdmin
-        .from("leads")
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq("id", id)
-        .select()
-        .single();
+      const { data, error } = await safeSupabaseUpdate("leads", id, { status, updated_at: new Date().toISOString() });
       if (error) throw error;
       return data;
     } else {
@@ -1026,13 +1029,8 @@ export const db = {
   },
 
   async updateLeadNotes(id: string, notes: string): Promise<Lead> {
-    if (isSupabaseEnabled) {
-      const { data, error } = await supabaseAdmin!
-        .from("leads")
-        .update({ internal_notes: notes, updated_at: new Date().toISOString() })
-        .eq("id", id)
-        .select()
-        .single();
+    if (isSupabaseEnabled && supabaseAdmin) {
+      const { data, error } = await safeSupabaseUpdate("leads", id, { internal_notes: notes, updated_at: new Date().toISOString() });
       if (error) throw error;
       return data;
     } else {
@@ -1155,12 +1153,7 @@ export const db = {
 
     let updatedLead: Lead;
     if (isSupabaseEnabled && supabaseAdmin) {
-      const { data, error } = await supabaseAdmin
-        .from("leads")
-        .update(updates)
-        .eq("id", leadId)
-        .select()
-        .single();
+      const { data, error } = await safeSupabaseUpdate("leads", leadId, updates);
       if (error) throw error;
       updatedLead = data;
     } else {
