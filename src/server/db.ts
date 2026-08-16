@@ -695,6 +695,63 @@ function syncMockAnalyticsAndScoring(
   }
 }
 
+async function safeSupabaseInsert(table: string, payload: Record<string, any>): Promise<{ data: any; error: any }> {
+  let currentPayload = { ...payload };
+  let attempts = 0;
+  while (attempts < 10) {
+    attempts++;
+    const { data, error } = await supabaseAdmin
+      .from(table)
+      .insert([currentPayload])
+      .select()
+      .single();
+
+    if (!error) return { data, error: null };
+
+    const missingColMatch =
+      error.message?.match(/Could not find the '([^']+)' column/i) ||
+      error.details?.match(/Could not find the '([^']+)' column/i) ||
+      error.message?.match(/column "([^"]+)" of relation "[^"]+" does not exist/i);
+
+    if (missingColMatch && missingColMatch[1]) {
+      const missingCol = missingColMatch[1];
+      delete currentPayload[missingCol];
+    } else {
+      return { data: null, error };
+    }
+  }
+  return { data: null, error: new Error(`Failed to insert into ${table} after max self-heal retries.`) };
+}
+
+async function safeSupabaseUpdate(table: string, id: string, payload: Record<string, any>): Promise<{ data: any; error: any }> {
+  let currentPayload = { ...payload };
+  let attempts = 0;
+  while (attempts < 10) {
+    attempts++;
+    const { data, error } = await supabaseAdmin
+      .from(table)
+      .update(currentPayload)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (!error) return { data, error: null };
+
+    const missingColMatch =
+      error.message?.match(/Could not find the '([^']+)' column/i) ||
+      error.details?.match(/Could not find the '([^']+)' column/i) ||
+      error.message?.match(/column "([^"]+)" of relation "[^"]+" does not exist/i);
+
+    if (missingColMatch && missingColMatch[1]) {
+      const missingCol = missingColMatch[1];
+      delete currentPayload[missingCol];
+    } else {
+      return { data: null, error };
+    }
+  }
+  return { data: null, error: new Error(`Failed to update ${table} after max self-heal retries.`) };
+}
+
 // Unified Database Layer API
 export const db = {
   // Server-side authentication check helper
@@ -780,75 +837,30 @@ export const db = {
         
         if (existingLeads && existingLeads.length > 0) {
           const existing = existingLeads[0];
-        let { data, error } = await supabaseAdmin
-          .from("leads")
-          .update({
+          const updatePayload = {
             ...leadData,
             status: leadData.status || existing.status,
             call_token: callToken,
             call_token_expires_at: callTokenExpiresAt,
             call_token_used: false,
             updated_at: new Date().toISOString(),
-          })
-          .eq("id", existing.id)
-          .select()
-          .single();
-
-        if (error && (error.message?.includes("call_token") || error.details?.includes("call_token"))) {
-          const cleanLeadData = { ...leadData };
-          delete (cleanLeadData as any).call_token;
-          delete (cleanLeadData as any).call_token_expires_at;
-          delete (cleanLeadData as any).call_token_used;
-
-          const retryRes = await supabaseAdmin
-            .from("leads")
-            .update({
-              ...cleanLeadData,
-              status: leadData.status || existing.status,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", existing.id)
-            .select()
-            .single();
-          data = retryRes.data;
-          error = retryRes.error;
+          };
+          const { data, error } = await safeSupabaseUpdate("leads", existing.id, updatePayload);
+          if (error) throw error;
+          return data;
         }
-        if (error) throw error;
-        return data;
       }
-    }
-    
-    let { data, error } = await supabaseAdmin
-      .from("leads")
-      .insert([{
+      
+      const insertPayload = {
         ...leadData,
         status: leadData.status || "new",
         call_token: callToken,
         call_token_expires_at: callTokenExpiresAt,
         call_token_used: false,
-      }])
-      .select()
-      .single();
-
-    if (error && (error.message?.includes("call_token") || error.details?.includes("call_token"))) {
-      const cleanLeadData = { ...leadData };
-      delete (cleanLeadData as any).call_token;
-      delete (cleanLeadData as any).call_token_expires_at;
-      delete (cleanLeadData as any).call_token_used;
-
-      const retryRes = await supabaseAdmin
-        .from("leads")
-        .insert([{
-          ...cleanLeadData,
-          status: leadData.status || "new",
-        }])
-        .select()
-        .single();
-      data = retryRes.data;
-      error = retryRes.error;
-    }
-    if (error) throw error;
-    return data;
+      };
+      const { data, error } = await safeSupabaseInsert("leads", insertPayload);
+      if (error) throw error;
+      return data;
     } else {
       const local = readLocalDb();
       
