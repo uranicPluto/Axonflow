@@ -207,3 +207,5 @@ export async function scoreAndUpdateLead(leadId: string): Promise<LeadScoringRes
 
   return scoring;
 }
+
+export const calculateLeadScore = calculateGptLeadScore;
