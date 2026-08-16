@@ -780,37 +780,75 @@ export const db = {
         
         if (existingLeads && existingLeads.length > 0) {
           const existing = existingLeads[0];
-          const { data, error } = await supabaseAdmin
+        let { data, error } = await supabaseAdmin
+          .from("leads")
+          .update({
+            ...leadData,
+            status: leadData.status || existing.status,
+            call_token: callToken,
+            call_token_expires_at: callTokenExpiresAt,
+            call_token_used: false,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existing.id)
+          .select()
+          .single();
+
+        if (error && (error.message?.includes("call_token") || error.details?.includes("call_token"))) {
+          const cleanLeadData = { ...leadData };
+          delete (cleanLeadData as any).call_token;
+          delete (cleanLeadData as any).call_token_expires_at;
+          delete (cleanLeadData as any).call_token_used;
+
+          const retryRes = await supabaseAdmin
             .from("leads")
             .update({
-              ...leadData,
+              ...cleanLeadData,
               status: leadData.status || existing.status,
-              call_token: callToken,
-              call_token_expires_at: callTokenExpiresAt,
-              call_token_used: false,
               updated_at: new Date().toISOString(),
             })
             .eq("id", existing.id)
             .select()
             .single();
-          if (error) throw error;
-          return data;
+          data = retryRes.data;
+          error = retryRes.error;
         }
+        if (error) throw error;
+        return data;
       }
-      
-      const { data, error } = await supabaseAdmin
+    }
+    
+    let { data, error } = await supabaseAdmin
+      .from("leads")
+      .insert([{
+        ...leadData,
+        status: leadData.status || "new",
+        call_token: callToken,
+        call_token_expires_at: callTokenExpiresAt,
+        call_token_used: false,
+      }])
+      .select()
+      .single();
+
+    if (error && (error.message?.includes("call_token") || error.details?.includes("call_token"))) {
+      const cleanLeadData = { ...leadData };
+      delete (cleanLeadData as any).call_token;
+      delete (cleanLeadData as any).call_token_expires_at;
+      delete (cleanLeadData as any).call_token_used;
+
+      const retryRes = await supabaseAdmin
         .from("leads")
         .insert([{
-          ...leadData,
+          ...cleanLeadData,
           status: leadData.status || "new",
-          call_token: callToken,
-          call_token_expires_at: callTokenExpiresAt,
-          call_token_used: false,
         }])
         .select()
         .single();
-      if (error) throw error;
-      return data;
+      data = retryRes.data;
+      error = retryRes.error;
+    }
+    if (error) throw error;
+    return data;
     } else {
       const local = readLocalDb();
       

@@ -576,3 +576,19 @@ CREATE INDEX IF NOT EXISTS idx_lead_activities_lead_id ON lead_activities(lead_i
 
 ALTER TABLE lead_activities ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admin full access lead_activities" ON lead_activities FOR ALL TO authenticated USING (is_admin(auth.uid()));
+
+-- ==========================================
+-- SCHEMA MIGRATIONS & COLUMN RECOVERY
+-- ==========================================
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_token TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_token_expires_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_token_used BOOLEAN DEFAULT false;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_uid TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS full_name TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS company_name TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_recording_url TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_temperature TEXT DEFAULT 'warm';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS meeting_booked BOOLEAN DEFAULT false;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS meeting_time TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS meeting_link TEXT;
+
