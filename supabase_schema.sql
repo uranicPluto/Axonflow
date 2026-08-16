@@ -595,10 +595,41 @@ ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_given BOOLEAN DEFAULT false;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_timestamp TIMESTAMPTZ;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_ip TEXT;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_user_agent TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS company TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS qualification_status TEXT DEFAULT 'pending';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS owner_id UUID;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS assigned_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS outcome TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS outcome_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS is_spam BOOLEAN DEFAULT false;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS rate_limited BOOLEAN DEFAULT false;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS utm_source TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS utm_medium TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS utm_campaign TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS utm_content TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS landing_page TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS referrer TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_opted_in BOOLEAN DEFAULT false;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_scheduled_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS call_summary TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS fit_score INTEGER;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS intent_score INTEGER;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS urgency_score INTEGER;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS budget_score INTEGER;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS budget_level TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS qualification TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS gpt_summary TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS talking_points JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS existing_solutions TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS temperature TEXT DEFAULT 'warm';
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS last_interaction_at TIMESTAMPTZ DEFAULT now();
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS attendee_timezone TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS cal_event_id TEXT;
 
 -- Drop and recreate leads_source_check to guarantee both experience_service and experience_form are allowed
 ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_source_check;
 ALTER TABLE leads ADD CONSTRAINT leads_source_check CHECK (source IN ('book_a_call', 'experience_service', 'experience_form', 'manual', 'referral', 'organic', 'paid_ads', 'linkedin', 'other', 'questionnaire'));
+
 
 -- ==========================================
 -- WORKFLOW LOGS TABLE (n8n Error Auditing)

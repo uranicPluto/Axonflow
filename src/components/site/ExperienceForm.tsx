@@ -62,8 +62,10 @@ export function ExperienceForm({ onPickTime, title, subtitle }: ExperienceFormPr
   });
 
   const onSubmit = async (data: ExperienceFormData) => {
+    console.log("[EXPERIENCE FORM SUBMIT FIRED]", JSON.stringify(data, null, 2));
     setSubmitError(null);
     try {
+      console.log("[EXPERIENCE FORM CALLING createLeadFn]", { source: "experience_service", name: data.name, email: data.email });
       const res = await createLeadFn({
         data: {
           source: "experience_service",
@@ -83,6 +85,7 @@ export function ExperienceForm({ onPickTime, title, subtitle }: ExperienceFormPr
           }),
         },
       });
+      console.log("[EXPERIENCE FORM createLeadFn SUCCESS RESULT]", res);
 
       setCreatedLead({
         id: (res as any)?.id || `lead-${Date.now()}`,

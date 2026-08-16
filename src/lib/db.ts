@@ -376,8 +376,9 @@ export const createLeadFn = createServerFn({ method: "POST" })
       throw new Error(`Rate limit exceeded: ${rateLimitRes.reason}`);
     }
 
+    console.log("[CREATE_LEAD_FN RECEIVED INTAKE DATA]", JSON.stringify(data, null, 2));
     const { db } = await import("../server/db");
-    const lead = await db.createLead({
+    const leadPayload = {
       name: data.name,
       full_name: data.name,
       email: data.email,
@@ -393,7 +394,10 @@ export const createLeadFn = createServerFn({ method: "POST" })
       status: "new_lead",
       qualification_status: "pending",
       meeting_booked: false,
-    });
+    };
+    console.log("[CREATE_LEAD_FN CALLING DB.CREATE_LEAD WITH PAYLOAD]", JSON.stringify(leadPayload, null, 2));
+    const lead = await db.createLead(leadPayload);
+    console.log("[CREATE_LEAD_FN DB.CREATE_LEAD RETURNED LEAD]", lead);
 
     // 3. Log Activity
     const { logActivity } = await import("../server/activity-logger");

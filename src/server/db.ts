@@ -831,6 +831,7 @@ export const db = {
   },
 
   async createLead(leadData: Partial<Lead>): Promise<Lead> {
+    console.log("[DB.CREATE_LEAD ENTERED]", JSON.stringify(leadData, null, 2));
     const email = leadData.email?.toLowerCase().trim() || "";
     
     const callToken = leadData.call_token || (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `tok-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`);
@@ -853,6 +854,7 @@ export const db = {
             call_token_used: false,
             updated_at: new Date().toISOString(),
           };
+          console.log("[EXPERIENCE FORM FINAL UPDATE PAYLOAD]", JSON.stringify(updatePayload, null, 2));
           const { data, error } = await safeSupabaseUpdate("leads", existing.id, updatePayload);
           if (error) throw error;
           return data;
@@ -866,7 +868,9 @@ export const db = {
         call_token_expires_at: callTokenExpiresAt,
         call_token_used: false,
       };
+      console.log("[EXPERIENCE FORM FINAL INSERT PAYLOAD]", JSON.stringify(insertPayload, null, 2));
       const { data, error } = await safeSupabaseInsert("leads", insertPayload);
+      console.log("[EXPERIENCE FORM SUPABASE INSERT RESULT]", { data, error });
       if (error) throw error;
       return data;
     } else {
