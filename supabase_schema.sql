@@ -596,4 +596,18 @@ ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_timestamp TIMESTAMPTZ;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_ip TEXT;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_user_agent TEXT;
 
+-- ==========================================
+-- WORKFLOW LOGS TABLE (n8n Error Auditing)
+-- ==========================================
+CREATE TABLE IF NOT EXISTS workflow_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workflow_name TEXT NOT NULL,
+    node_name TEXT,
+    error_message TEXT,
+    lead_uid TEXT,
+    timestamp TIMESTAMPTZ DEFAULT now(),
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+
 
