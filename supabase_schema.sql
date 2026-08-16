@@ -596,9 +596,14 @@ ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_timestamp TIMESTAMPTZ;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_ip TEXT;
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_user_agent TEXT;
 
+-- Drop and recreate leads_source_check to guarantee both experience_service and experience_form are allowed
+ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_source_check;
+ALTER TABLE leads ADD CONSTRAINT leads_source_check CHECK (source IN ('book_a_call', 'experience_service', 'experience_form', 'manual', 'referral', 'organic', 'paid_ads', 'linkedin', 'other', 'questionnaire'));
+
 -- ==========================================
 -- WORKFLOW LOGS TABLE (n8n Error Auditing)
 -- ==========================================
+
 CREATE TABLE IF NOT EXISTS workflow_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     workflow_name TEXT NOT NULL,
