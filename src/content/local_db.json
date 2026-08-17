@@ -15,6 +15,39 @@
   },
   "leads": [
     {
+      "id": "lead-1786925551508",
+      "created_at": "2026-08-17T00:12:31.508Z",
+      "source": "experience_service",
+      "name": "Jayesh Mahajan",
+      "email": "test.lead.1786925551496@houseofworkflow.com",
+      "phone": "+91 98765 43210",
+      "service_interest": "ai_automation",
+      "problem_description": "We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.",
+      "status": "meeting_booked",
+      "internal_notes": "[WORKFLOW B INTAKE] Source: experience_service. Service: ai_automation. Problem: We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.",
+      "lead_score": 78,
+      "lead_score_reason": "Evaluated lead for House of Workflow fit. Score 78/100 (WARM). High potential in service alignment (ai_automation) and workflow automation requirements.",
+      "pain_points": "",
+      "budget_signal": "",
+      "business_type": "",
+      "call_transcript": "Agent: Hi Jayesh Mahajan, calling from House of Workflow regarding your ai_automation inquiry. Jayesh Mahajan: Yes, our team is struggling with We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.. Agent: We can definitely automate this with our AI Workflow Systems. Would you like to schedule a consultation? Jayesh Mahajan: Yes, tomorrow sounds great.",
+      "call_attempts": 0,
+      "call_outcome": "",
+      "meeting_link": "https://cal.com/meeting/bk-1786925551677",
+      "meeting_confirmed": false,
+      "calendly_event_id": "",
+      "call_token": "c77b0902-778b-4310-a389-2f29cddbd938",
+      "call_token_expires_at": "2026-08-17T00:27:31.497Z",
+      "call_token_used": false,
+      "updated_at": "2026-08-17T00:12:31.810Z",
+      "lead_score_manual_override": true,
+      "lead_score_override_reason": null,
+      "qualification_status": "qualified",
+      "call_summary": "Confirmed service interest in ai_automation. Pain point: \"We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.\". High urgency & decision-maker confirmed. Accepted consultation booking.",
+      "meeting_booked": true,
+      "meeting_time": "2026-08-18T00:12:31.675Z"
+    },
+    {
       "id": "lead-1786924519081",
       "created_at": "2026-08-16T23:55:19.081Z",
       "source": "experience_service",
@@ -1241,6 +1274,16 @@
     }
   ],
   "activity_log": [
+    {
+      "id": "act-1786925551624",
+      "message": "Lead status changed: Jayesh Mahajan (new_lead -> called)",
+      "timestamp": "2026-08-17T00:12:31.624Z"
+    },
+    {
+      "id": "act-1786925551508",
+      "message": "New lead captured: Jayesh Mahajan (test.lead.1786925551496@houseofworkflow.com)",
+      "timestamp": "2026-08-17T00:12:31.508Z"
+    },
     {
       "id": "act-1786924519165",
       "message": "Lead status changed: Jayesh Mahajan (new_lead -> called)",
@@ -26124,6 +26167,18 @@
         "reason": null
       },
       "calculated_at": "2026-08-16T23:55:19.341Z"
+    },
+    {
+      "id": "scr-1786925551816-6werx",
+      "lead_id": "lead-1786925551508",
+      "score": 78,
+      "classification": "Hot",
+      "breakdown": {
+        "manual_override": true,
+        "score": 78,
+        "reason": null
+      },
+      "calculated_at": "2026-08-17T00:12:31.816Z"
     }
   ],
   "analytics_events": [
@@ -26278,6 +26333,22 @@
       "source": "experience_service",
       "metadata": {},
       "created_at": "2026-08-16T23:55:19.187Z"
+    },
+    {
+      "id": "evt-1786925551508-lopli",
+      "event_type": "new_lead",
+      "lead_id": "lead-1786925551508",
+      "source": "experience_service",
+      "metadata": {},
+      "created_at": "2026-08-17T00:12:31.508Z"
+    },
+    {
+      "id": "evt-1786925551649-0foh3",
+      "event_type": "qualified",
+      "lead_id": "lead-1786925551508",
+      "source": "experience_service",
+      "metadata": {},
+      "created_at": "2026-08-17T00:12:31.649Z"
     }
   ],
   "meetings": [
@@ -26504,9 +26575,81 @@
       "reminder_sent": false,
       "created_at": "2026-08-16T23:55:19.251Z",
       "updated_at": "2026-08-16T23:55:19.251Z"
+    },
+    {
+      "id": "mtg-1786925551719-ytdvq",
+      "lead_id": "lead-1786925551508",
+      "cal_event_id": "bk-1786925551677",
+      "cal_uid": "bk-1786925551677",
+      "scheduled_at": "2026-08-18T00:12:31.675Z",
+      "attendee_timezone": "Asia/Kolkata",
+      "duration_min": 30,
+      "meeting_link": "https://cal.com/meeting/bk-1786925551677",
+      "status": "scheduled",
+      "reminder_sent": false,
+      "created_at": "2026-08-17T00:12:31.719Z",
+      "updated_at": "2026-08-17T00:12:31.719Z"
     }
   ],
   "lead_activities": [
+    {
+      "id": "act-1786925551827-pkuce",
+      "lead_id": "lead-1786925551508",
+      "activity_type": "status_changed",
+      "description": "Updated lead qualification (Score: 40 → 78)",
+      "actor": "admin",
+      "metadata": {
+        "lead_score": 78,
+        "lead_score_reason": "Evaluated lead for House of Workflow fit. Score 78/100 (WARM). High potential in service alignment (ai_automation) and workflow automation requirements.",
+        "updated_at": "2026-08-17T00:12:31.810Z",
+        "lead_score_manual_override": true
+      },
+      "created_at": "2026-08-17T00:12:31.827Z"
+    },
+    {
+      "id": "act-1786925551701-b5emq",
+      "lead_id": "lead-1786925551508",
+      "activity_type": "status_changed",
+      "description": "Updated lead qualification (Status: qualified → meeting_booked)",
+      "actor": "admin",
+      "metadata": {
+        "status": "meeting_booked",
+        "meeting_booked": true,
+        "meeting_time": "2026-08-18T00:12:31.675Z",
+        "meeting_link": "https://cal.com/meeting/bk-1786925551677",
+        "updated_at": "2026-08-17T00:12:31.684Z"
+      },
+      "created_at": "2026-08-17T00:12:31.701Z"
+    },
+    {
+      "id": "act-1786925551657-6bt70",
+      "lead_id": "lead-1786925551508",
+      "activity_type": "status_changed",
+      "description": "Updated lead qualification (Status: called → qualified)",
+      "actor": "admin",
+      "metadata": {
+        "qualification_status": "qualified",
+        "call_summary": "Confirmed service interest in ai_automation. Pain point: \"We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.\". High urgency & decision-maker confirmed. Accepted consultation booking.",
+        "call_transcript": "Agent: Hi Jayesh Mahajan, calling from House of Workflow regarding your ai_automation inquiry. Jayesh Mahajan: Yes, our team is struggling with We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.. Agent: We can definitely automate this with our AI Workflow Systems. Would you like to schedule a consultation? Jayesh Mahajan: Yes, tomorrow sounds great.",
+        "status": "qualified",
+        "updated_at": "2026-08-17T00:12:31.642Z"
+      },
+      "created_at": "2026-08-17T00:12:31.657Z"
+    },
+    {
+      "id": "act-1786925551575-9s8u1",
+      "lead_id": "lead-1786925551508",
+      "activity_type": "qualification_updated",
+      "description": "Updated internal notes",
+      "actor": "admin",
+      "metadata": {
+        "status": "new_lead",
+        "qualification_status": "pending",
+        "internal_notes": "[WORKFLOW B INTAKE] Source: experience_service. Service: ai_automation. Problem: We need an automated lead intake & AI voice agent qualification system to book meetings on Cal.com.",
+        "updated_at": "2026-08-17T00:12:31.558Z"
+      },
+      "created_at": "2026-08-17T00:12:31.575Z"
+    },
     {
       "id": "act-1786924519348-0ub8x",
       "lead_id": "lead-1786924519081",
@@ -28663,6 +28806,50 @@
       "created_at": "2026-08-16T23:55:19.362Z",
       "updated_at": "2026-08-16T23:55:19.380Z",
       "sent_at": "2026-08-16T23:55:19.380Z"
+    },
+    {
+      "id": "cml-1786925551745",
+      "lead_id": "lead-1786925551508",
+      "channel": "whatsapp",
+      "provider": "aisensy",
+      "template_name": "how_booking_confirm",
+      "message_type": "recipient_notification",
+      "provider_message_id": "mock-wa-1786925551753",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "wf_b_wa_confirm_bk-1786925551677",
+      "created_at": "2026-08-17T00:12:31.736Z",
+      "updated_at": "2026-08-17T00:12:31.753Z",
+      "sent_at": "2026-08-17T00:12:31.753Z"
+    },
+    {
+      "id": "cml-1786925551779",
+      "lead_id": "lead-1786925551508",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786925551787",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "wf_b_email_confirm_bk-1786925551677",
+      "created_at": "2026-08-17T00:12:31.772Z",
+      "updated_at": "2026-08-17T00:12:31.787Z",
+      "sent_at": "2026-08-17T00:12:31.787Z"
+    },
+    {
+      "id": "cml-1786925551849",
+      "channel": "email",
+      "provider": "resend",
+      "template_name": null,
+      "message_type": "email_notification",
+      "provider_message_id": "mock-email-1786925551859",
+      "status": "sent",
+      "error_message": null,
+      "idempotency_key": "founder_call_brief_test.lead.1786925551496@houseofworkflow.com_1786925551842",
+      "created_at": "2026-08-17T00:12:31.842Z",
+      "updated_at": "2026-08-17T00:12:31.859Z",
+      "sent_at": "2026-08-17T00:12:31.859Z"
     }
   ]
 }

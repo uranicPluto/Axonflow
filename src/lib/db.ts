@@ -388,8 +388,10 @@ export const createLeadFn = createServerFn({ method: "POST" })
       throw new Error(`Rate limit exceeded: ${rateLimitRes.reason}`);
     }
 
-    console.log("[CREATE_LEAD_FN RECEIVED INTAKE DATA]", JSON.stringify(data, null, 2));
+    console.log("[WFB-1] createLeadFn started", JSON.stringify(data, null, 2));
     const { db } = await import("../server/db");
+    const { logWorkflowStep } = await import("../server/workflow-logger");
+
     const leadPayload = {
       name: data.name,
       full_name: data.name,
@@ -415,7 +417,8 @@ export const createLeadFn = createServerFn({ method: "POST" })
     };
     console.log("[CREATE_LEAD_FN CALLING DB.CREATE_LEAD WITH PAYLOAD]", JSON.stringify(leadPayload, null, 2));
     const lead = await db.createLead(leadPayload);
-    console.log("[CREATE_LEAD_FN DB.CREATE_LEAD RETURNED LEAD]", lead);
+    console.log("[WFB-2] lead inserted", lead.id);
+    await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-2: lead_inserted", status: "success" });
 
     // 3. Log Activity
     const { logActivity } = await import("../server/activity-logger");
@@ -428,8 +431,17 @@ export const createLeadFn = createServerFn({ method: "POST" })
     });
 
     // 4. Auto-trigger Workflow B Experience Service Flow
+    console.log("[WFB-3] about to trigger Workflow B", lead.id);
+    await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-3: about_to_trigger_workflow_b", status: "success" });
+
     try {
       const { processExperienceFormSubmission } = await import("../server/experience-flow-engine");
+      console.log("[WFB-4] Workflow B imported");
+      await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-4: workflow_b_imported", status: "success" });
+
+      console.log("[WFB-5] Workflow B launched", lead.id);
+      await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-5: workflow_b_launched", status: "success" });
+
       processExperienceFormSubmission({
         id: lead.id,
         name: lead.name,
@@ -437,9 +449,13 @@ export const createLeadFn = createServerFn({ method: "POST" })
         phone: lead.phone,
         service_interest: lead.service_interest,
         problem_description: lead.problem_description,
-      }).catch((expErr) => console.error("[WORKFLOW B] Background experience flow error:", expErr));
-    } catch (expErr) {
+      }).catch(async (expErr) => {
+        console.error("[WORKFLOW B] Background experience flow error:", expErr);
+        await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-ERR: background_flow_failed", status: "failed", error_message: expErr?.message || String(expErr) });
+      });
+    } catch (expErr: any) {
       console.error("[WORKFLOW B] Failed to initialize experience flow:", expErr);
+      await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-ERR: init_failed", status: "failed", error_message: expErr?.message || String(expErr) });
     }
 
     return {
