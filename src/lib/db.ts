@@ -420,7 +420,7 @@ export const createLeadFn = createServerFn({ method: "POST" })
     console.log("[WFB-2] lead inserted", lead.id);
     await logWorkflowStep({ workflow_name: "workflow_b", lead_id: lead.id, step_name: "WFB-2: lead_inserted", status: "success" });
 
-    // 3. Log Activity
+    // 3. Log Activity & Trigger n8n Webhook
     const { logActivity } = await import("../server/activity-logger");
     await logActivity({
       leadId: lead.id,
@@ -429,6 +429,23 @@ export const createLeadFn = createServerFn({ method: "POST" })
       ipAddress: clientIp,
       details: { name: lead.name, email: lead.email, service_interest: lead.service_interest },
     });
+
+    // 3b. Trigger n8n Webhook (Fire-and-Forget, in addition to Workflow B)
+    try {
+      const { triggerN8nExperienceServiceWebhook } = await import("../server/n8n-webhook");
+      triggerN8nExperienceServiceWebhook({
+        lead_id: lead.id,
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        service_interest: lead.service_interest,
+        problem_description: lead.problem_description,
+        source: lead.source || "experience_service",
+        created_at: lead.created_at || new Date().toISOString(),
+      }).catch((n8nErr) => console.error("[N8N] Background trigger error:", n8nErr));
+    } catch (n8nErr) {
+      console.error("[N8N] Failed to initialize n8n webhook:", n8nErr);
+    }
 
     // 4. Auto-trigger Workflow B Experience Service Flow
     console.log("[WFB-3] about to trigger Workflow B", lead.id);
