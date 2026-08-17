@@ -197,9 +197,6 @@ export async function processExperienceFormSubmission(lead: ExperienceFormLeadIn
       const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
       // 5. Send WhatsApp Intake Notification / Confirmation
-      const dateObj = new Date(selectedSlot.time);
-      const dateStr = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-      const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
       await sendWhatsAppMessage({
         phone: lead.phone,
