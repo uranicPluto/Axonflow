@@ -196,7 +196,11 @@ export async function processExperienceFormSubmission(lead: ExperienceFormLeadIn
       const dateStr = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
       const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-      // 5. Send WhatsApp Confirmation
+      // 5. Send WhatsApp Intake Notification / Confirmation
+      const dateObj = new Date(selectedSlot.time);
+      const dateStr = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const timeStr = dateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
       await sendWhatsAppMessage({
         phone: lead.phone,
         userName: fullName,
@@ -222,6 +226,24 @@ export async function processExperienceFormSubmission(lead: ExperienceFormLeadIn
         leadId: lead.id,
       });
     }
+  }
+
+  // Fallback direct confirmation if no Cal.com booking was made
+  if (!meetingBooked && lead.email) {
+    const emailHtml = formatEmailConfirmationHtml({
+      name: fullName,
+      date: "Pending Schedule",
+      time: "Our AI Team Will Contact You",
+      meetingLink: "https://houseofworkflow.com/contact?tab=schedule",
+    });
+
+    await sendEmailNotification({
+      to: lead.email,
+      subject: "We Received Your Automation Request — House of Workflow",
+      html: emailHtml,
+      idempotencyKey: `wf_b_email_intake_${lead.id}`,
+      leadId: lead.id,
+    });
   }
 
   // 7. Execute GPT Lead Scoring
