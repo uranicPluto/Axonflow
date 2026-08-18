@@ -9,6 +9,8 @@ import { BookingModal } from "./BookingModal";
 import { ExperienceModal } from "./ExperienceModal";
 import { ArrowRight, Container } from "./primitives";
 
+import { supabase } from "@/lib/supabase-client";
+
 function Wordmark({ tone = "light" }: { tone?: "light" | "dark" }) {
   return (
     <Link to="/" className="group flex items-center gap-2.5" aria-label={`${brand.name} home`}>
@@ -56,6 +58,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [experienceOpen, setExperienceOpen] = useState(false);
+  const [userSession, setUserSession] = useState<any>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -68,6 +71,55 @@ export function Header() {
     setMobileOpen(false);
     setOpen(null);
   }, [pathname]);
+
+  useEffect(() => {
+    // Check initial Supabase session & local marker
+    supabase.auth.getSession().then(({ data }) => {
+      if (data?.session?.user) {
+        setUserSession(data.session.user);
+      } else if (typeof window !== "undefined" && localStorage.getItem("user_logged_in") === "true") {
+        setUserSession({ email: localStorage.getItem("user_email") || "User" });
+      }
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUserSession(session.user);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("user_logged_in", "true");
+          localStorage.setItem("user_email", session.user.email || "");
+        }
+      } else {
+        setUserSession(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("user_logged_in");
+          localStorage.removeItem("user_email");
+        }
+      }
+    });
+
+    const handleCustomAuth = () => {
+      if (typeof window !== "undefined" && localStorage.getItem("user_logged_in") === "true") {
+        setUserSession({ email: localStorage.getItem("user_email") || "User" });
+      }
+    };
+    window.addEventListener("auth_state_changed", handleCustomAuth);
+
+    return () => {
+      authListener?.subscription?.unsubscribe();
+      window.removeEventListener("auth_state_changed", handleCustomAuth);
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user_logged_in");
+      localStorage.removeItem("user_email");
+    }
+    setUserSession(null);
+    window.location.href = "/";
+  };
 
   return (
     <>
@@ -117,12 +169,22 @@ export function Header() {
 
             <div className="flex items-center justify-end gap-2">
               <div className="hidden items-center gap-2 lg:flex">
-                <Link
-                  to="/signup"
-                  className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
-                >
-                  Sign Up
-                </Link>
+                {!userSession ? (
+                  <Link
+                    to="/login"
+                    className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
+                  >
+                    Sign In
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
+                  >
+                    Sign Out
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setExperienceOpen(true)}
@@ -279,13 +341,26 @@ export function Header() {
                   </li>
                 </ul>
                 <div className="mt-5 flex flex-col gap-2.5">
-                  <Link
-                    to="/signup"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
-                  >
-                    Sign Up / Log In
-                  </Link>
+                  {!userSession ? (
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
+                    >
+                      Sign In
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        handleSignOut();
+                      }}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
+                    >
+                      Sign Out
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {

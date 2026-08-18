@@ -1,15 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AuthComponent } from "@/components/ui/sign-up";
-import { brand } from "@/content/site";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/signup")({
-  component: SignupPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/login" });
+  },
 });
-
-function SignupPage() {
-  return (
-    <div className="w-full min-h-screen">
-      <AuthComponent brandName={brand.name} />
-    </div>
-  );
-}
