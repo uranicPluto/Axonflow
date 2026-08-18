@@ -15,6 +15,8 @@ import { jsonLd, pageMeta } from "@/components/site/seo";
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { getProjectsFn, getTestimonialsFn } from "@/lib/db";
 
+import { testimonials as staticTestimonials } from "@/content/shared";
+
 export const Route = createFileRoute("/case-studies/")({
   loader: async () => {
     try {
@@ -42,29 +44,46 @@ export const Route = createFileRoute("/case-studies/")({
           ].filter((r) => r && r.value),
         }));
 
-      const testimonials = (rawTestimonials || [])
-        .filter((t) => t && t.published)
-        .map((t, idx) => {
-          const avatars = [
-            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
-            "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80",
-            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80",
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
-            "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80",
-          ];
-          return {
+      const avatars = [
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&h=150&q=80",
+      ];
+
+      const publishedDbTestimonials = (rawTestimonials || []).filter((t) => t && t.published);
+
+      const testimonials = publishedDbTestimonials.length > 0
+        ? publishedDbTestimonials.map((t, idx) => ({
             text: t.quote || "",
             image: avatars[idx % avatars.length],
             name: t.author_name || "Anonymous",
             role: `${t.author_title || ""}${t.author_company ? `, ${t.author_company}` : ""}`,
-          };
-        });
+          }))
+        : staticTestimonials.map((t, idx) => ({
+            text: t.text,
+            image: avatars[idx % avatars.length],
+            name: t.name,
+            role: `${t.role}${t.company ? `, ${t.company}` : ""}`,
+          }));
 
       return { projects, testimonials };
     } catch (err) {
       console.error("Error in portfolio/case-studies loader:", err);
-      return { projects: [], testimonials: [] };
+      const avatars = [
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80",
+      ];
+      const fallbackTestimonials = staticTestimonials.map((t, idx) => ({
+        text: t.text,
+        image: avatars[idx % avatars.length],
+        name: t.name,
+        role: `${t.role}${t.company ? `, ${t.company}` : ""}`,
+      }));
+      return { projects: [], testimonials: fallbackTestimonials };
     }
   },
   head: () => ({
