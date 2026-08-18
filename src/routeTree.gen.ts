@@ -14,8 +14,11 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ExperienceRouteImport } from './routes/experience'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as ProcessRouteImport } from './routes/process'
 import { Route as QuestionnaireRouteImport } from './routes/questionnaire'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminActionCenterRouteImport } from './routes/admin.action-center'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
@@ -93,6 +96,16 @@ const ExperienceRoute = ExperienceRouteImport.update({
   path: '/experience',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProcessRoute = ProcessRouteImport.update({
   id: '/process',
   path: '/process',
@@ -101,6 +114,11 @@ const ProcessRoute = ProcessRouteImport.update({
 const QuestionnaireRoute = QuestionnaireRouteImport.update({
   id: '/questionnaire',
   path: '/questionnaire',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -370,8 +388,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/experience': typeof ExperienceRoute
+  '/login': typeof LoginRoute
+  '/portfolio': typeof PortfolioRoute
   '/process': typeof ProcessRoute
   '/questionnaire': typeof QuestionnaireRoute
+  '/signup': typeof SignupRoute
   '/admin/action-center': typeof AdminActionCenterRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -429,8 +450,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/experience': typeof ExperienceRoute
+  '/login': typeof LoginRoute
+  '/portfolio': typeof PortfolioRoute
   '/process': typeof ProcessRoute
   '/questionnaire': typeof QuestionnaireRoute
+  '/signup': typeof SignupRoute
   '/admin/action-center': typeof AdminActionCenterRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -490,8 +514,11 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/experience': typeof ExperienceRoute
+  '/login': typeof LoginRoute
+  '/portfolio': typeof PortfolioRoute
   '/process': typeof ProcessRoute
   '/questionnaire': typeof QuestionnaireRoute
+  '/signup': typeof SignupRoute
   '/admin/action-center': typeof AdminActionCenterRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -552,8 +579,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/experience'
+    | '/login'
+    | '/portfolio'
     | '/process'
     | '/questionnaire'
+    | '/signup'
     | '/admin/action-center'
     | '/admin/analytics'
     | '/admin/approvals'
@@ -611,8 +641,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/contact'
     | '/experience'
+    | '/login'
+    | '/portfolio'
     | '/process'
     | '/questionnaire'
+    | '/signup'
     | '/admin/action-center'
     | '/admin/analytics'
     | '/admin/approvals'
@@ -671,8 +704,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/experience'
+    | '/login'
+    | '/portfolio'
     | '/process'
     | '/questionnaire'
+    | '/signup'
     | '/admin/action-center'
     | '/admin/analytics'
     | '/admin/approvals'
@@ -732,8 +768,11 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   ExperienceRoute: typeof ExperienceRoute
+  LoginRoute: typeof LoginRoute
+  PortfolioRoute: typeof PortfolioRoute
   ProcessRoute: typeof ProcessRoute
   QuestionnaireRoute: typeof QuestionnaireRoute
+  SignupRoute: typeof SignupRoute
   CareersSlugRoute: typeof CareersSlugRoute
   CaseStudiesSlugRoute: typeof CaseStudiesSlugRoute
   IndustriesSlugRoute: typeof IndustriesSlugRoute
@@ -786,6 +825,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExperienceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/process': {
       id: '/process'
       path: '/process'
@@ -798,6 +851,13 @@ declare module '@tanstack/react-router' {
       path: '/questionnaire'
       fullPath: '/questionnaire'
       preLoaderRoute: typeof QuestionnaireRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -1250,8 +1310,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   ExperienceRoute: ExperienceRoute,
+  LoginRoute: LoginRoute,
+  PortfolioRoute: PortfolioRoute,
   ProcessRoute: ProcessRoute,
   QuestionnaireRoute: QuestionnaireRoute,
+  SignupRoute: SignupRoute,
   CareersSlugRoute: CareersSlugRoute,
   CaseStudiesSlugRoute: CaseStudiesSlugRoute,
   IndustriesSlugRoute: IndustriesSlugRoute,

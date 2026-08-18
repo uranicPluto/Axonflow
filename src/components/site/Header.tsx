@@ -117,6 +117,12 @@ export function Header() {
 
             <div className="flex items-center justify-end gap-2">
               <div className="hidden items-center gap-2 lg:flex">
+                <Link
+                  to="/signup"
+                  className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
+                >
+                  Sign Up
+                </Link>
                 <button
                   type="button"
                   onClick={() => setExperienceOpen(true)}
@@ -273,6 +279,13 @@ export function Header() {
                   </li>
                 </ul>
                 <div className="mt-5 flex flex-col gap-2.5">
+                  <Link
+                    to="/signup"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
+                  >
+                    Sign Up / Log In
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {
