@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 import { BookingModal } from "./BookingModal";
 import { ExperienceModal } from "./ExperienceModal";
+import { LoginModal } from "./LoginModal";
 import { ArrowRight, Container } from "./primitives";
 
 import { supabase } from "@/lib/supabase-client";
@@ -58,6 +59,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [experienceOpen, setExperienceOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const [userSession, setUserSession] = useState<any>(null);
 
   useEffect(() => {
@@ -170,17 +172,18 @@ export function Header() {
             <div className="flex items-center justify-end gap-2">
               <div className="hidden items-center gap-2 lg:flex">
                 {!userSession ? (
-                  <Link
-                    to="/login"
-                    className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
+                  <button
+                    type="button"
+                    onClick={() => setLoginOpen(true)}
+                    className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40 cursor-pointer"
                   >
                     Sign In
-                  </Link>
+                  </button>
                 ) : (
                   <button
                     type="button"
                     onClick={handleSignOut}
-                    className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40"
+                    className="flex h-9 items-center rounded-full border border-hairline px-3.5 text-[0.875rem] font-medium text-foreground transition-all hover:bg-muted/40 cursor-pointer"
                   >
                     Sign Out
                   </button>
@@ -342,13 +345,16 @@ export function Header() {
                 </ul>
                 <div className="mt-5 flex flex-col gap-2.5">
                   {!userSession ? (
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        setLoginOpen(true);
+                      }}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all cursor-pointer"
                     >
                       Sign In
-                    </Link>
+                    </button>
                   ) : (
                     <button
                       type="button"
@@ -356,7 +362,7 @@ export function Header() {
                         setMobileOpen(false);
                         handleSignOut();
                       }}
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all"
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-hairline bg-background px-6 text-[0.95rem] font-medium text-foreground transition-all cursor-pointer"
                     >
                       Sign Out
                     </button>
@@ -389,6 +395,7 @@ export function Header() {
         </AnimatePresence>
       </header>
 
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
       <BookingModal isOpen={bookingOpen} onClose={() => setBookingOpen(false)} />
       <ExperienceModal isOpen={experienceOpen} onClose={() => setExperienceOpen(false)} />
     </>
